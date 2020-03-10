@@ -2981,7 +2981,7 @@ SM.extend({
 
                                 //存储JSON信息
                                 self.writeFile({
-                                    content: JSON.stringify(data),
+                                    content: JSON.stringify(data,undefined, 2),
                                     path: self.toJSString(savePath),
                                     fileName: "artboard.json"
                                 });
@@ -3173,17 +3173,22 @@ SM.extend({
                 };
 
 
-
         if (layerType == "shape"){
+            log("shape:"+layerData.name+",class:"+layer.class());
             //todo 自动判断图标包含关系并添加切图
             let layerShapeType = "";
-            if(this.is(layer, MSBitmapLayer)){
+            if(this.is(layer, MSShapeGroup) ||
+                this.is(layer, MSShapePathLayer) ||
+                this.is(layer, MSTriangleShape) ||
+                this.is(layer, MSStarShape) ||
+                this.is(layer, MSPolygonShape) ||
+                this.is(layer, MSBitmapLayer)){
+                layerShapeType = "image";
                 if(!this.hasExportSizes(layer)){
                     var size = layer.exportOptions().addExportFormat();
                     size.setName("");
                     size.setScale(1);
                 }
-                layerShapeType = "bitmap";
             } else if(this.is(layer, MSRectangleShape)){
                 layerShapeType = "rectangle";
             }else if(this.is(layer, MSOvalShape)){
