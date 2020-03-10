@@ -42,8 +42,8 @@ var SM = {
                 I18N[lang] = JSON.parse(language);
                 language = "I18N[\'" + webI18N[lang] + "\'] = " + language;
             }
-
-            coscript.setShouldKeepAround(true);
+            //fixme
+            // coscript.setShouldKeepAround(true);
 
             if(command && command == "init"){
                 this.checkVersion();
@@ -2969,6 +2969,7 @@ SM.extend({
                             data.artboards[artboardIndex].width = artboardRect.width;
                             data.artboards[artboardIndex].height = artboardRect.height;
 
+                            log(self.configs.exportOption);
                             if(!self.configs.exportOption){
                                 var imageURL = NSURL.fileURLWithPath(self.exportImage({
                                         layer: artboard,
@@ -2977,6 +2978,15 @@ SM.extend({
                                     })),
                                     imageData = NSData.dataWithContentsOfURL(imageURL),
                                     imageBase64 = imageData.base64EncodedStringWithOptions(0);
+
+                                //存储JSON信息
+                                self.writeFile({
+                                    content: JSON.stringify(data),
+                                    path: self.toJSString(savePath),
+                                    fileName: "artboard.json"
+                                });
+
+
                                 data.artboards[artboardIndex].imageBase64 = 'data:image/png;base64,' + imageBase64;
 
                                 var newData =  JSON.parse(JSON.stringify(data));
@@ -3154,12 +3164,49 @@ SM.extend({
             exportLayerRect = layer.absoluteRect();
         }
 
+
         var layerData = {
                     objectID: this.toJSString( layer.objectID() ),
                     type: layerType,
                     name: this.toHTMLEncode(this.emojiToEntities(layer.name())),
                     rect: this.rectToJSON(exportLayerRect, artboardRect)
                 };
+
+
+
+        if (layerType == "shape"){
+            //todo 自动判断图标包含关系并添加切图
+            let layerShapeType = "";
+            if(this.is(layer, MSBitmapLayer)){
+                if(!this.hasExportSizes(layer)){
+                    var size = layer.exportOptions().addExportFormat();
+                    size.setName("");
+                    size.setScale(1);
+                }
+                layerShapeType = "bitmap";
+            } else if(this.is(layer, MSRectangleShape)){
+                layerShapeType = "rectangle";
+            }else if(this.is(layer, MSOvalShape)){
+                layerShapeType = "oval";
+            }
+
+            // return this.is(layer, MSTextLayer) ||
+            //     this.is(layer, MSShapeGroup) ||
+            //     this.is(layer, MSRectangleShape) ||
+            //     this.is(layer, MSOvalShape) ||
+            //     this.is(layer, MSShapePathLayer) ||
+            //     this.is(layer, MSTriangleShape) ||
+            //     this.is(layer, MSStarShape) ||
+            //     this.is(layer, MSPolygonShape) ||
+            //     this.is(layer, MSBitmapLayer) ||
+            //     this.is(layer, MSSliceLayer) ||
+            //     this.is(layer, MSSymbolInstance) ||
+            if(layerShapeType) {
+                this.extend({
+                    shapeType: layerShapeType,
+                }, layerData);
+            }
+        }
 
         if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
 
