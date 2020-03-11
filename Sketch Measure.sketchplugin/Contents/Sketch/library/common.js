@@ -2708,8 +2708,9 @@ SM.extend({
                 parentRect = self.getRect(parentGroup),
                 colorHex = layerData.color["color-hex"].split(" ")[0];
 
+            layerData.tspan = textData;
+            layerData.tspanID = [];
             textData.forEach(function(tData){
-
                 if(
                     tData["content"].trim() &&
                     (
@@ -2753,6 +2754,7 @@ SM.extend({
                         data
                     );
 
+                    layerData.tspanID.push(self.toJSString(textLayer.objectID()));
                     self.removeLayer(textLayer);
                 }
 
@@ -3138,6 +3140,25 @@ SM.extend({
             return this;
         }
 
+        let layerShapeType = "";
+        if(this.is(layer, MSShapeGroup) ||
+            this.is(layer, MSShapePathLayer) ||
+            this.is(layer, MSTriangleShape) ||
+            this.is(layer, MSStarShape) ||
+            this.is(layer, MSPolygonShape) ||
+            this.is(layer, MSBitmapLayer)){
+            layerShapeType = "image";
+            if(!this.hasExportSizes(layer)){
+                var size = layer.exportOptions().addExportFormat();
+                size.setName("");
+                size.setScale(1);
+            }
+        } else if(this.is(layer, MSRectangleShape)){
+            layerShapeType = "rectangle";
+        }else if(this.is(layer, MSOvalShape)){
+            layerShapeType = "oval";
+        }
+
         var layerType = this.is(layer, MSTextLayer) ? "text" :
                this.is(layer, MSSymbolInstance) ? "symbol" :
                this.is(layer, MSSliceLayer) || this.hasExportSizes(layer)? "slice":
@@ -3173,44 +3194,8 @@ SM.extend({
                 };
 
 
-        if (layerType == "shape"){
-            log("shape:"+layerData.name+",class:"+layer.class());
-            //todo 自动判断图标包含关系并添加切图
-            let layerShapeType = "";
-            if(this.is(layer, MSShapeGroup) ||
-                this.is(layer, MSShapePathLayer) ||
-                this.is(layer, MSTriangleShape) ||
-                this.is(layer, MSStarShape) ||
-                this.is(layer, MSPolygonShape) ||
-                this.is(layer, MSBitmapLayer)){
-                layerShapeType = "image";
-                if(!this.hasExportSizes(layer)){
-                    var size = layer.exportOptions().addExportFormat();
-                    size.setName("");
-                    size.setScale(1);
-                }
-            } else if(this.is(layer, MSRectangleShape)){
-                layerShapeType = "rectangle";
-            }else if(this.is(layer, MSOvalShape)){
-                layerShapeType = "oval";
-            }
-
-            // return this.is(layer, MSTextLayer) ||
-            //     this.is(layer, MSShapeGroup) ||
-            //     this.is(layer, MSRectangleShape) ||
-            //     this.is(layer, MSOvalShape) ||
-            //     this.is(layer, MSShapePathLayer) ||
-            //     this.is(layer, MSTriangleShape) ||
-            //     this.is(layer, MSStarShape) ||
-            //     this.is(layer, MSPolygonShape) ||
-            //     this.is(layer, MSBitmapLayer) ||
-            //     this.is(layer, MSSliceLayer) ||
-            //     this.is(layer, MSSymbolInstance) ||
-            if(layerShapeType) {
-                this.extend({
-                    shapeType: layerShapeType,
-                }, layerData);
-            }
+        if(layerShapeType && layerShapeType!="image") {
+            layerData.shapeType = layerShapeType;
         }
 
         if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
