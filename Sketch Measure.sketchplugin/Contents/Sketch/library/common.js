@@ -2627,19 +2627,15 @@ SM.extend({
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
 
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
-                    // console.log("symbol2:"+layerData.name+",tempSymbolLayer.name"+tempSymbolLayer.name);
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
-                        // console.log("symbol3:"+layerData.name);
                         var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
                         if(
                           overrides &&
                           overrides[symbolMasterObjectID] &&
                           !!overrides[symbolMasterObjectID].symbolID
                         ){
-                            // console.log("symbol4:"+layerData.name);
                           var changeSymbol = self.find({key: "(symbolID != NULL) && (symbolID == %@)", match: self.toJSString(overrides[symbolMasterObjectID].symbolID)}, self.document.documentData().allSymbols());
                           if(changeSymbol){
-                              console.log("symbol5:"+layerData.name);
                             tempSymbolLayer.changeInstanceToSymbol(changeSymbol);
                           }
                           else{
@@ -2648,7 +2644,6 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
-                        // console.log("symbol6:"+layerData.name);
                       self.getLayer(
                           artboard,
                           tempSymbolLayer,
@@ -2945,6 +2940,7 @@ SM.extend({
                             layer = artboard.children()[layerIndex],
                             message = page.name() + ' - ' + artboard.name() + ' - ' + layer.name();
                         // log( page.name() + ' - ' + artboard.name() + ' - ' + layer.name());
+
                         try {
                           self.getLayer(
                               artboard, // Sketch artboard element
@@ -2975,6 +2971,11 @@ SM.extend({
                             data.artboards[artboardIndex].objectID = self.toJSString(artboard.objectID());
                             data.artboards[artboardIndex].width = artboardRect.width;
                             data.artboards[artboardIndex].height = artboardRect.height;
+
+                            //画板背景色
+                            if(artboard.hasBackgroundColor()) {
+                                data.artboards[artboardIndex].backgroundColor = self.colorToJSON(artboard.backgroundColor());
+                            }
 
                             log(self.configs.exportOption);
                             if(!self.configs.exportOption){
