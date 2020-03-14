@@ -3192,7 +3192,7 @@ SM.extend({
 
         var rect;
         //控件中的图片导出时是最小尺寸
-        if(symbolLayer && layerShapeType == "image"){
+        if(layerShapeType == "image"){
             var slice = MSSliceLayer.sliceLayerFromLayer(layer);
             rect = this.rectToJSON(slice.absoluteRect(), artboardRect);
             this.removeLayer(slice)
