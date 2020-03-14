@@ -2627,15 +2627,19 @@ SM.extend({
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
 
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
+                    // console.log("symbol2:"+layerData.name+",tempSymbolLayer.name"+tempSymbolLayer.name);
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
+                        // console.log("symbol3:"+layerData.name);
                         var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
                         if(
                           overrides &&
                           overrides[symbolMasterObjectID] &&
                           !!overrides[symbolMasterObjectID].symbolID
                         ){
+                            // console.log("symbol4:"+layerData.name);
                           var changeSymbol = self.find({key: "(symbolID != NULL) && (symbolID == %@)", match: self.toJSString(overrides[symbolMasterObjectID].symbolID)}, self.document.documentData().allSymbols());
                           if(changeSymbol){
+                              console.log("symbol5:"+layerData.name);
                             tempSymbolLayer.changeInstanceToSymbol(changeSymbol);
                           }
                           else{
@@ -2644,6 +2648,7 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
+                        // console.log("symbol6:"+layerData.name);
                       self.getLayer(
                           artboard,
                           tempSymbolLayer,
@@ -3185,16 +3190,24 @@ SM.extend({
             exportLayerRect = layer.absoluteRect();
         }
 
+        var rect;
+        //控件中的图片导出时是最小尺寸
+        if(symbolLayer && layerShapeType == "image"){
+            var slice = MSSliceLayer.sliceLayerFromLayer(layer);
+            rect = this.rectToJSON(slice.absoluteRect(), artboardRect);
+            this.removeLayer(slice)
+            // console.log(">>"+JSON.stringify(this.rectToJSON(slice.absoluteRect()))+":::"+JSON.stringify(this.rectToJSON(slice.absoluteRect(),artboardRect))+", symbolLayer:"+JSON.stringify(this.rectToJSON(symbolLayer.absoluteRect())));
+        }
 
         var layerData = {
                     objectID: this.toJSString( layer.objectID() ),
                     type: layerType,
                     name: this.toHTMLEncode(this.emojiToEntities(layer.name())),
-                    rect: this.rectToJSON(exportLayerRect, artboardRect)
+                    rect: rect ? rect : this.rectToJSON(exportLayerRect, artboardRect)
                 };
 
 
-        if(layerShapeType && layerShapeType!="image") {
+        if(layerShapeType) {
             layerData.shapeType = layerShapeType;
         }
 
