@@ -2977,7 +2977,7 @@ SM.extend({
                                 data.artboards[artboardIndex].backgroundColor = self.colorToJSON(artboard.backgroundColor());
                             }
 
-                            log(self.configs.exportOption);
+
                             if(!self.configs.exportOption){
                                 var imageURL = NSURL.fileURLWithPath(self.exportImage({
                                         layer: artboard,
@@ -2986,14 +2986,6 @@ SM.extend({
                                     })),
                                     imageData = NSData.dataWithContentsOfURL(imageURL),
                                     imageBase64 = imageData.base64EncodedStringWithOptions(0);
-
-                                //存储JSON信息
-                                self.writeFile({
-                                    content: JSON.stringify(data,undefined, 2),
-                                    path: self.toJSString(savePath),
-                                    fileName: "artboard.json"
-                                });
-
 
                                 data.artboards[artboardIndex].imageBase64 = 'data:image/png;base64,' + imageBase64;
 
@@ -3039,6 +3031,12 @@ SM.extend({
                             }
 
                             var selectingPath = savePath;
+                            //存储JSON信息
+                            self.writeFile({
+                                content: JSON.stringify(data,undefined, 2),
+                                path: self.toJSString(savePath),
+                                fileName: "artboard.json"
+                            });
                             if(self.configs.exportOption){
                                 self.writeFile({
                                         content: self.template(template, {lang: language, data: JSON.stringify(data)}),
