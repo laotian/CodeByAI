@@ -1149,7 +1149,7 @@ var I18N = {},
             }
             for(let i=0;i<codes.length;i++){
               const code = codes[i];
-              if(importImages.some(function(image){return new RegExp("^import\\s+"+image).test(code)})){
+              if(importImages.some(function(image){return new RegExp("^import\\s+"+image+"\\s+").test(code)})){
                 importLines.push(code);
               }
             }
