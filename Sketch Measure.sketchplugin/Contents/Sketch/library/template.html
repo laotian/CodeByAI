@@ -1108,21 +1108,52 @@ var I18N = {},
           //RN Code Template
           if(self.codeMode){
             const jsFile = self.current.slug + ".js";
-            let beginLine =  layerData.codeLine.from -1;
-            let endLine = layerData.codeLine.end -1;
             let code = self.current.codes;
             let codes = code.split("\n");
+            let beginLine = layerData.codeLine.from;
+            let endLine = layerData.codeLine.end;
+            if(this.selectedIndexOld>=0){
+              const  layerDataOld = this.current.layers[this.selectedIndexOld];
+              //从起始到终结点画个新矩形
+              let rectArray = [this.selectedIndexOld, this.selectedIndex].map(function(item){ return self.getRect(item)});
+              let combineRect = this.getContainerRect(rectArray);
+              let selectLayers =[];
+              for(let index=0;index<this.current.layers.length;index++){
+                const rect = self.getRect(index);
+                if(self.include(combineRect,rect) || (self.isIntersect(combineRect,rect) && !self.include(rect, combineRect))){
+                  selectLayers.push(index);
+                }
+              }
+              beginLine = selectLayers.map(function(layerIndex){return self.current.layers[layerIndex].codeLine.from}).sort(function(a,b){return a-b})[0];
+              endLine = selectLayers.map(function(layerIndex){return self.current.layers[layerIndex].codeLine.end}).sort(function(a,b){return b-a})[0];
+              self.selectedLayers(selectLayers);
+            }
+            beginLine--;
+            endLine--;
             // let selectView = codes.slice(beginLine,endLine);
             let selectLine = [];
             // <View style={styles.rectangle2} />
             let selectStyles = [];
+            let importImages = [];
+            let importLines = [];
             for(let i=beginLine;i<endLine;i++){
               // selectLine.push(i);
               let match = codes[i].match(/styles.([a-zA-Z0-9_]+)/);
               if(match){
                 selectStyles.push(match[1]);
               }
+              match = codes[i].match(/source=\{([a-zA-Z0-9_]+)\}/);
+              if(match){
+                importImages.push(match[1]);
+              }
             }
+            for(let i=0;i<codes.length;i++){
+              const code = codes[i];
+              if(importImages.some(function(image){return new RegExp("^import\\s+"+image).test(code)})){
+                importLines.push(code);
+              }
+            }
+
             for(let style of self.current.styleLines){
               if(selectStyles.includes(style.id)){
                 for(let i=style.from-1; i<style.end-1;i++){
@@ -1138,19 +1169,23 @@ var I18N = {},
               '<li class="icon-ios-panel" data-id="ios-panel" data-codeType="ios" ></li>',
               '</ul>'].join('');
 
+            var exportable = ['<ul class="exportable">',
+              '<li>',
+              '<a href="./ui2code/'+jsFile+'" target="_blank">查看JS文件&gt;</a><br/>',
+              '</li>',
+              '</ul>'].join('');
+
             var rnCode = [
               '<div id="css-panel" class="code-item item select">',
-                '<ul class="exportable">',
-                '<li>',
-                  '<a href="./ui2code/'+jsFile+'" target="_blank">查看JS文件</a><br/>',
-                '</li>',
-                '</ul>',
+              '<textarea id="css" rows="' + (importLines.length) + '" readonly="readonly"  wrap="off" style="overflow:scroll">' +  importLines.join("\n") + '</textarea>',
               '</div>'
             ].join('');
 
+            //importLines.join("\n")
+
             var rnSelectCode = [
               '<div id="android-panel" class="code-item item select">',
-              '<textarea id="css" rows="' + (Math.min(endLine-beginLine,16)) + '" readonly="readonly"  wrap="off" style="overflow:scroll">' + codes.filter(function(line,index){
+              '<textarea id="css" rows="' + (Math.min(endLine-beginLine,16)) + '" readonly="readonly"  wrap="off" style="overflow:scroll">' +   codes.filter(function(line,index){
                 if(index>=beginLine && index<endLine){
                   return true;
                 }
@@ -1161,13 +1196,13 @@ var I18N = {},
 
             var rnSelectStyle = [
               '<div id="ios-panel" class="code-item item select">',
-              '<textarea id="css" rows="' + (Math.min(selectLine.length,16)) + '" readonly="readonly" wrap="off" style="overflow:scroll">' + codes.filter(function(line,index){
+              '<textarea id="css" rows="' + (Math.min(selectLine.length,16)) + '" readonly="readonly" wrap="off" style="overflow:scroll">' +  codes.filter(function(line,index){
                 return  selectLine.includes(index);
               }).join("\n") + '</textarea>',
               '</div>'
             ].join('');
 
-            html.push(this.propertyType('CODE TEMPLATE', [tab,rnCode,rnSelectCode,rnSelectStyle].join(''), true));
+            html.push(this.propertyType('CODE TEMPLATE', [exportable, tab,rnCode,rnSelectCode,rnSelectStyle].join(''), true));
           }
           self.renderInspector(html);
 
@@ -1252,6 +1287,33 @@ var I18N = {},
             $('#layer-' + this.selectedIndex).addClass('selected');
             $('#rulers').hide();
         },
+        selectedLayers: function(layerIndexArray){
+          if( this.selectedIndex == undefined || !layerIndexArray || layerIndexArray.length==0 ) return false;
+          $('.selected').removeClass('selected');
+          for(let i=0;i<layerIndexArray.length;i++){
+            const selectedIndex = layerIndexArray[i];
+            $('#layer-' + selectedIndex).addClass('selected');
+          }
+          $('#rulers').hide();
+        },
+        include:function(source, target){ //判断source 包含target 矩形
+          return source.x<=target.x && source.y<=target.y && source.maxX>=target.maxX && source.maxY>=target.maxY;
+        },
+        getContainerRect: function(childs) { //获取由childs组成的新矩形
+          const lastIndex = childs.length - 1;
+          const x = childs.map(function(child){return child.x}).sort(function(a,b){return a-b})[0];
+          const y = childs.map(function(child){return child.y}).sort(function(a,b){return a-b})[0];
+          const maxX = childs.map(function(child){return child.maxX}).sort(function(a,b){return a-b})[lastIndex];
+          const maxY = childs.map(function(child){return child.maxY}).sort(function(a,b){return a-b})[lastIndex];
+          return {
+            x,
+            y,
+            width: maxX - x,
+            height: maxY - y,
+            maxX,
+            maxY
+          };
+        },
         removeSelected: function(){
             if(!this.selectedIndex) return false;
             $('#layer-' + this.selectedIndex).removeClass('selected');
@@ -1300,6 +1362,12 @@ var I18N = {},
                             if(!$('.screen-viewer').hasClass('moving-screen')){
                                 if( $(event.target).hasClass('layer') || $(event.target).hasClass('slice-layer')){
                                     var selected = (!$(event.target).hasClass('slice-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
+                                    const oldSelectedIndex = self.selectedIndex;
+                                    if(self.codeMode && self.shiftKeyPressed && oldSelectedIndex>=0){
+                                      self.selectedIndexOld = oldSelectedIndex;
+                                    }else{
+                                      self.selectedIndexOld = undefined;
+                                    }
                                     self.selectedIndex = self.getIndex(selected);
                                     self.hideDistance();
                                     self.mouseoutLayer();
@@ -1364,90 +1432,97 @@ var I18N = {},
                     self.zoomRender();
                     event.stopPropagation();
                 });
-            $(window)
-                .keydown(function(event){
+
+          $(window)
+                  .keydown(function(event){
+                    if(event.shiftKey){
+                      self.shiftKeyPressed = true;
+                    }
                     if((event.ctrlKey || event.metaKey) && (event.which == 187 || event.which == 189 || event.which == 48)) {
-                        if(event.which == 187 && self.configs.zoom < 4){
-                            $('.zoom-out').click();
-                        }
-                        else if(event.which == 189 && self.configs.zoom > .25){
-                            $('.zoom-in').click();
-                        }
-                        else if(event.which == 48){
-                            self.maxSize = undefined;
-                            self.configs.zoom = 1;
-                            self.zoomRender();
-                        }
-                        event.preventDefault();
-                        return false;
+                      if(event.which == 187 && self.configs.zoom < 4){
+                        $('.zoom-out').click();
+                      }
+                      else if(event.which == 189 && self.configs.zoom > .25){
+                        $('.zoom-in').click();
+                      }
+                      else if(event.which == 48){
+                        self.maxSize = undefined;
+                        self.configs.zoom = 1;
+                        self.zoomRender();
+                      }
+                      event.preventDefault();
+                      return false;
                     }
                     else if(event.which == 32 ){
-                        $('#cursor').show();
-                        $('.screen-viewer').addClass('moving-screen');
-                        self.mouseoutLayer();
-                        self.hideDistance();
-                        event.preventDefault();
+                      $('#cursor').show();
+                      $('.screen-viewer').addClass('moving-screen');
+                      self.mouseoutLayer();
+                      self.hideDistance();
+                      event.preventDefault();
                     }
                     else if(event.which == 18){
-                        $('#screen').addClass('percentage-mode');
+                      $('#screen').addClass('percentage-mode');
                     }
-                })
-                .keyup(function(event){
+                  })
+                  .keyup(function(event){
+                    if(self.shiftKeyPressed){
+                      self.shiftKeyPressed = false;
+                    }
                     if(event.which == 32 ){
-                        $('#cursor').hide();
-                        $('.screen-viewer').removeClass('moving-screen');
-                        $('#cursor').removeClass('moving');
-                        event.preventDefault();
+                      $('#cursor').hide();
+                      $('.screen-viewer').removeClass('moving-screen');
+                      $('#cursor').removeClass('moving');
+                      event.preventDefault();
                     }
                     else if(event.which == 18){
-                        $('#screen').removeClass('percentage-mode');
-                        event.preventDefault();
+                      $('#screen').removeClass('percentage-mode');
+                      event.preventDefault();
                     }
-                })
-                .mousemove(function(event){
+                  })
+                  .mousemove(function(event){
                     $('#cursor')
-                        .css({
-                            left: event.clientX,
-                            top: event.clientY
-                        });
+                            .css({
+                              left: event.clientX,
+                              top: event.clientY
+                            });
                     var $target = $(event.target);
                     if(
-                        $('.screen-viewer').hasClass('moving-screen') &&
-                        $('#cursor').hasClass('moving')
+                            $('.screen-viewer').hasClass('moving-screen') &&
+                            $('#cursor').hasClass('moving')
                     ){
-                        $('.screen-viewer').scrollLeft((self.moveData.x - event.clientX) + self.moveData.scrollLeft);
-                        $('.screen-viewer').scrollTop((self.moveData.y - event.clientY) + self.moveData.scrollTop);
-                        event.preventDefault();
+                      $('.screen-viewer').scrollLeft((self.moveData.x - event.clientX) + self.moveData.scrollLeft);
+                      $('.screen-viewer').scrollTop((self.moveData.y - event.clientY) + self.moveData.scrollTop);
+                      event.preventDefault();
                     }
-                })
-                .mousedown(function(event){
+                  })
+                  .mousedown(function(event){
                     var $target = $(event.target);
                     if(
-                        $('.screen-viewer').hasClass('moving-screen') &&
-                        (
-                            $target.hasClass('cursor') ||
-                            $target.hasClass('overlay')
-                        )
+                            $('.screen-viewer').hasClass('moving-screen') &&
+                            (
+                                    $target.hasClass('cursor') ||
+                                    $target.hasClass('overlay')
+                            )
                     ){
-                        self.moveData = {
-                            x: event.clientX,
-                            y: event.clientY,
-                            scrollLeft: $('.screen-viewer').scrollLeft(),
-                            scrollTop: $('.screen-viewer').scrollTop()
-                        }
-                        $('#cursor').addClass('moving');
-                        event.preventDefault();
+                      self.moveData = {
+                        x: event.clientX,
+                        y: event.clientY,
+                        scrollLeft: $('.screen-viewer').scrollLeft(),
+                        scrollTop: $('.screen-viewer').scrollTop()
+                      }
+                      $('#cursor').addClass('moving');
+                      event.preventDefault();
                     }
-                })
-                .mouseup(function(event){
+                  })
+                  .mouseup(function(event){
                     var $target = $(event.target);
                     if(
-                        $('.screen-viewer').hasClass('moving-screen')
+                            $('.screen-viewer').hasClass('moving-screen')
                     ){
-                        $('#cursor').removeClass('moving');
-                        event.preventDefault();
+                      $('#cursor').removeClass('moving');
+                      event.preventDefault();
                     }
-                })
+                  })
 
             // unit
             $('#unit')
