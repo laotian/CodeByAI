@@ -2882,6 +2882,13 @@ SM.extend({
             }
         });
     },
+    ui2Code: function (exportDir) {
+        const task = NSTask.alloc().init();
+        task.setLaunchPath("/bin/sh");
+        task.setArguments([this.pluginSketch + "/ui2code.sh",exportDir]);
+        task.launch();
+        task.waitUntilExit();
+    },
     export: function(){
         if(this.exportPanel()){
             if(this.selectionArtboards.length <= 0){
@@ -3045,6 +3052,9 @@ SM.extend({
                                     });
                                 selectingPath = savePath + "/index.html";
                             }
+                            //生成
+                            self.ui2Code(savePath);
+
                             NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
 
                             self.message(_("Export complete!"));
