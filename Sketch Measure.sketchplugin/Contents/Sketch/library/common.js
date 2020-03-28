@@ -3246,7 +3246,8 @@ SM.extend({
             layerData.textAlign = TextAligns[layer.textAlignment()];
             layerData.letterSpacing = this.toJSNumber(layer.characterSpacing()) || 0;
             layerData.lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
-            if(layer.canFixHeight()){
+            if(layer.canFixHeight() && layerData.rect.height < layerData.lineHeight * 2){
+                //自动高度,只有一行
                 var glyphBounds = layer.glyphBounds();
                 layerData.glyphBounds = {
                     x: Math.round(glyphBounds.origin.x),
