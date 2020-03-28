@@ -3053,7 +3053,7 @@ SM.extend({
                                 selectingPath = savePath + "/index.html";
                             }
                             //生成
-                            self.ui2Code(savePath);
+                            // self.ui2Code(savePath);
 
                             NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
 
@@ -3183,6 +3183,10 @@ SM.extend({
             layer.setTextBehaviour(0); // fixed for v40
         } // fixed for v40
 
+        if(layerType=="text"){
+            layer.adjustFrameToFit();
+        }
+
         var exportLayerRect;
         if(this.configs.exportInfluenceRect == true && layerType != "text"){
             // export the influence rect.(include the area of shadows and outside borders...)
@@ -3242,6 +3246,16 @@ SM.extend({
             layerData.textAlign = TextAligns[layer.textAlignment()];
             layerData.letterSpacing = this.toJSNumber(layer.characterSpacing()) || 0;
             layerData.lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
+            if(layer.canFixHeight()){
+                var glyphBounds = layer.glyphBounds();
+                layerData.glyphBounds = {
+                    x: Math.round(glyphBounds.origin.x),
+                    y: Math.round(glyphBounds.origin.y),
+                    width: Math.round(glyphBounds.size.width),
+                    height: Math.round(glyphBounds.size.height)
+                }
+            }
+
         }
 
         var layerCSSAttributes = layer.CSSAttributes(),
