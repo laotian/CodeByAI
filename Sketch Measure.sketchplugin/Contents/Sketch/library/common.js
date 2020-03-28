@@ -3173,6 +3173,19 @@ SM.extend({
             layerShapeType = "oval";
         }
 
+        //渐变色填充矩形或圆形
+        if(["rectangle","oval"].includes(layerShapeType)
+            &&layer.style() && this.getFills(layer.style()).find(function (fill) {
+            return fill.fillType!=="color";
+        })){
+            if(!this.hasExportSizes(layer)){
+                var size = layer.exportOptions().addExportFormat();
+                size.setName("");
+                size.setScale(1);
+            }
+        }
+
+
         var layerType = this.is(layer, MSTextLayer) ? "text" :
                this.is(layer, MSSymbolInstance) ? "symbol" :
                this.is(layer, MSSliceLayer) || this.hasExportSizes(layer)? "slice":
@@ -3183,8 +3196,9 @@ SM.extend({
             layer.setTextBehaviour(0); // fixed for v40
         } // fixed for v40
 
-        if(layerType=="text"){
-            layer.adjustFrameToFit();
+        //修复系统中没有的字体，防止布局变形
+        if(layerType=="text" && layer.replaceMissingFontsIfNecessary){
+            layer.replaceMissingFontsIfNecessary();
         }
 
         var exportLayerRect;
@@ -3238,7 +3252,7 @@ SM.extend({
             layerData.styleName = this.getStyleName(layer);
         }
 
-        if ( layerType == "text" ) {
+        if (layerType == "text" ) {
             layerData.content = this.toHTMLEncode(this.emojiToEntities(layer.stringValue()));
             layerData.color = this.colorToJSON(layer.textColor());
             layerData.fontSize = layer.fontSize();
