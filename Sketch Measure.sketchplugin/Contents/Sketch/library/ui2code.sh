@@ -1,6 +1,6 @@
 #!/bin/sh
 sketchDir=$1
-apiUrl="http://127.0.0.1:8080/api/sketch"
+apiUrl="http://182.92.76.238:8080/api/sketch"
 cd $sketchDir
 if [ -f "sketch.zip" ]; then
   rm sketch.zip

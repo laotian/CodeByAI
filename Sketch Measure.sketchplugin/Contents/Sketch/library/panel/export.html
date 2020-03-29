@@ -256,7 +256,16 @@
                                     _('Export layer influence rect'),
                                 '</label>',
                             '</div>',
-
+                            //export codes
+                            '<div class="item" style="margin-top:10px;">',
+                                '<label>',
+                                    '<div class="checkbox">',
+                                        '<input id="export-codes" type="checkbox" name="export-codes" value="0">',
+                                        '<label for="export-codes"></label>',
+                                    '</div>',
+                                    _('Export codes'),
+                                '</label>',
+                            '</div>',
                         '</div>',
                         '<div class="footer">',
                             '<button id="submit" class="submit" disabled="disabled">' + _('Export') + '</button>',
@@ -315,6 +324,10 @@
 
             if(data.exportInfluenceRect){
                 $('#export-influenceRect').attr('checked', true);
+            }
+
+            if(data.exportCodes){
+              $('#export-codes').attr('checked', true);
             }
 
             $('.checkbutton')
@@ -394,6 +407,9 @@
 
                 data.exportInfluenceRect = false;
                 if( $('input[name=export-influenceRect]:checked').length > 0 ) data.exportInfluenceRect = true;
+
+                data.exportCodes = false;
+                if( $('input[name=export-codes]:checked').length > 0 ) data.exportCodes = true;
 
                 data.order = $('input[name=order]:checked').val();
 

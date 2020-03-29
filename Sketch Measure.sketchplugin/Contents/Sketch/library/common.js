@@ -2808,6 +2808,11 @@ SM.extend({
             data.exportInfluenceRect = false;
         }
 
+        data.exportCodes = self.configs.exportCodes;
+        if(data.exportCodes == undefined){
+            data.exportCodes = false;
+        }
+
         self.configs.order = (self.configs.order)? self.configs.order: "positive";
         data.order = self.configs.order;
 
@@ -2848,7 +2853,7 @@ SM.extend({
         return this.SMPanel({
             url: this.pluginSketch + "/panel/export.html",
             width: 320,
-            height: 597,
+            height: 620,
             data: data,
             callback: function( data ){
                 var allData = self.allData;
@@ -2887,6 +2892,7 @@ SM.extend({
                 self.configs = self.setConfigs({
                     exportOption: data.exportOption,
                     exportInfluenceRect: data.exportInfluenceRect,
+                    exportCodes: data.exportCodes,
                     order: data.order
                 });
             }
@@ -2940,7 +2946,7 @@ SM.extend({
 
                 coscript.scheduleWithRepeatingInterval_jsFunction( 0, function( interval ){
                     // self.message('Processing layer ' + idx + ' of ' + self.allCount);
-                    processing.evaluateWebScript("processing('"  + Math.round( idx / self.allCount * 100 ) +  "%', '" + _("Processing layer %@ of %@", [idx, self.allCount]) + "')");
+                    processing.evaluateWebScript("processing('"  + Math.round( idx / self.allCount *  (self.configs.exportCodes ? 80 : 100) ) +  "%', '" + _("Processing layer %@ of %@", [idx, self.allCount]) + "')");
                     idx++;
 
                     if(!data.artboards[artboardIndex]){
@@ -3063,8 +3069,11 @@ SM.extend({
                                 selectingPath = savePath + "/index.html";
                             }
                             //生成
-                            // self.ui2Code(savePath);
-
+                            if(self.configs.exportCodes) {
+                                processing.evaluateWebScript("processing('80%', '" + _("Generating Codes...") + "')");
+                                self.ui2Code(savePath);
+                                processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
+                            }
                             NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
 
                             self.message(_("Export complete!"));
