@@ -396,6 +396,16 @@ SM.extend({
 
         return bordersData;
     },
+    hasUnSupportFills: function(style){
+        //包含除color外的其它填充
+        var fill, fillIter = style.fills().objectEnumerator();
+        while (fill = fillIter.nextObject()) {
+            if (fill.isEnabled() && fill.fillType() != 0) {
+                return true;
+            }
+        }
+        return false;
+    },
     getFills: function(style) {
         var fillsData = [],
             fill, fillIter = style.fills().objectEnumerator();
@@ -3175,9 +3185,7 @@ SM.extend({
 
         //渐变色填充矩形或圆形
         if(["rectangle","oval"].includes(layerShapeType)
-            &&layer.style() && this.getFills(layer.style()).find(function (fill) {
-            return fill.fillType!=="color";
-        })){
+            &&layer.style() && this.hasUnSupportFills(layer.style())){
             if(!this.hasExportSizes(layer)){
                 var size = layer.exportOptions().addExportFormat();
                 size.setName("");
