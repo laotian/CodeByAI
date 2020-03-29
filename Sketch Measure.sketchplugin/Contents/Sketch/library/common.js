@@ -3167,9 +3167,9 @@ SM.extend({
                 size.setName("");
                 size.setScale(1);
             }
-        } else if(this.is(layer, MSRectangleShape)){
+        } else if(this.is(layer, MSRectangleShape) && !layer.hasClippingMask()){
             layerShapeType = "rectangle";
-        }else if(this.is(layer, MSOvalShape)){
+        }else if(this.is(layer, MSOvalShape) && !layer.hasClippingMask()){
             layerShapeType = "oval";
         }
 
