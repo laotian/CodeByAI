@@ -3199,6 +3199,36 @@ SM.extend({
         //修复系统中没有的字体，防止布局变形
         if(layerType=="text" && layer.replaceMissingFontsIfNecessary){
             layer.replaceMissingFontsIfNecessary();
+            var oldBehaviour = layer.textBehaviour();
+            if(oldBehaviour!=0){
+                var oldFrame = layer.frame();
+                var oldRect = oldFrame.rect();
+                layer.setTextBehaviour(0);
+                var currentRect = layer.frame().rect();
+                //如果自动宽度后，并长了，需要恢复
+                if(currentRect.size.width>oldRect.size.width){
+                    layer.setTextBehaviour(oldBehaviour);
+                    layer.setFrame(MSRect.rectWithRect(oldRect));
+                }else{
+                    //如果只有一行，更改对齐方式
+                    var lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
+                    if(currentRect.size.height<lineHeight*2){
+                        layer.setTextAlignment(0);
+                    }
+                }
+            }
+
+
+            // if(layer.canFixHeight() && layerData.rect.height < layerData.lineHeight * 2){
+            //     //自动高度,只有一行
+            //     var glyphBounds = layer.glyphBounds();
+            //     layerData.glyphBounds = {
+            //         x: Math.round(glyphBounds.origin.x),
+            //         y: Math.round(glyphBounds.origin.y),
+            //         width: Math.round(glyphBounds.size.width),
+            //         height: Math.round(glyphBounds.size.height)
+            //     }
+            // }
         }
 
         var exportLayerRect;
@@ -3260,17 +3290,6 @@ SM.extend({
             layerData.textAlign = TextAligns[layer.textAlignment()];
             layerData.letterSpacing = this.toJSNumber(layer.characterSpacing()) || 0;
             layerData.lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
-            if(layer.canFixHeight() && layerData.rect.height < layerData.lineHeight * 2){
-                //自动高度,只有一行
-                var glyphBounds = layer.glyphBounds();
-                layerData.glyphBounds = {
-                    x: Math.round(glyphBounds.origin.x),
-                    y: Math.round(glyphBounds.origin.y),
-                    width: Math.round(glyphBounds.size.width),
-                    height: Math.round(glyphBounds.size.height)
-                }
-            }
-
         }
 
         var layerCSSAttributes = layer.CSSAttributes(),
