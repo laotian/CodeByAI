@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>Sketch Measure</title>
+    <title>SketchCodes</title>
     <link>https://raw.githubusercontent.com/utom/sketch-measure/master/appcast.xml</link>
-    <description>Make it a fun to create spec for developers and teammates</description>
+    <description>Export spec and handwritten codes from sketch</description>
     <language>en</language>
 		<item>
-			<title>Version 2.8.1</title>
+			<title>Version 1.0.0</title>
 			<description>
 				<![CDATA[
 					<ul>

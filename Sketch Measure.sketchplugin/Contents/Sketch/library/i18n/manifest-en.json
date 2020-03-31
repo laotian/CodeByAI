@@ -51,7 +51,7 @@
             "script": "mark.sketchscript"
         },
         {
-            "name": "Spec Export",
+            "name": "Export Spec/Codes",
             "identifier": "commandExport",
             "shortcut": "ctrl shift e",
             "handler" : "commandExport",
@@ -172,13 +172,13 @@
               ]
             }
         ],
-        "title" : "Sketch Measure"
+        "title" : "SketchCodes"
     },
-    "identifier": "com.utom.measure",
+    "identifier": "codes.sketch",
     "appcast": "https://raw.githubusercontent.com/utom/sketch-measure/master/appcast.xml",
     "homepage": "http://utom.design/measure/",
-    "version": "2.8.1",
-    "description" : "Make it a fun to create spec for developers and teammates",
+    "version": "1.0.0",
+    "description" : "Export spec and handwritten codes from sketch",
     "authorEmail" : "utombox@gmail.com",
-    "name" : "Sketch Measure"
+    "name" : "SketchCodes"
 }
