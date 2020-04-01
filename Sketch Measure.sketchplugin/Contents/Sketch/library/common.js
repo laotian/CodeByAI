@@ -2810,7 +2810,7 @@ SM.extend({
 
         data.exportCodes = self.configs.exportCodes;
         if(data.exportCodes == undefined){
-            data.exportCodes = false;
+            data.exportCodes = true;
         }
 
         self.configs.order = (self.configs.order)? self.configs.order: "positive";
