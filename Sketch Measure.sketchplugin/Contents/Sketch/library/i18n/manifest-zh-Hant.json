@@ -1,5 +1,5 @@
 {
-    "author": "utom",
+    "author": "sketch.codes",
     "commands" : [
         {
             "name": "工具欄",
@@ -51,7 +51,7 @@
             "script": "mark.sketchscript"
         },
         {
-            "name": "匯出規範與代碼",
+            "name": "匯出代碼與規範",
             "identifier": "commandExport",
             "shortcut": "ctrl shift e",
             "handler" : "commandExport",

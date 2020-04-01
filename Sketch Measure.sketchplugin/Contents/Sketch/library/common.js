@@ -985,7 +985,7 @@ SM.extend({
     },
     Toolbar: function(){
         var self = this,
-            identifier = "com.utom.measure",
+            identifier = "codes.sketch",
             threadDictionary = NSThread.mainThread().threadDictionary(),
             Toolbar = threadDictionary[identifier];
 
@@ -2188,7 +2188,7 @@ SM.extend({
             height: 451,
             data: data,
             floatWindow: true,
-            identifier: "com.utom.measure.colors",
+            identifier: "codes.sketch.colors",
             callback: function( data ){
                 var colors = data;
                 self.configs = self.setConfigs({

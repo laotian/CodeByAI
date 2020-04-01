@@ -1,5 +1,5 @@
 {
-    "author": "utom",
+    "author": "sketch.codes",
     "commands" : [
         {
             "name": "Toolbar",
@@ -51,7 +51,7 @@
             "script": "mark.sketchscript"
         },
         {
-            "name": "Export Spec/Codes",
+            "name": "Export Codes/Spec",
             "identifier": "commandExport",
             "shortcut": "ctrl shift e",
             "handler" : "commandExport",
