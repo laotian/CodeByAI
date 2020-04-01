@@ -26,3 +26,7 @@ function linkNiudana(){
 function linkSketchim(){
   openURL('http://sketch.im');
 }
+
+function linkHelpCodes(){
+  openURL('http://sketch.codes/');
+}

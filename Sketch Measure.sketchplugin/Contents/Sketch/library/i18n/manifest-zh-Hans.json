@@ -138,6 +138,12 @@
                     }
                 },
             "script": "mark.sketchscript"
+        },
+        {
+            "name": "SketchCodes",
+            "identifier": "linkHelpCodes",
+            "handler": "linkHelpCodes",
+            "script": "links.sketchscript"
         }
     ],
     "menu" : {
@@ -166,6 +172,7 @@
             {
               "title": "帮助",
               "items": [
+                "linkHelpCodes",
                 "linkZhCNHelp",
                 "linkFeedback",
                 "linkDonate",
