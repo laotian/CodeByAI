@@ -1578,6 +1578,9 @@ var I18N = {},
                     self.locationHash({
                         artboard: self.artboardIndex
                     });
+                    if(self.codeMode){
+                      self.resetCodeMode();
+                    }
                 })
                 .on('click', '.pages-select', function( event ){
                     event.stopPropagation();
@@ -1680,8 +1683,7 @@ var I18N = {},
                 });
 
         },
-        switchCodeMode: function(){
-          this.codeMode = !this.codeMode;
+        resetCodeMode(){
           if(this.codeMode){
             if(!this.project.codeArtboards || this.artboardIndex>=this.project.codeArtboards.length) return;
             this.current = this.project.codeArtboards[this.artboardIndex];
@@ -1695,6 +1697,10 @@ var I18N = {},
           $('#inspector').removeClass('active');
           this.selectedIndex = undefined;
           this.tempTargetRect = undefined;
+        },
+        switchCodeMode: function(){
+          this.codeMode = !this.codeMode;
+          this.resetCodeMode();
         },
     }
     var init = SMApp.fn.init = function(project) {
