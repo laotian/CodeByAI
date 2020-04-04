@@ -2400,7 +2400,8 @@ SM.extend({
                this.is(layer, MSBitmapLayer) ||
                this.is(layer, MSSliceLayer) ||
                this.is(layer, MSSymbolInstance) ||
-               this.isSliceGroup(layer)
+               this.isSliceGroup(layer) ||
+               (this.is(layer, MSLayerGroup) && /GROUP\#/.exec(layer.name()))
     },
     getStates: function(layer){
         var isVisible = true,
@@ -3190,6 +3191,8 @@ SM.extend({
             layerShapeType = "rectangle";
         }else if(this.is(layer, MSOvalShape) && !layer.hasClippingMask()){
             layerShapeType = "oval";
+        }else if(this.is(layer, MSLayerGroup) && /GROUP\#/.exec(layer.name())){
+            layerShapeType = "group";
         }
 
         //渐变色填充矩形或圆形
