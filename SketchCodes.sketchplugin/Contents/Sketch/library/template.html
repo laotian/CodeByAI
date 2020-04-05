@@ -196,6 +196,13 @@ main{position:relative;height:calc(100vh - 60px);}
 }
 .cursor.show{display:block;}
 .cursor.moving{background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAMAAAAJbCvNAAABMlBMVEUAAAAAAAA2NjYsLCwCAgIAAAAAAAAMDAwBAQECAgIBAQECAgIBAQEBAQEAAAAAAAAAAAA5OTkgICAICAgAAAAcHBwCAgIAAAAAAAAAAAAAAAAAAABDQ0M8PDwxMTE0NDQVFRUCAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDw8DAwMAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAABhYWEcHBz6+vr39/dMTEzs7Oy8vLy4uLhWVlYqKiooKCj09PTw8PC1tbWnp6d2dnZZWVn8/Pzp6enj4+Pd3d3a2trNzc2tra2pqammpqaKioqAgIBzc3NwcHBmZmZdXV1TU1NHR0c+Pj7W1tbR0dHGxsbAwMCampqSkpKPj4+GhoZycnJsbGwkJCTy91wiAAAANnRSTlMAPP7+/ZcN/Pnr487Kv7QlEv7+/fz71jk2GAcE/v7+/fzzpaCUkGZZQTEsIAn826uEg3JtXFGryOxIAAABkElEQVR4AeXS1XLbQBjF8RXIDHbNdiBpOCnDOa4kg2Oww9w2KUPf/xW6s8q2sTXT6X1+t99/NJozK+6lR8ZmRPzDZpxc3sg9y2Sez3aNl+mUsx23TjpzxbJtmnaqMR08ZO8mGuNn4JA8AU75YiXl5ISW5SXwgTwAUGIfcAuM3thpoRnsAJhnC8DcY0gWj3HBmg5qPAdw1nMBfJ9Aai4AQ1aFllzENNcD2jSEsuOkEvyIEB1k44XrEicI6bCigtXoIbzFN5D2PMAbAG4L0im3VVD2AQyOIF3lgeY88MOC9JXBEEkf2rsHwHtLRup749jtikvTQU8Hflkor/hJB00ZdHUwKKwKJRLP70FRh+7ubXDOLRHY4GU4wEE0I7Q1foPyVh4mQeCay1nxx1OeqWC8K6MF4MrCmK/FX/W0PQKCgfr7gLd/ZDvirkiaX3DXRTE381wzHEFp5UvHQPeJmNFImlD8WOJXH35SzFpZGnba7eFPrleK1yMzEQocBtaEWI+R4aC+Va0YRrWm/jm7Uxf/5zeExWvZghlTSgAAAABJRU5ErkJggg==');}
+
+#select-region{
+  border:1px solid #EE6723;
+  /*background-color: rgba(0, 0, 0, 0.2);*/
+  position:absolute;
+}
+
     </style>
     <script type="text/javascript">
     <!--
@@ -307,6 +314,7 @@ var I18N = {},
         render: function() {
             $('#app').html([
                 '<header>',
+                    '<div id="select-region" />',
                     '<div class="header-left">',
                         '<ul class="tab">',
                             '<li class="icon-artboards current" data-id="artboards"></li>',
@@ -865,7 +873,9 @@ var I18N = {},
             }
         },
         inspector: function(){
+          console.log("inspector, selectedIndex:",this.selectedIndex);
             if(!this.selectedIndex || (!this.current && !this.current.layers && !this.current.layers[this.selectedIndex])) return false;
+          console.log("inspector, selectedIndex:",this.selectedIndex,"----line2--");
             var self = this,
                 layerData = this.current.layers[this.selectedIndex],
                 html = [];
@@ -1113,21 +1123,12 @@ var I18N = {},
             let codes = code.split("\n");
             let beginLine = layerData.codeLine.from;
             let endLine = layerData.codeLine.end;
-            if(this.selectedIndexOld>=0){
-              const  layerDataOld = this.current.layers[this.selectedIndexOld];
-              //从起始到终结点画个新矩形
-              let rectArray = [this.selectedIndexOld, this.selectedIndex].map(function(item){ return self.getRect(item)});
-              let combineRect = this.getContainerRect(rectArray);
-              let selectLayers =[];
-              for(let index=0;index<this.current.layers.length;index++){
-                const rect = self.getRect(index);
-                if(self.include(combineRect,rect) || (self.isIntersect(combineRect,rect) && !self.include(rect, combineRect))){
-                  selectLayers.push(index);
-                }
+            if(self.selectRegionData){
+              let regionLines = self.selectedLayers();
+              if(regionLines && regionLines.endLine >= regionLines.beginLine){
+                beginLine = regionLines.beginLine;
+                endLine = regionLines.endLine;
               }
-              beginLine = selectLayers.map(function(layerIndex){return self.current.layers[layerIndex].codeLine.from}).sort(function(a,b){return a-b})[0];
-              endLine = selectLayers.map(function(layerIndex){return self.current.layers[layerIndex].codeLine.end}).sort(function(a,b){return b-a})[0];
-              self.selectedLayers(selectLayers);
             }
             beginLine--;
             endLine--;
@@ -1207,6 +1208,7 @@ var I18N = {},
             ].join('');
 
             html.push(this.propertyType('CODE TEMPLATE', [exportable, tab,rnCode,rnSelectCode,rnSelectStyle].join(''), true));
+            console.log("htmlOut");
           }
           self.renderInspector(html);
 
@@ -1290,15 +1292,50 @@ var I18N = {},
             $('.selected').removeClass('selected');
             $('#layer-' + this.selectedIndex).addClass('selected');
             $('#rulers').hide();
+            // $('#select-region').hide();
         },
-        selectedLayers: function(layerIndexArray){
-          if( this.selectedIndex == undefined || !layerIndexArray || layerIndexArray.length==0 ) return false;
-          $('.selected').removeClass('selected');
-          for(let i=0;i<layerIndexArray.length;i++){
-            const selectedIndex = layerIndexArray[i];
-            $('#layer-' + selectedIndex).addClass('selected');
+        selectedLayers: function(){
+          console.log('selectedLayers:',this.selectRegionData);
+          if(this.selectRegionData) {
+            let container = {left:10000,right:0,top:100000,bottom:0};
+            let beginLine = 100000;
+            let endLine = 0;
+            const selectedLayerIndex = [];
+            for (let index = 0; index < this.current.layers.length; index++) {
+              const rect = $('#layer-' + index)[0].getBoundingClientRect();
+              rect.x = rect.left;
+              rect.y = rect.top;
+              rect.maxX = rect.right;
+              rect.maxY = rect.bottom;
+              if (this.include(this.selectRegionData, rect) || (this.isIntersect(this.selectRegionData, rect) && !this.include(rect, this.selectRegionData))) {
+                container.left = Math.min(container.left,rect.left);
+                container.top = Math.min(container.top,rect.top);
+                container.right = Math.max(container.right,rect.right);
+                container.bottom = Math.max(container.bottom,rect.bottom);
+                beginLine = Math.min(beginLine,this.current.layers[index].codeLine.from);
+                endLine = Math.max(endLine,this.current.layers[index].codeLine.end);
+                selectedLayerIndex.push(index);
+              }
+            }
+            if(selectedLayerIndex.length==0 && this.selectedIndex!=undefined){
+              //只处理点中的那个
+              container = $('#layer-' + this.selectedIndex)[0].getBoundingClientRect();
+            }
+
+            $('.selected').removeClass('selected');
+            $('#select-region').css({
+              left: container.left,
+              top: container.top,
+              width: container.right - container.left,
+              height: container.bottom - container.top,
+            });
+            return {
+              beginLine,
+              endLine
+            }
           }
-          $('#rulers').hide();
+
+
         },
         include:function(source, target){ //判断source 包含target 矩形
           return source.x<=target.x && source.y<=target.y && source.maxX>=target.maxX && source.maxY>=target.maxY;
@@ -1364,28 +1401,47 @@ var I18N = {},
                 .on({
                         click: function( event ){
                             if(!$('.screen-viewer').hasClass('moving-screen')){
-                                if( $(event.target).hasClass('layer') || $(event.target).hasClass('slice-layer')){
-                                    var selected = (!$(event.target).hasClass('slice-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
-                                    const oldSelectedIndex = self.selectedIndex;
-                                    if(self.codeMode && self.shiftKeyPressed && oldSelectedIndex>=0){
-                                      self.selectedIndexOld = oldSelectedIndex;
-                                    }else{
-                                      self.selectedIndexOld = undefined;
-                                    }
-                                    self.selectedIndex = self.getIndex(selected);
-                                    self.hideDistance();
-                                    self.mouseoutLayer();
-                                    self.selectedLayer();
-                                    self.inspector();
-                                }
-                                else{
-                                    self.removeSelected();
-                                    self.hideDistance();
-                                    $('#inspector').removeClass('active');
-                                    self.selectedIndex = undefined;
-                                    self.tempTargetRect = undefined;
-                                }
+                              if(self.codeMode && self.selectRegionData && (self.selectRegionData.width>10 || self.selectRegionData.height>10)){
+                                self.hideDistance();
+                                self.mouseoutLayer();
+                                self.selectedLayer();
+                                self.inspector();
+                              }else if( $(event.target).hasClass('layer') || $(event.target).hasClass('slice-layer')){
+                                var selected = (!$(event.target).hasClass('slice-layer')) ? event.target : $('.layer-' + $(event.target).attr('data-objectid')).first();
+                                self.selectedIndex = self.getIndex(selected);
+                                self.selectRegionData = undefined;
+                                self.hideDistance();
+                                self.mouseoutLayer();
+                                self.selectedLayer();
+                                self.inspector();
+                                $('#select-region').hide();
+                              }
+                              else{
+                                  self.removeSelected();
+                                  self.hideDistance();
+                                  $('#inspector').removeClass('active');
+                                  self.selectedIndex = undefined;
+                                  self.tempTargetRect = undefined;
+                                  $('#select-region').hide();
+                              }
+                              self.selectRegionData = undefined;
+                              self.selectedIndex = undefined;
                             }
+                        },
+                        mousedown: function(event){
+                          if(self.codeMode && $(event.target).hasClass('layer')) {
+                            var selected = (!$(event.target).hasClass('slice-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
+                            self.selectedIndex = self.getIndex(selected);
+                            self.selectRegionData = {
+                              x: event.clientX,
+                              y: event.clientY,
+                              maxX: event.clientX,
+                              maxY: event.clientY,
+                              width: 0,
+                              height: 0,
+                              selectedIndex: self.selectedIndex,
+                            };
+                          }
                         },
                         mousemove: function( event ){
                             if(!$('.screen-viewer').hasClass('moving-screen')){
@@ -1396,7 +1452,31 @@ var I18N = {},
                                     self.targetIndex = undefined;
                                     self.distance();
                                 }
-                                else if($(event.target).hasClass('layer')){
+                                else if(self.codeMode && self.selectRegionData){
+                                  self.selectRegionData.maxX = event.clientX;
+                                  self.selectRegionData.maxY = event.clientY;
+                                  if(self.selectRegionData.maxX<self.selectRegionData.x){
+                                    let temp = self.selectRegionData.maxX;
+                                    self.selectRegionData.maxX = self.selectRegionData.x;
+                                    self.selectRegionData.x = temp;
+                                  }
+                                  if(self.selectRegionData.maxY<self.selectRegionData.y){
+                                    let temp = self.selectRegionData.maxY;
+                                    self.selectRegionData.maxY = self.selectRegionData.y;
+                                    self.selectRegionData.y = temp;
+                                  }
+                                  self.selectRegionData.width = self.selectRegionData.maxX - self.selectRegionData.x;
+                                  self.selectRegionData.height = self.selectRegionData.maxY - self.selectRegionData.y;
+                                  $('#select-region').css({
+                                    left: self.selectRegionData.x,
+                                    top: self.selectRegionData.y,
+                                    width: self.selectRegionData.width,
+                                    height: self.selectRegionData.height,
+                                  });
+                                  $('#select-region').show();
+                                  // console.log(self.selectRegionData);
+                                  event.preventDefault();
+                                }else if($(event.target).hasClass('layer')){
                                     self.targetIndex = self.getIndex(event.target);
                                     self.tempTargetRect = undefined;
                                     self.mouseoverLayer();
@@ -1517,6 +1597,15 @@ var I18N = {},
                       $('#cursor').addClass('moving');
                       event.preventDefault();
                     }
+                    // if(self.codeMode && $(event.target).hasClass('layer')){
+                    //   var selected = (!$(event.target).hasClass('slice-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
+                    //   self.selectedIndex = self.getIndex(selected);
+                    //   self.selectRegionData = {
+                    //     x: event.clientX,
+                    //     y: event.clientY,
+                    //     selectedIndex: self.selectedIndex,
+                    //   };
+                    // }
                   })
                   .mouseup(function(event){
                     var $target = $(event.target);
@@ -1526,6 +1615,18 @@ var I18N = {},
                       $('#cursor').removeClass('moving');
                       event.preventDefault();
                     }
+                    // if(self.codeMode && self.selectRegionData){
+                    //   console.log("MOUSEUP!");
+                    //   self.hideDistance();
+                    //   self.mouseoutLayer();
+                    //   self.selectedLayer();
+                    //   self.inspector();
+                    //   $('#select-region').hide();
+                    //   self.selectRegionData = undefined;
+                    //   self.selectedIndex = undefined;
+                    //   event.preventDefault();
+                    //   event.stopPropagation();
+                    // }
                   })
 
             // unit
