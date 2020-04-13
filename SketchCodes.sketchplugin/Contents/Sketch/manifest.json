@@ -167,8 +167,7 @@
               "title": "Help",
               "items": [
                 "linkHelp",
-                "linkFeedback",
-                "linkDonate"
+                "linkFeedback"
               ]
             }
         ],
@@ -176,7 +175,7 @@
     },
     "identifier": "codes.sketch",
     "appcast": "https://raw.githubusercontent.com/utom/sketch-measure/master/appcast.xml",
-    "homepage": "http://sketch.codes",
+    "homepage": "https://github.com/laotian/SketchCodes",
     "version": "1.0.0",
     "description" : "Export spec and handwritten codes from sketch",
     "authorEmail" : "tianlupan@126.com",
