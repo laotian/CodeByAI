@@ -168,7 +168,6 @@
             "commandClear",
             "-",
             "commandSettings",
-            "linkDonate",
             {
               "title": "幫助",
               "items": [
