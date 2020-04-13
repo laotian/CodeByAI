@@ -177,7 +177,7 @@
     "identifier": "codes.sketch",
     "appcast": "https://raw.githubusercontent.com/utom/sketch-measure/master/appcast.xml",
     "homepage": "http://sketch.codes",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description" : "Export spec and handwritten codes from sketch",
     "authorEmail" : "tianlupan@126.com",
     "name" : "SketchCodes"
