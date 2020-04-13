@@ -1,5 +1,5 @@
 {
-    "author": "utom",
+    "author": "sketch.codes",
     "commands" : [
         {
             "name": "Toolbar",
@@ -179,6 +179,6 @@
     "homepage": "http://sketch.codes",
     "version": "1.0.0",
     "description" : "Export spec and handwritten codes from sketch",
-    "authorEmail" : "utombox@gmail.com",
+    "authorEmail" : "tianlupan@126.com",
     "name" : "SketchCodes"
 }
