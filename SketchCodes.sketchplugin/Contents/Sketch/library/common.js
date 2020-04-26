@@ -3304,6 +3304,7 @@ SM.extend({
 
         if (layerType == "text" ) {
             layerData.content = this.toHTMLEncode(this.emojiToEntities(layer.stringValue()));
+            layerData.encodeContent = encodeURI(layer.stringValue());
             layerData.color = this.colorToJSON(layer.textColor());
             layerData.fontSize = layer.fontSize();
             layerData.fontFace = this.toJSString(layer.fontPostscriptName());
