@@ -2539,7 +2539,7 @@ SM.extend({
       }
       return formats;
     },
-    getExportable: function(layer, savePath){
+    getExportable: function(layer, savePath = layer.name()){
         var self = this,
             exportable = [],
             size, sizes = layer.exportOptions().exportFormats(),
@@ -2567,16 +2567,16 @@ SM.extend({
                   layer: layer,
                   path: self.assetsPath,
                   scale: exportFormat.scale,
-                  name: layer.name(),
+                  name: savePath,
                   prefix: prefix,
                   suffix: suffix,
                   format: exportFormat.format
               });
 
           exportable.push({
-                  name: self.toJSString(layer.name()),
+                  name: self.toJSString(savePath),
                   format: fileFormat,
-                  path: prefix + layer.name() + suffix + "." + exportFormat.format
+                  path: prefix + savePath + suffix + "." + exportFormat.format
               });
         }
 
@@ -2606,7 +2606,15 @@ SM.extend({
                 .defaultManager()
                 .createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.assetsPath, true, nil, nil);
 
-            this.sliceCache[objectID] = layerData.exportable = this.getExportable(sliceLayer);
+            //防止因重名导致的覆盖
+            let layerName = sliceLayer.name();
+            let duplicateCount = this.slices.filter(function(slice){
+                return new RegExp(`${layerName}(\d)*`).test(slice.name);
+            }).length;
+            if(duplicateCount){
+                layerName=`${layerName}${Math.max(2,duplicateCount+1)}`;
+            }
+            this.sliceCache[objectID] = layerData.exportable = this.getExportable(sliceLayer,layerName);
             this.slices.push({
                 name: layerData.name,
                 objectID: objectID,
