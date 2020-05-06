@@ -3185,6 +3185,17 @@ SM.extend({
             return this;
         }
 
+        //如果layer不在artboard可视范围内，不处理
+        var artboardVisibleRect = this.rectToJSON(artboardRect);
+        var layerRectTemp = this.rectToJSON(layer.absoluteRect(), artboardRect);
+        if(layerRectTemp.x>=artboardVisibleRect.width
+            || layerRectTemp.y>=artboardVisibleRect.height
+            || layerRectTemp.x + layerRectTemp.width<=0
+            || layerRectTemp.y+layerRectTemp.height <=0
+        ){
+            return this;
+        }
+
         let layerShapeType = "";
         if(this.is(layer, MSShapeGroup) ||
             this.is(layer, MSShapePathLayer) ||
