@@ -2545,6 +2545,9 @@ SM.extend({
             size, sizes = layer.exportOptions().exportFormats(),
             fileFormat = this.toJSString(sizes[0].fileFormat()),
             matchFormat = /png|jpg|tiff|webp/.exec(fileFormat);
+        // 导出格式暂只支持png
+        fileFormat = "png";
+        matchFormat = true;
         var exportFormats =
             (self.configs.unit == "dp/sp" && matchFormat)? [
               { scale: 1 / self.configs.scale, prefix: "drawable-mdpi/", format: fileFormat },
@@ -2570,13 +2573,13 @@ SM.extend({
                   name: savePath,
                   prefix: prefix,
                   suffix: suffix,
-                  format: exportFormat.format
+                  format: fileFormat
               });
 
           exportable.push({
                   name: self.toJSString(savePath),
                   format: fileFormat,
-                  path: prefix + savePath + suffix + "." + exportFormat.format
+                  path: prefix + savePath + suffix + "." +fileFormat
               });
         }
 
