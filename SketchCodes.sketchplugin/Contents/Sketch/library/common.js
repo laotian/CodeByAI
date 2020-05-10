@@ -2910,10 +2910,10 @@ SM.extend({
             }
         });
     },
-    ui2Code: function (exportDir) {
+    generateService: function (exportDir) {
         const task = NSTask.alloc().init();
         task.setLaunchPath("/bin/sh");
-        task.setArguments([this.pluginSketch + "/ui2code.sh",exportDir]);
+        task.setArguments([this.pluginSketch + "/generateService.sh",exportDir]);
         task.launch();
         task.waitUntilExit();
     },
@@ -3083,7 +3083,7 @@ SM.extend({
                             //生成
                             if(self.configs.exportCodes) {
                                 processing.evaluateWebScript("processing('80%', '" + _("Generating Codes...") + "')");
-                                self.ui2Code(savePath);
+                                self.generateService(savePath);
                                 processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
                             }
                             NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);

@@ -202,6 +202,132 @@ main{position:relative;height:calc(100vh - 60px);}
   /*background-color: rgba(0, 0, 0, 0.2);*/
   position:absolute;
 }
+header .header-center .selectbox{margin-top:16px; width:140px;}
+    .selectbox{
+      /*position: relative;*/
+      height: 28px;
+    }
+    .selectwrap{
+      position: relative;
+      width: 100%;
+      color: #222;
+      background: #FFF;
+      height: 28px;
+      border-radius: 2px;
+      transition: all .15s ease;
+      overflow: hidden;
+    }
+    .selectwrap h3:after,
+    .selectwrap p:after,
+    .selectwrap input:checked + span:before,
+    .selectwrap label:hover span:before{
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAAjVBMVEUAAACVy/8jIyMiIiIjIyMjIyMjIyMkJCQpKSkrKys0hfbT09M0hfY0hfbR0dE5ifzf3981hfbR0dHR0dE2ifnT09PW1tY8iv/R0dE0hfbR0dE1hffS0tLY2NjR0dE0hfU1hfbR0dE0hPbS0tI0hfbR0dE1hvc1hvc2hvjT09M1iPbU1NQiIiLQ0NA0hPZ8y0M1AAAALHRSTlMAAvnmxplmORkGVVXk+eoYB9LSvScnGg7htHBrYBH17cOnmY+IgHddSEg3Nw4Gpb8AAAFuSURBVHja7dbbUtpQFAbgFRSUgIByEvFcrSfI+z9etzhmpq3Tu9Upne+7SHKVtf99WEkAAAAAwP+i3+32I0mvs/lFpxdJjg83m8PjSHJ0sPnJwVHkKJVy31/mqZU5Y71O9or3u5vW5x7ezyJfTdaeLvvv23dfD+IXDWVPW+OuxQMAAAAAAAAAAAAAAAAAAAAAAPxZVddVJKsGg/Qay1XT1JFrMt1uB5FredukB7mabtODjE9LjvsqMi3OSo673BqzYcnxkFtjfl5yfMuoUbUvfb0pOb5Hgklb421UclxEgtlwWMfO80nTnDxFgvloNIidl+uS4zIyrMvo11HU7zmeI8PF5+gH5eH6JVKMhx/7aV1uN6+RYvG+nx4/Ao3eIkF7wu8fymU4iwztCX8sl/N5pGh7bnE6jhRtzy3OFpFoeZuao/0KlhxXkapaNc1qGakmd9vtdBLJqvrpL/wpXk4CAAAAAAAAAAAAAADg3/MDzwkxoz3xdSUAAAAASUVORK5CYII=) no-repeat;
+      background-size: 100px 100px;
+    }
+    .selectwrap h3,
+    .selectwrap p{
+      position: relative;
+      margin: 0;
+      padding: 0 0 0 10px;
+      height: 28px;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 28px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+    .selectwrap h3{
+      color: rgba(33,33,33,0.50);
+      border-bottom: 1px solid #EEE;
+      display: none;
+    }
+
+    .selectwrap h3:after,
+    .selectwrap p:after{
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 28px;
+      height: 28px;
+    }
+    .selectwrap p:after{
+      background-position-x: -50px;
+    }
+    .selectwrap ul{
+      position: relative;
+      height: 140px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      overflow: auto;
+    }
+    .selectwrap ul::-webkit-scrollbar
+    {
+      width: 5px;
+      background: #EBEBEB;
+      border-radius: 2.5px;
+    }
+    .selectwrap ul::-webkit-scrollbar-thumb
+    {
+      background-color: #BCBCBC;
+      border-radius: 2.5px;
+    }
+    .selectwrap ul li label{
+      position: relative;
+      padding: 0 10px;
+      display: block;
+      height: 32px;
+      line-height: 32px;
+      cursor: pointer;
+    }
+    .selectwrap ul li.sub-title{
+      padding: 0 10px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 12px;
+      background: #EEE;
+      color: rgba(33,33,33,0.32);
+    }
+    .selectwrap ul li label input{
+      float: right;
+      visibility: hidden;
+    }
+    .selectwrap span{
+      display: block;
+    }
+    .selectwrap span:before{
+      content: '';
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      top: 0;
+      right: 0;
+    }
+
+    .selectwrap label:hover span:before{
+      background-position: -50px -50px;
+    }
+    .selectwrap input:checked + span:before{
+      background-position: 0 -50px;
+    }
+    .selectwrap input:checked + span{
+      color: #3484F5;
+    }
+    .selectbox:focus{
+      outline: 0;
+    }
+    .selectbox:focus .selectwrap{
+      height: 126px;
+      z-index: 1;
+    }
+    .selectbox:focus .selectwrap h3{
+      display: block;
+    }
+    .selectbox:focus .selectwrap p{
+      display: none;
+    }
+
 
     </style>
     <script type="text/javascript">
@@ -325,11 +451,15 @@ var I18N = {},
                     '<div class="header-center">',
                         '<div id="zoom" class="zoom-widget"></div>',
                         '<h1></h1>',
-                        '<div class="show-notes" id="show-codes-container">',
-                          '<label for="show-codes">' + _('View codes') + '</label>',
-                          '<div class="slidebox">',
-                            '<input id="show-codes" type="checkbox" name="show-codes">',
-                            '<label for="show-codes"></label>',
+                        '<div id="show-codes" class="selectbox mrb16" tabindex="0">',
+                          '<div class="selectwrap">',
+                            '<h3>' + _('Code type') + '</h3>',
+                            '<p></p>',
+                            '<ul>',
+                              '<li><label id="code-hidden"><input type="radio" name="show-codes-type" value="code-hidden"><span>' + _('Code hidden') + '</span></label></li>',
+                              '<li><label id="code-rn"><input type="radio" name="show-codes-type" value="code-rn"><span>' + _('RN') + '</span></label></li>',
+                              '<li><label id="code-android"><input type="radio" name="show-codes-type" value="code-android"><span>' + _('android') + '</span></label></li>',
+                            '</ul>',
                           '</div>',
                         '</div>',
                         '<div class="show-notes">',
@@ -1117,8 +1247,8 @@ var I18N = {},
 
           //RN Code Template
           if(self.codeMode){
-            const jsFile = self.current.slug + ".js";
-            const previewFile = self.current.slug + ".png";
+            const codeFile = self.current.codeFile;
+            const imagePath = self.current.imagePath;
             let code = self.current.codes;
             let codes = code.split("\n");
             let beginLine = layerData.codeLine.from;
@@ -1170,10 +1300,10 @@ var I18N = {},
 
             var exportable = ['<ul class="exportable">',
               '<li>',
-              '<a href="./ui2code/'+jsFile+'" target="_blank">'+_('View source code')+'</a><br/>',
+              '<a href="'+codeFile+'" target="_blank">'+_('View source code')+'</a><br/>',
               '</li>',
               '<li>',
-              '<a href="./ui2code/'+previewFile+'" target="_blank">'+_('View App snapshot')+'</a><br/>',
+              '<a href="'+imagePath+'" target="_blank">'+_('View App snapshot')+'</a><br/>',
               '</li>',
               '</ul>'].join('');
 
@@ -1626,9 +1756,36 @@ var I18N = {},
                     $('#notes').fadeOut('fast');
                 }
             });
-            $('#show-codes').change(function(){
-              self.switchCodeMode();
+            $('#show-codes input').change(function(){
+              var $this = $(this),
+                      id = $this.val().substring(5);
+              self.switchCodeMode(id==="hidden" ? undefined : id);
             });
+
+            $('.selectbox').each(function(index){
+              var $this = $(this);
+
+              $this.find('h3').on('click', function(){
+                $this.blur();
+              });
+
+              $this.find('input').change(function(){
+                var $parent = $this.find('input:checked').parent(),
+                        text = $parent.find('span').text();
+                $this.find('p').html(text);
+                $this.blur();
+              });
+
+              var $parentLabel = $this.find('input:checked').parent(),
+                      // $parentLi = $parentLabel.parent(),
+                      text = $parentLabel.find('span').text();
+
+              // $this.find('ul').scrollTop($parentLi.position().top);
+
+              $this.find('p').html(text);
+            });
+
+
             $('#artboards')
                 .on('click', '.artboard', function( event ){
                     if(self.artboardIndex == self.getIndex(this)) return;
@@ -1648,6 +1805,7 @@ var I18N = {},
                     if(self.codeMode){
                       self.resetCodeMode();
                     }
+                    console.log("artboard click!");
                 })
                 .on('click', '.pages-select', function( event ){
                     event.stopPropagation();
@@ -1751,11 +1909,11 @@ var I18N = {},
 
         },
         resetCodeMode(){
-          if(this.codeMode){
-            if(!this.project.codeArtboards || this.artboardIndex>=this.project.codeArtboards.length) return;
-            this.current = this.project.codeArtboards[this.artboardIndex];
-          }else{
+          if(!this.codeMode){
             this.current = this.project.artboards[this.artboardIndex];
+          }else{
+            if(!this.project.codeArtboards || !this.project.codeArtboards[this.codeMode] || this.artboardIndex>=this.project.codeArtboards[this.codeMode].length) return;
+            this.current = this.project.codeArtboards[this.codeMode][this.artboardIndex];
           }
           this.screen();
           this.layers();
@@ -1765,9 +1923,15 @@ var I18N = {},
           this.selectedIndex = undefined;
           this.tempTargetRect = undefined;
         },
-        switchCodeMode: function(){
-          this.codeMode = !this.codeMode;
-          this.resetCodeMode();
+        switchCodeMode: function(codeMode){
+          this.codeMode = codeMode;
+          if(this.codeMode){
+            if(this.project.codeArtboards && this.project.codeArtboards[this.codeMode] && this.project.codeArtboards[this.codeMode][this.artboardIndex]){
+              this.resetCodeMode();
+            }else{
+              this.message(_('Code type not valid, export code with this type first'));
+            }
+          }
         },
     }
     var init = SMApp.fn.init = function(project) {
@@ -1807,8 +1971,10 @@ var I18N = {},
 $(function(){
   var smApp = SMApp(<!-- data -->);
   <!-- codeArtboards -->
-  if(!smApp.project.codeArtboards || smApp.project.codeArtboards.length==0){
-    $('#show-codes-container').hide();
+  if(!smApp.project.codeArtboards){
+    $('#show-codes').hide();
+  }else{
+    $('#code-hidden').click();
   }
 });
     -->
