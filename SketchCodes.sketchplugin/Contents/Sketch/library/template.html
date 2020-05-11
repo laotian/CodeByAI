@@ -1335,10 +1335,14 @@ var I18N = {},
             ].join('');
 
             html.push(this.propertyType('CODE TEMPLATE', [exportable, tab,rnCode,rnSelectCode,rnSelectStyle].join(''), true));
-            console.log("htmlOut");
           }
           self.renderInspector(html);
-
+          if(this.codeMode){
+            $('#inspector').find('[data-codeType=android]').trigger('click');
+            if(this.codeMode==="android") {
+              $("#code-tab").hide();
+            }
+          }
         },
         getAndroidWithHeight: function (layerData) {
             return "android:layout_width=\"" + this.unitSize(layerData.rect.width, false) + "\"\r\n" + "android:layout_height=\"" + this.unitSize(layerData.rect.height, false) + "\"\r\n";
