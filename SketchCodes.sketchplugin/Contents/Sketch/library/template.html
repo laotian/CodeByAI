@@ -1150,13 +1150,13 @@ var I18N = {},
             //  EXPORTABLE
             if(layerData.exportable && layerData.exportable.length > 0){
               var expHTML = [],
-                      path = this.codeMode ? 'ui2code/images/' : 'assets/';
+                      path = this.codeMode ? '' : 'assets/';
               expHTML.push('<ul class="exportable">')
               $.each(layerData.exportable, function(index, exportable) {
                 var filePath = path + exportable.path;
                 expHTML.push(
                         '<li>',
-                        '<a href="' + filePath + '" data-format="' + exportable.format.toUpperCase() + '"><img src="' + filePath + '" alt="' + exportable.path + '">' + exportable.path.replace('drawable-', '') + '</a>',
+                        '<a href="' + filePath + '" data-format="' + exportable.format.toUpperCase() + '"><img src="' + filePath + '" alt="' + exportable.path + '">' + exportable.path.replace('./CodeByAI/android/res/', '').replace('./CodeByAI/rn/images/', '').replace('drawable-', '') + '</a>',
                         '</li>');
               });
               expHTML.push('</ul>')
@@ -1924,6 +1924,9 @@ var I18N = {},
           this.tempTargetRect = undefined;
         },
         switchCodeMode: function(codeMode){
+          if(this.codeMode===codeMode){
+            return;
+          }
           this.codeMode = codeMode;
           if(this.codeMode){
             if(this.project.codeArtboards && this.project.codeArtboards[this.codeMode] && this.project.codeArtboards[this.codeMode][this.artboardIndex]){
@@ -1931,6 +1934,8 @@ var I18N = {},
             }else{
               this.message(_('Code type not valid, export code with this type first'));
             }
+          }else{
+            this.resetCodeMode();
           }
         },
     }
