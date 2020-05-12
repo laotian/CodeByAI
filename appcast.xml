@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>SketchCodes</title>
-    <link>https://raw.githubusercontent.com/laotian/SketchCodes/master/appcast.xml</link>
+    <title>CodeByAI</title>
+    <link>https://raw.githubusercontent.com/laotian/CodeByAI/master/appcast.xml</link>
     <description>Export spec and handwritten codes from sketch</description>
     <language>en</language>
 		<item>
@@ -14,7 +14,7 @@
 					</ul>
 				]]>
 			</description>
-			<enclosure url="https://github.com/laotian/SketchCodes/archive/master.zip" sparkle:version="1.0.0" type="application/octet-stream" />
+			<enclosure url="https://github.com/laotian/CodeByAI/archive/master.zip" sparkle:version="1.0.0" type="application/octet-stream" />
 		</item>
   </channel>
 </rss>

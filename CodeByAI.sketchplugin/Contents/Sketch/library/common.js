@@ -397,7 +397,7 @@ SM.extend({
         return bordersData;
     },
     hasUnSupportFills: function(style){
-        //包含除color外的其它填充
+        //Contains other fills than color
         var fill, fillIter = style.fills().objectEnumerator();
         while (fill = fillIter.nextObject()) {
             if (fill.isEnabled() && fill.fillType() != 0) {
@@ -985,7 +985,7 @@ SM.extend({
     },
     Toolbar: function(){
         var self = this,
-            identifier = "codes.sketch",
+            identifier = "com.codebyai",
             threadDictionary = NSThread.mainThread().threadDictionary(),
             Toolbar = threadDictionary[identifier];
 
@@ -2188,7 +2188,7 @@ SM.extend({
             height: 451,
             data: data,
             floatWindow: true,
-            identifier: "codes.sketch.colors",
+            identifier: "com.codebyai.colors",
             callback: function( data ){
                 var colors = data;
                 self.configs = self.setConfigs({
@@ -3185,7 +3185,7 @@ SM.extend({
             return this;
         }
 
-        //如果layer不在artboard可视范围内，不处理
+        //If the layer is not within the visual range of the artboard, it will not be processed
         var artboardVisibleRect = this.rectToJSON(artboardRect);
         var layerRectTemp = this.rectToJSON(layer.absoluteRect(), artboardRect);
         if(layerRectTemp.x>=artboardVisibleRect.width
@@ -3217,7 +3217,7 @@ SM.extend({
             layerShapeType = "group";
         }
 
-        //渐变色填充矩形或圆形
+        //Gradient fill rectangle or circle
         if(["rectangle","oval"].includes(layerShapeType)
             &&layer.style() && this.hasUnSupportFills(layer.style())){
             if(!this.hasExportSizes(layer)){
@@ -3238,7 +3238,7 @@ SM.extend({
             layer.setTextBehaviour(0); // fixed for v40
         } // fixed for v40
 
-        //修复系统中没有的字体，防止布局变形
+        //Fix fonts that are not in the system to prevent layout distortion
         if(layerType=="text" && layer.replaceMissingFontsIfNecessary){
             layer.replaceMissingFontsIfNecessary();
             var oldBehaviour = layer.textBehaviour();
@@ -3247,30 +3247,18 @@ SM.extend({
                 var oldRect = oldFrame.rect();
                 layer.setTextBehaviour(0);
                 var currentRect = layer.frame().rect();
-                //如果自动宽度后，并长了，需要恢复
+                //If after the automatic width, and long, need to restore
                 if(currentRect.size.width>oldRect.size.width){
                     layer.setTextBehaviour(oldBehaviour);
                     layer.setFrame(MSRect.rectWithRect(oldRect));
                 }else{
-                    //如果只有一行，更改对齐方式
+                    //If there is only one line, change the alignment
                     var lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
                     if(currentRect.size.height<lineHeight*2){
                         layer.setTextAlignment(0);
                     }
                 }
             }
-
-
-            // if(layer.canFixHeight() && layerData.rect.height < layerData.lineHeight * 2){
-            //     //自动高度,只有一行
-            //     var glyphBounds = layer.glyphBounds();
-            //     layerData.glyphBounds = {
-            //         x: Math.round(glyphBounds.origin.x),
-            //         y: Math.round(glyphBounds.origin.y),
-            //         width: Math.round(glyphBounds.size.width),
-            //         height: Math.round(glyphBounds.size.height)
-            //     }
-            // }
         }
 
         var exportLayerRect;
@@ -3290,7 +3278,7 @@ SM.extend({
         }
 
         var rect;
-        //控件中的图片导出时是最小尺寸
+        //The picture in the control is the smallest size when exported
         if(layerShapeType == "image"){
             var slice = MSSliceLayer.sliceLayerFromLayer(layer);
             rect = this.rectToJSON(slice.absoluteRect(), artboardRect);

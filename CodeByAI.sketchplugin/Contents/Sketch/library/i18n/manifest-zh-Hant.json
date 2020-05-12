@@ -1,130 +1,130 @@
 {
-    "author": "sketch.codes",
+    "author": "codebyai.com",
     "commands" : [
         {
-            "name": "工具栏",
+            "name": "工具欄",
             "identifier": "commandToolbar",
             "shortcut": "ctrl shift b",
             "handler" : "commandToolbar",
             "script": "mark.sketchscript"
         },
         {
-            "name": "工具栏 2.0(beta)",
+            "name": "工具欄 2.0 (beta)",
             "identifier": "commandToolbar2",
             "shortcut": "ctrl shift x",
             "handler" : "commandToolbar2",
             "script": "mark.sketchscript"
         },
         {
-            "name": "标注区域",
+            "name": "標記疊加層",
             "identifier": "commandOverlays",
             "shortcut": "ctrl shift 1",
             "handler" : "commandOverlays",
             "script": "mark.sketchscript"
         },
         {
-            "name": "标注尺寸",
+            "name": "標記尺寸",
             "identifier": "commandSizes",
             "shortcut": "ctrl shift 2",
             "handler" : "commandSizes",
             "script": "mark.sketchscript"
         },
         {
-            "name": "标注间隔",
+            "name": "標記間隔",
             "identifier": "commandSpacings",
             "shortcut": "ctrl shift 3",
             "handler" : "commandSpacings",
             "script": "mark.sketchscript"
         },
         {
-            "name": "标注属性",
+            "name": "標記屬性",
             "identifier": "commandProperties",
             "shortcut": "ctrl shift 4",
             "handler" : "commandProperties",
             "script": "mark.sketchscript"
         },
         {
-            "name": "标注备注",
+            "name": "標記備註",
             "identifier": "commandNote",
             "shortcut": "ctrl shift 5",
             "handler" : "commandNote",
             "script": "mark.sketchscript"
         },
         {
-            "name": "导出代码与规范",
+            "name": "匯出代碼與規範",
             "identifier": "commandExport",
             "shortcut": "ctrl shift e",
             "handler" : "commandExport",
             "script": "mark.sketchscript"
         },
         {
-            "name": "切换隐藏",
+            "name": "切換隱藏",
             "identifier": "commandHidden",
             "shortcut": "ctrl shift h",
             "handler": "commandHidden",
             "script": "mark.sketchscript"
         },
         {
-            "name": "切换锁定",
+            "name": "切換鎖定",
             "identifier": "commandLocked",
             "shortcut": "ctrl shift l",
             "handler": "commandLocked",
             "script": "mark.sketchscript"
         },
         {
-            "name": "清除标注",
+            "name": "清除標記",
             "identifier": "commandClear",
             "shortcut": "",
             "handler": "commandClear",
             "script": "mark.sketchscript"
         },
         {
-            "name": "设置",
+            "name": "設定",
             "identifier": "commandSettings",
             "shortcut": "",
             "handler": "commandSettings",
             "script": "mark.sketchscript"
         },
         {
-            "name": "颜色命名",
+            "name": "顏色名稱",
             "identifier": "commandColor",
             "shortcut": "ctrl shift c",
             "handler": "commandColor",
             "script": "mark.sketchscript"
         },
         {
-            "name": "设置切图",
+            "name": "設定切圖",
             "identifier": "commandExportable",
             "shortcut": "ctrl shift s",
             "handler": "commandExportable",
             "script": "mark.sketchscript"
         },
         {
-            "name": "使用文档",
+            "name": "使用說明",
             "identifier": "linkZhCNHelp",
             "handler": "linkZhCNHelp",
             "script": "links.sketchscript"
         },
         {
-            "name": "意见反馈",
+            "name": "意見反饋",
             "identifier": "linkFeedback",
             "handler": "linkFeedback",
             "script": "links.sketchscript"
         },
         {
-            "name": "赞助作者",
+            "name": "贊助作者",
             "identifier": "linkDonate",
             "handler": "linkDonate",
             "script": "links.sketchscript"
         },
         {
-            "name": "设计师导航",
+            "name": "設計師導航",
             "identifier": "linkNiudana",
             "handler": "linkNiudana",
             "script": "links.sketchscript"
         },
         {
-            "name": "素材下载",
+            "name": "素材下載",
             "identifier": "linkSketchim",
             "handler": "linkSketchim",
             "script": "links.sketchscript"
@@ -140,7 +140,7 @@
             "script": "mark.sketchscript"
         },
         {
-            "name": "SketchCodes",
+            "name": "CodeByAI",
             "identifier": "linkHelpCodes",
             "handler": "linkHelpCodes",
             "script": "links.sketchscript"
@@ -169,20 +169,20 @@
             "-",
             "commandSettings",
             {
-              "title": "帮助",
+              "title": "幫助",
               "items": [
                 "linkZhCNHelp",
                 "linkFeedback"
               ]
             }
         ],
-        "title" : "SketchCodes"
+        "title" : "CodeByAI"
     },
-    "identifier": "codes.sketch",
-    "appcast": "https://raw.githubusercontent.com/laotian/SketchCodes/master/appcast.xml",
-    "homepage": "https://github.com/laotian/SketchCodes",
+    "identifier": "com.codebyai",
+    "appcast": "https://raw.githubusercontent.com/laotian/CodeByAI/master/appcast.xml",
+    "homepage": "https://github.com/laotian/CodeByAI",
     "version": "1.0.0",
     "description" : "Export spec and handwritten codes from sketch",
     "authorEmail" : "tianlupan@126.com",
-    "name" : "SketchCodes"
+    "name" : "CodeByAI"
 }
