@@ -31,8 +31,9 @@ The complete page code and resources are located in the "CodeByAI" folder.
 * Do not use external shadows
 
 # Feedback
-Email: tianlupan@126.com
+- [ISSUE](https://github.com/laotian/CodeByAI/issues/new)
+- Email: tianlupan@126.com
 
-# 相关链接
+# Links
 - [CodeByAI中文说明](https://github.com/laotian/CodeByAI/wiki/CodeByAI中文使用文档)
 - [SketchMeasure中文说明](https://oursketch.com/plugin/sketch-measure)
