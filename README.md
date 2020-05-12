@@ -34,5 +34,5 @@ The complete page code and resources are located in the "CodeByAI" folder.
 Email: tianlupan@126.com
 
 # 相关链接
-- [CodeByAI中文说明](http://www.sketch.codes)
+- [CodeByAI中文说明](https://github.com/laotian/CodeByAI/wiki/CodeByAI中文使用文档)
 - [SketchMeasure中文说明](https://oursketch.com/plugin/sketch-measure)
