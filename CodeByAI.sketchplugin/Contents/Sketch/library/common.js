@@ -43,7 +43,7 @@ var SM = {
                 language = "I18N[\'" + webI18N[lang] + "\'] = " + language;
             }
             //fixme
-            coscript.setShouldKeepAround(true);
+            // coscript.setShouldKeepAround(true);
 
             if(command && command == "init"){
                 this.checkVersion();
