@@ -1,6 +1,6 @@
 #!/bin/sh
 sketchDir=$1
-apiUrl="http://182.92.76.238:8080/api/sketch"
+apiUrl="http://service.codebyai.com:8080/api/sketch"
 cd "$sketchDir"
 if [ -f "sketch.zip" ]; then
   rm sketch.zip
@@ -9,7 +9,7 @@ if [ -d "CodeByAI" ]; then
   rm -rf CodeByAI
 fi
 zip -r sketch.zip  assets artboard.json *.html
-curl $apiUrl -X POST -F "sketchZip=@sketch.zip" -o CodeByAI.zip
+curl $apiUrl -H "HOST:" -X POST -F "sketchZip=@sketch.zip" -o CodeByAI.zip
 unzip CodeByAI.zip
 cp CodeByAI/*.html ./
 rm CodeByAI.zip
