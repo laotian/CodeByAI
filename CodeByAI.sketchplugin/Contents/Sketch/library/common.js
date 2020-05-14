@@ -2640,7 +2640,15 @@ SM.extend({
                 var symbolRect = this.getRect(layer),
                     symbolChildren = layer.symbolMaster().children(),
                     tempSymbol = layer.duplicate(),
+                    tempGroup;
+                if(tempSymbol.detachStylesAndReplaceWithGroupRecursively){
+                    //sketch v60
                     tempGroup = tempSymbol.detachStylesAndReplaceWithGroupRecursively(false);
+                }else{
+                    //reference sketch-measure v2.7.7 for sketch v52.5
+                    tempGroup = tempSymbol.detachByReplacingWithGroup();
+                    tempGroup.resizeToFitChildrenWithOption(0)
+                }
 
                 var tempSymbolLayers = tempGroup.children().objectEnumerator(),
                     overrides = layer.overrides(),
