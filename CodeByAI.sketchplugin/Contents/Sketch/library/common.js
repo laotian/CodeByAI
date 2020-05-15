@@ -42,8 +42,11 @@ var SM = {
                 I18N[lang] = JSON.parse(language);
                 language = "I18N[\'" + webI18N[lang] + "\'] = " + language;
             }
-            //fixme
-            coscript.setShouldKeepAround(true);
+
+            //to avoid restart Sketch in develop mode, add .dev file in the project root dir
+            if(!NSFileManager.defaultManager().fileExistsAtPath(this.pluginRoot + "/../.dev")) {
+                coscript.setShouldKeepAround(true);
+            }
 
             if(command && command == "init"){
                 this.checkVersion();
