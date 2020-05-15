@@ -2620,13 +2620,35 @@ SM.extend({
             if(duplicateCount){
                 layerName=`${layerName}${Math.max(2,duplicateCount+1)}`;
             }
-            this.sliceCache[objectID] = layerData.exportable = this.getExportable(sliceLayer,layerName);
+
+
+
+
+            var slice;
+            if(this.is(sliceLayer, MSLayerGroup)){
+                slice = MSSliceLayer.sliceLayerFromLayer(sliceLayer);
+
+                var msRect = MSRect.rectWithUnionOfRects([
+                    MSRect.alloc().initWithRect(slice.absoluteRect().rect()),
+                    MSRect.alloc().initWithRect(layer.absoluteRect().rect())
+                ]);
+
+                slice.absoluteRect().setRect(msRect.rect());
+                slice.moveToLayer_beforeLayer(sliceLayer, sliceLayer.firstLayer());
+                slice.exportOptions().setLayerOptions(2);
+            }
+
+            this.sliceCache[objectID] = layerData.exportable = this.getExportable(slice || sliceLayer,layerName);
             this.slices.push({
                 name: layerData.name,
                 objectID: objectID,
                 rect: layerData.rect,
                 exportable: layerData.exportable
             })
+
+            if(slice){
+                this.removeLayer(slice);
+            }
         }
         else if( this.sliceCache[objectID] ){
             layerData.exportable = this.sliceCache[objectID];
