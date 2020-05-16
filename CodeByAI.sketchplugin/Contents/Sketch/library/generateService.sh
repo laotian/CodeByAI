@@ -1,7 +1,6 @@
 #!/bin/sh
 sketchDir=$1
-#apiUrl="http://service.codebyai.com:8080/api/sketch"
-apiUrl="http://127.0.0.1:8080/api/sketch"
+apiUrl="http://service.codebyai.com:8080/api/sketch"
 cd "$sketchDir"
 if [ -f "sketch.zip" ]; then
   rm sketch.zip
