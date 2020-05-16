@@ -2943,12 +2943,36 @@ SM.extend({
             }
         });
     },
-    generateService: function (exportDir) {
+    generateService: function (exportDir,processing, artBoardCount,selectingPath) {
+        console.log("generateService begin..");
+        const CodeByAI_DIR = exportDir + "/CodeByAI";
+        if(NSFileManager.defaultManager().fileExistsAtPath(CodeByAI_DIR)) {
+            NSFileManager
+                .defaultManager()
+                .removeItemAtPath_error(CodeByAI_DIR, nil);
+        }
         const task = NSTask.alloc().init();
         task.setLaunchPath("/bin/sh");
         task.setArguments([this.pluginSketch + "/generateService.sh",exportDir]);
         task.launch();
-        task.waitUntilExit();
+        // processing.evaluateWebScript("processing('80%', '" + _("Generating Codes...") + "')");
+        const startPercentage = 80;
+        const startTime = new Date().getTime();
+        const PER_ART_BOARD_PROCESS_SECONDS = 18;
+        const totalTime = artBoardCount*PER_ART_BOARD_PROCESS_SECONDS*1000;
+        let percentage = startPercentage;
+        coscript.scheduleWithRepeatingInterval_jsFunction(0, function( interval ){
+            const elapseMS = (new Date().getTime() - startTime);
+            percentage = Math.min(99, parseInt( startPercentage + (100 * (elapseMS/totalTime))));
+            if(NSFileManager.defaultManager().fileExistsAtPath(CodeByAI_DIR)) {
+                // task.waitUntilExit();
+                processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
+                NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
+                // this.message(_("Export complete!"));
+                return interval.cancel();
+            }
+            processing.evaluateWebScript("processing('"+percentage+"%', '" + _("Generating Codes... %@%",[percentage]) + "')");
+        });
     },
     export: function(){
         if(this.exportPanel()){
@@ -3115,13 +3139,13 @@ SM.extend({
                             }
                             //生成
                             if(self.configs.exportCodes) {
-                                processing.evaluateWebScript("processing('80%', '" + _("Generating Codes...") + "')");
-                                self.generateService(savePath);
-                                processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
+                                // processing.evaluateWebScript("processing('80%', '" + _("Generating Codes...") + "')");
+                                self.generateService(savePath,processing,self.selectionArtboards.length,selectingPath);
+                                // processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
+                            }else {
+                                NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
+                                self.message(_("Export complete!"));
                             }
-                            NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
-
-                            self.message(_("Export complete!"));
                             self.wantsStop = true;
                         }
 

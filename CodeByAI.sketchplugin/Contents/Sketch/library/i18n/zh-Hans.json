@@ -99,7 +99,7 @@
     "Download": "下载",
     "Cancel": "取消",
     "Donate": "捐赠",
-    "Generating Codes...": "正在生成代码...",
+    "Generating Codes... %@%": "正在生成代码... %@%",
     "Export codes": "导出代码",
     "View codes": "查看代码",
     "View source code": "查看代码文件",
