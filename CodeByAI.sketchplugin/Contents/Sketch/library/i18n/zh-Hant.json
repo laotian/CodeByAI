@@ -103,5 +103,6 @@
     "Code hidden": "不显示代码",
     "RN" : "RN",
     "android" : "Android",
-    "Code type not valid, export code with this type first": "代码类型无效，请先导出此种类型代码"
+    "Code type not valid, export code with this type first": "代码类型无效，请先导出此种类型代码",
+    "Generate code failed!": "代码导出失败!"
 };
