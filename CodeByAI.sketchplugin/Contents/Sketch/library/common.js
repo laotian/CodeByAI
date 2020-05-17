@@ -2512,6 +2512,16 @@ SM.extend({
                     height: height
                 }
 
+            // add border radius for images
+            const maskLayer = layer.closestClippingLayer();
+            if(maskLayer && !layerData.radius){
+                if(this.is(maskLayer, MSRectangleShape)){
+                    layerData.radius = this.getRadius(maskLayer);
+                }else if(this.is(maskLayer, MSOvalShape)){
+                    layerData.radius = width/2;
+                }
+            }
+
         }
     },
     getFormats: function( exportFormats ) {
