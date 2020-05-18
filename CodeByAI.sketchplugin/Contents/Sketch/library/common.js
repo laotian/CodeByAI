@@ -2964,7 +2964,8 @@ SM.extend({
         const PER_ART_BOARD_PROCESS_SECONDS = 18;
         const totalTime = artBoardCount*PER_ART_BOARD_PROCESS_SECONDS*1000;
         let percentage = startPercentage;
-        coscript.scheduleWithRepeatingInterval_jsFunction(0, function( interval ){
+        let lastPercentage = -1;
+        coscript.scheduleWithRepeatingInterval_jsFunction(2, function( interval ){
             const elapseMS = (new Date().getTime() - startTime);
             percentage = Math.min(99, parseInt( startPercentage + (100 * (elapseMS/totalTime))));
             if(!task.running) {
@@ -2981,7 +2982,11 @@ SM.extend({
                 // this.message(_("Export complete!"));
                 return interval.cancel();
             }
-            processing.evaluateWebScript("processing('"+percentage+"%', '" + _("Generating Codes... %@%",[percentage]) + "')");
+            if(percentage!=lastPercentage) {
+                //occupy tool many cpu
+                lastPercentage = percentage;
+                processing.evaluateWebScript("processing('" + percentage + "%', '" + _("Generating Codes... %@%", [percentage]) + "')");
+            }
         });
     },
     export: function(){
