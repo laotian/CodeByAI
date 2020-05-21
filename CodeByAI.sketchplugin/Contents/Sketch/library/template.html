@@ -1322,7 +1322,7 @@ var I18N = {},
                   return true;
                 }
                 return false;
-              }).join("\n") + '</textarea>',
+              }).join("\n").replace(/</gm,"&lt;").replace(/>/gm,"&gt;") + '</textarea>',
               '</div>'
             ].join('');
 
@@ -1330,7 +1330,7 @@ var I18N = {},
               '<div id="ios-panel" class="code-item item select">',
               '<textarea id="css" rows="' + (Math.min(selectLine.length,16)) + '" readonly="readonly" wrap="off" style="overflow:scroll">' +  codes.filter(function(line,index){
                 return  selectLine.includes(index);
-              }).join("\n") + '</textarea>',
+              }).join("\r\n") + '</textarea>',
               '</div>'
             ].join('');
 
