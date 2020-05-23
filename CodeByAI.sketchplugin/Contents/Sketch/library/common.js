@@ -2961,10 +2961,11 @@ SM.extend({
         task.launch();
         const startPercentage = 80;
         const startTime = new Date().getTime();
-        const PER_ART_BOARD_PROCESS_SECONDS = 10;
+        const PER_ART_BOARD_PROCESS_SECONDS = 5;
         const totalTime = artBoardCount*PER_ART_BOARD_PROCESS_SECONDS*1000;
         let percentage = startPercentage;
         let lastPercentage = -1;
+        processing.evaluateWebScript("processing('" + percentage + "%', '" + _("Generating Codes... %@%", [percentage]) + "')");
         coscript.scheduleWithRepeatingInterval_jsFunction(2, function( interval ){
             const elapseMS = (new Date().getTime() - startTime);
             percentage = Math.min(99, parseInt( startPercentage + (100 * (elapseMS/totalTime))));
