@@ -2961,11 +2961,12 @@ SM.extend({
         task.launch();
         const startPercentage = 80;
         const startTime = new Date().getTime();
-        const PER_ART_BOARD_PROCESS_SECONDS = 10;
+        const PER_ART_BOARD_PROCESS_SECONDS = 5;
         const totalTime = artBoardCount*PER_ART_BOARD_PROCESS_SECONDS*1000;
         let percentage = startPercentage;
         let lastPercentage = -1;
-        coscript.scheduleWithRepeatingInterval_jsFunction(2, function( interval ){
+        processing.evaluateWebScript("processing('" + percentage + "%', '" + _("Generating Codes... %@%", [percentage]) + "')");
+        coscript.scheduleWithRepeatingInterval_jsFunction(1, function( interval ){
             const elapseMS = (new Date().getTime() - startTime);
             percentage = Math.min(99, parseInt( startPercentage + (100 * (elapseMS/totalTime))));
             if(!task.running) {
@@ -3266,6 +3267,38 @@ SM.extend({
         ){
             return this;
         }
+
+        //If the slice size contains this layer, this layer is invalid
+        //todo optimize recursive speed, add cache
+        var tempGroup = group;
+        var isInSliceRegion = false;
+        var layerRight = layerRectTemp.x + layerRectTemp.width;
+        var layerBottom = layerRectTemp.y + layerRectTemp.height;
+        while(!isInSliceRegion && !this.is(tempGroup, MSPage) && !this.is(layer, MSSliceLayer)) {
+            var groupLayers = tempGroup.children().objectEnumerator();
+            var groupLayer;
+            while (groupLayer = groupLayers.nextObject()) {
+                if (groupLayer!=layer && this.is(groupLayer, MSSliceLayer)) {
+                    var groupLayerRect = this.rectToJSON(groupLayer.absoluteRect(),artboardRect);
+                    var groupLayerRight = groupLayerRect.x+groupLayerRect.width;
+                    var groupLayerBottom = groupLayerRect.y + groupLayerRect.height;
+                    if(layerRectTemp.x >= groupLayerRect.x
+                        && layerRectTemp.y >= groupLayerRect.y
+                        && layerRight <= groupLayerRight
+                        && layerBottom <= groupLayerBottom
+                    ){
+                        isInSliceRegion = true;
+                        break;
+                    }
+                }
+            }
+            tempGroup = tempGroup.parentGroup();
+        }
+
+        if(isInSliceRegion){
+            return this;
+        }
+
 
         let layerShapeType = "";
         if(this.is(layer, MSShapeGroup) ||
