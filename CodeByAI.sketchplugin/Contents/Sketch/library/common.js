@@ -2693,7 +2693,6 @@ SM.extend({
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
 
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
-                    console.log("idx:",idx,"totalCount:",tempGroup.children().count()+",symbolChildren count:"+symbolChildren.count());
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
                         var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
                         if(
@@ -3286,10 +3285,16 @@ SM.extend({
         var isInSliceRegion = false;
         var layerRight = layerRectTemp.x + layerRectTemp.width;
         var layerBottom = layerRectTemp.y + layerRectTemp.height;
+        console.log("parentName:",group.name()+",parentCount:"+group.children().count());
         while(!isInSliceRegion && !this.is(tempGroup, MSPage) && !this.is(layer, MSSliceLayer)) {
             var groupLayers = tempGroup.children().objectEnumerator();
             var groupLayer;
+            var tempGroupRect = this.rectToJSON(tempGroup.absoluteRect(),artboardRect);
             while (groupLayer = groupLayers.nextObject()) {
+                //only process son, not grandSon
+                if(groupLayer.parentGroup().objectID()!=tempGroup.objectID()){
+                    continue;
+                }
                 if (groupLayer!=layer && this.is(groupLayer, MSSliceLayer)) {
                     var groupLayerRect = this.rectToJSON(groupLayer.absoluteRect(),artboardRect);
                     var groupLayerRight = groupLayerRect.x+groupLayerRect.width;
@@ -3299,6 +3304,11 @@ SM.extend({
                         && layerRight <= groupLayerRight
                         && layerBottom <= groupLayerBottom
                     ){
+                        isInSliceRegion = true;
+                        break;
+                    }
+                    //whole group slice
+                    if(tempGroupRect.width==groupLayerRect.width && tempGroupRect.height == groupLayerRect.height){
                         isInSliceRegion = true;
                         break;
                     }
