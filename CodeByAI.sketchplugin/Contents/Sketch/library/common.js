@@ -2685,6 +2685,7 @@ SM.extend({
                     tempGroup.resizeToFitChildrenWithOption(0)
                 }
 
+
                 var tempSymbolLayers = tempGroup.children().objectEnumerator(),
                     overrides = layer.overrides(),
                     idx = 0;
@@ -2692,6 +2693,7 @@ SM.extend({
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
 
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
+                    console.log("idx:",idx,"totalCount:",tempGroup.children().count()+",symbolChildren count:"+symbolChildren.count());
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
                         var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
                         if(
@@ -2709,11 +2711,21 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
+                      let symbolChildIndex =  idx;
+                      // symbol has background, if detached,add a child rect, so count+1,
+                      if(tempGroup.children().count()==symbolChildren.count()+1){
+                          symbolChildIndex--;
+                      }
+                      var symbolLayer = undefined;
+                      if(symbolChildIndex>=0 && symbolChildIndex< symbolChildren.count()){
+                          symbolLayer = symbolChildren[symbolChildIndex];
+                      }
+                      // todo check whether to supply symbolLayer, just use objectID?
                       self.getLayer(
                           artboard,
                           tempSymbolLayer,
                           data,
-                          symbolChildren[idx]
+                          symbolLayer
                       );
                     }
                     idx++
