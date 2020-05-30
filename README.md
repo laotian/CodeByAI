@@ -10,9 +10,8 @@ The plug-in is based on [SketchMeasure](https://github.com/utom/sketch-measure),
 2. Open `CodeByAI.sketchplugin`
 
 # Code Export
-1. Copy the artboards to be exported to the newly created document, because the plug-in may slightly modify the source file during the export process.  
-2. Select the artboards in the new document (multiple selections are supported), execute the menu Plug-in / CodeByAI / Export Code and Specification
-3. Select the screen resolution as the standard resolution in the pop-up settings panel. Check the "Export Code" on the export panel.  
+1. Select artboards (multiple selections are supported), execute the menu Plug-in / CodeByAI / Export Code and Specification
+2. Select the screen resolution as the standard resolution in the pop-up settings panel. Check the "Export Code" on the export panel.  
 
 
 # Code View
