@@ -3285,7 +3285,6 @@ SM.extend({
         var isInSliceRegion = false;
         var layerRight = layerRectTemp.x + layerRectTemp.width;
         var layerBottom = layerRectTemp.y + layerRectTemp.height;
-        console.log("parentName:",group.name()+",parentCount:"+group.children().count());
         while(!isInSliceRegion && !this.is(tempGroup, MSPage) && !this.is(layer, MSSliceLayer)) {
             var groupLayers = tempGroup.children().objectEnumerator();
             var groupLayer;
@@ -3323,6 +3322,12 @@ SM.extend({
 
 
         let layerShapeType = "";
+        var layerIsMask = layer.hasClippingMask();
+        if(layerIsMask && group && group.children().count()==2){
+            //layer parent only contains mask layer, mask layer is valid!
+            layerIsMask = false;
+        }
+
         if(this.is(layer, MSShapeGroup) ||
             this.is(layer, MSShapePathLayer) ||
             this.is(layer, MSTriangleShape) ||
@@ -3335,9 +3340,9 @@ SM.extend({
                 size.setName("");
                 size.setScale(1);
             }
-        } else if(this.is(layer, MSRectangleShape) && !layer.hasClippingMask()){
+        } else if(this.is(layer, MSRectangleShape) && !layerIsMask){
             layerShapeType = "rectangle";
-        }else if(this.is(layer, MSOvalShape) && !layer.hasClippingMask()){
+        }else if(this.is(layer, MSOvalShape) && !layerIsMask){
             layerShapeType = "oval";
         }else if(this.is(layer, MSLayerGroup) && /GROUP\#/.exec(layer.name())){
             layerShapeType = "group";
@@ -3352,7 +3357,6 @@ SM.extend({
                 size.setScale(1);
             }
         }
-
 
         var layerType = this.is(layer, MSTextLayer) ? "text" :
                this.is(layer, MSSymbolInstance) ? "symbol" :
