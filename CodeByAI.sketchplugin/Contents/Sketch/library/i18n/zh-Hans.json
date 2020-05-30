@@ -109,5 +109,6 @@
     "RN" : "RN",
     "android" : "Android",
     "Code type not valid, export code with this type first": "代码类型无效，请先导出此种类型代码",
-    "Generate code failed!": "代码导出失败!"
+    "Generate code failed!": "代码导出失败!",
+    "Error occur when processing %@ - %@ , error: %@":"当处理 %@ - %@ 时发生错误 %@"
 };

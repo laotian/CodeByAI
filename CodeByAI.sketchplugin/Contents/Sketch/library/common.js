@@ -223,6 +223,12 @@ SM.extend({
         var container = layer.parentGroup();
         if (container) container.removeLayer(layer);
     },
+    removeCurrentExportAboard: function(){
+        if(this.currentExportAboard) {
+            this.removeLayer(this.currentExportAboard);
+            this.currentExportAboard = undefined;
+        }
+    },
     getRect: function(layer){
      var rect = layer.absoluteRect();
         return {
@@ -3039,6 +3045,8 @@ SM.extend({
                 self.sliceCache = {};
                 self.maskCache = [];
                 self.wantsStop = false;
+                self.currentExportAboard = undefined;
+                // var removeCurrentExportAboard = self.removeCurrentExportAboard.bind(self);
 
                 coscript.scheduleWithRepeatingInterval_jsFunction( 0, function( interval ){
                     // self.message('Processing layer ' + idx + ' of ' + self.allCount);
@@ -3054,7 +3062,10 @@ SM.extend({
 
                     if(!exporting) {
                         exporting = true;
-                        var artboard = self.selectionArtboards[artboardIndex],
+                        if(!self.currentExportAboard){
+                            self.currentExportAboard = self.selectionArtboards[artboardIndex].duplicate();
+                        }
+                        var artboard = self.currentExportAboard,
                             page = artboard.parentGroup(),
                             layer = artboard.children()[layerIndex],
                             message = page.name() + ' - ' + artboard.name() + ' - ' + layer.name();
@@ -3072,8 +3083,12 @@ SM.extend({
                         } catch (e) {
                           self.wantsStop = true;
                           log(e)
-                          processing.evaluateWebScript("$('#processing-text').html('<small>" + self.toHTMLEncode(message) + "</small>');");
-                          if(ga) ga.sendError(message)
+                          processing.evaluateWebScript("processing('100%', '')");
+                          self.removeCurrentExportAboard();
+                          var dialog = NSAlert.alloc().init()
+                          dialog.setMessageText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
+                          dialog.runModal();
+                          // if(ga) ga.sendError(message)
                         }
 
                         if( layerIndex >= artboard.children().length ){
@@ -3138,6 +3153,7 @@ SM.extend({
 
                             layerIndex = 0;
                             artboardIndex++;
+                            self.removeCurrentExportAboard();
                         }
 
                         if(artboardIndex >= self.selectionArtboards.length && layerCount >= self.allCount){
@@ -3178,7 +3194,8 @@ SM.extend({
                     }
 
                     if( self.wantsStop === true ){
-                        if(ga) ga.sendEvent('spec', 'spec done');
+                        self.removeCurrentExportAboard();
+                                       // if(ga) ga.sendEvent('spec', 'spec done');
                         return interval.cancel();
                     }
 
