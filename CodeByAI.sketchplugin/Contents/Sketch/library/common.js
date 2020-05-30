@@ -3328,13 +3328,15 @@ SM.extend({
             layerIsMask = false;
         }
 
+        var hasOutShadow = (layer.style && layer.style().shadows().count()>0);
+
         if(this.is(layer, MSShapeGroup) ||
             this.is(layer, MSShapePathLayer) ||
             this.is(layer, MSTriangleShape) ||
             this.is(layer, MSStarShape) ||
             this.is(layer, MSPolygonShape) ||
             this.is(layer, MSBitmapLayer) ||
-            (layer.style && layer.style().shadows().count()>0)){
+            hasOutShadow ){
                 layerShapeType = "image";
                 if(!this.hasExportSizes(layer)){
                     var size = layer.exportOptions().addExportFormat();
@@ -3393,7 +3395,7 @@ SM.extend({
         }
 
         var exportLayerRect;
-        if(this.configs.exportInfluenceRect == true && layerType != "text"){
+        if(hasOutShadow || (this.configs.exportInfluenceRect == true && layerType != "text")){
             // export the influence rect.(include the area of shadows and outside borders...)
             var influenceCGRect = layer.absoluteInfluenceRect();
             exportLayerRect = {
@@ -3410,7 +3412,7 @@ SM.extend({
 
         var rect;
         //The picture in the control is the smallest size when exported
-        if(layerShapeType == "image"){
+        if(layerShapeType == "image" && !hasOutShadow){
             var slice = MSSliceLayer.sliceLayerFromLayer(layer);
             rect = this.rectToJSON(slice.absoluteRect(), artboardRect);
             this.removeLayer(slice)
