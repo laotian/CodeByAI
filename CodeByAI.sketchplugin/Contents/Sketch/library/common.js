@@ -223,6 +223,12 @@ SM.extend({
         var container = layer.parentGroup();
         if (container) container.removeLayer(layer);
     },
+    removeCurrentExportAboard: function(){
+        if(this.currentExportAboard) {
+            this.removeLayer(this.currentExportAboard);
+            this.currentExportAboard = undefined;
+        }
+    },
     getRect: function(layer){
      var rect = layer.absoluteRect();
         return {
@@ -2685,6 +2691,7 @@ SM.extend({
                     tempGroup.resizeToFitChildrenWithOption(0)
                 }
 
+
                 var tempSymbolLayers = tempGroup.children().objectEnumerator(),
                     overrides = layer.overrides(),
                     idx = 0;
@@ -2709,11 +2716,21 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
+                      let symbolChildIndex =  idx;
+                      // symbol has background, if detached,add a child rect, so count+1,
+                      if(tempGroup.children().count()==symbolChildren.count()+1){
+                          symbolChildIndex--;
+                      }
+                      var symbolLayer = undefined;
+                      if(symbolChildIndex>=0 && symbolChildIndex< symbolChildren.count()){
+                          symbolLayer = symbolChildren[symbolChildIndex];
+                      }
+                      // todo check whether to supply symbolLayer, just use objectID?
                       self.getLayer(
                           artboard,
                           tempSymbolLayer,
                           data,
-                          symbolChildren[idx]
+                          symbolLayer
                       );
                     }
                     idx++
@@ -3028,6 +3045,8 @@ SM.extend({
                 self.sliceCache = {};
                 self.maskCache = [];
                 self.wantsStop = false;
+                self.currentExportAboard = undefined;
+                // var removeCurrentExportAboard = self.removeCurrentExportAboard.bind(self);
 
                 coscript.scheduleWithRepeatingInterval_jsFunction( 0, function( interval ){
                     // self.message('Processing layer ' + idx + ' of ' + self.allCount);
@@ -3043,7 +3062,10 @@ SM.extend({
 
                     if(!exporting) {
                         exporting = true;
-                        var artboard = self.selectionArtboards[artboardIndex],
+                        if(!self.currentExportAboard){
+                            self.currentExportAboard = self.selectionArtboards[artboardIndex].duplicate();
+                        }
+                        var artboard = self.currentExportAboard,
                             page = artboard.parentGroup(),
                             layer = artboard.children()[layerIndex],
                             message = page.name() + ' - ' + artboard.name() + ' - ' + layer.name();
@@ -3061,8 +3083,12 @@ SM.extend({
                         } catch (e) {
                           self.wantsStop = true;
                           log(e)
-                          processing.evaluateWebScript("$('#processing-text').html('<small>" + self.toHTMLEncode(message) + "</small>');");
-                          if(ga) ga.sendError(message)
+                          processing.evaluateWebScript("processing('100%', '')");
+                          self.removeCurrentExportAboard();
+                          var dialog = NSAlert.alloc().init()
+                          dialog.setMessageText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
+                          dialog.runModal();
+                          // if(ga) ga.sendError(message)
                         }
 
                         if( layerIndex >= artboard.children().length ){
@@ -3127,6 +3153,7 @@ SM.extend({
 
                             layerIndex = 0;
                             artboardIndex++;
+                            self.removeCurrentExportAboard();
                         }
 
                         if(artboardIndex >= self.selectionArtboards.length && layerCount >= self.allCount){
@@ -3167,7 +3194,8 @@ SM.extend({
                     }
 
                     if( self.wantsStop === true ){
-                        if(ga) ga.sendEvent('spec', 'spec done');
+                        self.removeCurrentExportAboard();
+                                       // if(ga) ga.sendEvent('spec', 'spec done');
                         return interval.cancel();
                     }
 
@@ -3277,7 +3305,12 @@ SM.extend({
         while(!isInSliceRegion && !this.is(tempGroup, MSPage) && !this.is(layer, MSSliceLayer)) {
             var groupLayers = tempGroup.children().objectEnumerator();
             var groupLayer;
+            var tempGroupRect = this.rectToJSON(tempGroup.absoluteRect(),artboardRect);
             while (groupLayer = groupLayers.nextObject()) {
+                //only process son, not grandSon
+                if(groupLayer.parentGroup().objectID()!=tempGroup.objectID()){
+                    continue;
+                }
                 if (groupLayer!=layer && this.is(groupLayer, MSSliceLayer)) {
                     var groupLayerRect = this.rectToJSON(groupLayer.absoluteRect(),artboardRect);
                     var groupLayerRight = groupLayerRect.x+groupLayerRect.width;
@@ -3287,6 +3320,11 @@ SM.extend({
                         && layerRight <= groupLayerRight
                         && layerBottom <= groupLayerBottom
                     ){
+                        isInSliceRegion = true;
+                        break;
+                    }
+                    //whole group slice
+                    if(tempGroupRect.width==groupLayerRect.width && tempGroupRect.height == groupLayerRect.height){
                         isInSliceRegion = true;
                         break;
                     }
@@ -3301,21 +3339,30 @@ SM.extend({
 
 
         let layerShapeType = "";
+        var layerIsMask = layer.hasClippingMask();
+        if(layerIsMask && group && group.children().count()==2){
+            //layer parent only contains mask layer, mask layer is valid!
+            layerIsMask = false;
+        }
+
+        var hasOutShadow = (layer.style && layer.style().shadows().count()>0);
+
         if(this.is(layer, MSShapeGroup) ||
             this.is(layer, MSShapePathLayer) ||
             this.is(layer, MSTriangleShape) ||
             this.is(layer, MSStarShape) ||
             this.is(layer, MSPolygonShape) ||
-            this.is(layer, MSBitmapLayer)){
-            layerShapeType = "image";
-            if(!this.hasExportSizes(layer)){
-                var size = layer.exportOptions().addExportFormat();
-                size.setName("");
-                size.setScale(1);
-            }
-        } else if(this.is(layer, MSRectangleShape) && !layer.hasClippingMask()){
+            this.is(layer, MSBitmapLayer) ||
+            hasOutShadow ){
+                layerShapeType = "image";
+                if(!this.hasExportSizes(layer)){
+                    var size = layer.exportOptions().addExportFormat();
+                    size.setName("");
+                    size.setScale(1);
+                }
+        } else if(this.is(layer, MSRectangleShape) && !layerIsMask){
             layerShapeType = "rectangle";
-        }else if(this.is(layer, MSOvalShape) && !layer.hasClippingMask()){
+        }else if(this.is(layer, MSOvalShape) && !layerIsMask){
             layerShapeType = "oval";
         }else if(this.is(layer, MSLayerGroup) && /GROUP\#/.exec(layer.name())){
             layerShapeType = "group";
@@ -3330,7 +3377,6 @@ SM.extend({
                 size.setScale(1);
             }
         }
-
 
         var layerType = this.is(layer, MSTextLayer) ? "text" :
                this.is(layer, MSSymbolInstance) ? "symbol" :
@@ -3366,7 +3412,7 @@ SM.extend({
         }
 
         var exportLayerRect;
-        if(this.configs.exportInfluenceRect == true && layerType != "text"){
+        if(hasOutShadow || (this.configs.exportInfluenceRect == true && layerType != "text")){
             // export the influence rect.(include the area of shadows and outside borders...)
             var influenceCGRect = layer.absoluteInfluenceRect();
             exportLayerRect = {
@@ -3383,7 +3429,7 @@ SM.extend({
 
         var rect;
         //The picture in the control is the smallest size when exported
-        if(layerShapeType == "image"){
+        if(layerShapeType == "image" && !hasOutShadow){
             var slice = MSSliceLayer.sliceLayerFromLayer(layer);
             rect = this.rectToJSON(slice.absoluteRect(), artboardRect);
             this.removeLayer(slice)
