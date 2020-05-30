@@ -3333,13 +3333,14 @@ SM.extend({
             this.is(layer, MSTriangleShape) ||
             this.is(layer, MSStarShape) ||
             this.is(layer, MSPolygonShape) ||
-            this.is(layer, MSBitmapLayer)){
-            layerShapeType = "image";
-            if(!this.hasExportSizes(layer)){
-                var size = layer.exportOptions().addExportFormat();
-                size.setName("");
-                size.setScale(1);
-            }
+            this.is(layer, MSBitmapLayer) ||
+            (layer.style && layer.style().shadows().count()>0)){
+                layerShapeType = "image";
+                if(!this.hasExportSizes(layer)){
+                    var size = layer.exportOptions().addExportFormat();
+                    size.setName("");
+                    size.setScale(1);
+                }
         } else if(this.is(layer, MSRectangleShape) && !layerIsMask){
             layerShapeType = "rectangle";
         }else if(this.is(layer, MSOvalShape) && !layerIsMask){
