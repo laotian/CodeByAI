@@ -3412,7 +3412,7 @@ SM.extend({
         }
 
         var exportLayerRect;
-        if(hasOutShadow || (this.configs.exportInfluenceRect == true && layerType != "text")){
+        if(this.configs.exportInfluenceRect == true && layerType != "text"){
             // export the influence rect.(include the area of shadows and outside borders...)
             var influenceCGRect = layer.absoluteInfluenceRect();
             exportLayerRect = {
@@ -3429,7 +3429,7 @@ SM.extend({
 
         var rect;
         //The picture in the control is the smallest size when exported
-        if(layerShapeType == "image" && !hasOutShadow){
+        if(layerType == "slice" && !this.is(layer, MSSliceLayer)){
             var slice = MSSliceLayer.sliceLayerFromLayer(layer);
             rect = this.rectToJSON(slice.absoluteRect(), artboardRect);
             this.removeLayer(slice)
