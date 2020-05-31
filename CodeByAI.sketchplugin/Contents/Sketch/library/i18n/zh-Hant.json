@@ -99,11 +99,11 @@
     "View codes": "查看代碼",
     "View source code": "查看代碼文件",
     "View App snapshot": "查看APP運行截圖",
-    "Code type" : "代码类型",
-    "Code hidden": "不显示代码",
+    "Code type" : "程式碼類型",
+    "Code hidden": "不顯示程式碼",
     "RN" : "RN",
     "android" : "Android",
-    "Code type not valid, export code with this type first": "代码类型无效，请先导出此种类型代码",
-    "Generate code failed!": "代码导出失败!",
-    "Error occur when processing %@ - %@ , error: %@":"当处理 %@ - %@ 时发生错误 %@"
+    "Code type not valid, export code with this type first": "程式碼類型無效，請先匯出此種類型程式碼",
+    "Generate code failed!": "程式碼匯出失敗!",
+    "Error occur when processing %@ - %@ , error: %@":"當處理 %@ - %@ 時發生錯誤 %@"
 };
