@@ -5,6 +5,10 @@ The generated code style is close to the developer's handwritten code and suppor
 You can easily select part of the code or the entire page to the project, greatly improving the efficiency of page development.  
 The plug-in is based on [SketchMeasure](https://github.com/utom/sketch-measure), designer can maintain your usage habits.
 
+# 中文文档
+- [CodeByAI](https://github.com/laotian/CodeByAI/wiki/CodeByAI中文使用文档)
+- [SketchMeasure](https://oursketch.com/plugin/sketch-measure)
+
 # Download
 1. [Download](https://github.com/laotian/CodeByAI/archive/master.zip) the plugin and unzip.
 2. Open `CodeByAI.sketchplugin`
@@ -33,7 +37,3 @@ The complete page code and resources are located in the "CodeByAI" folder.
 # Feedback
 - [ISSUE](https://github.com/laotian/CodeByAI/issues/new)
 - Email: tianlupan@126.com
-
-# Links
-- [CodeByAI中文说明](https://github.com/laotian/CodeByAI/wiki/CodeByAI中文使用文档)
-- [SketchMeasure中文说明](https://oursketch.com/plugin/sketch-measure)
