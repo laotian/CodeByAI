@@ -182,7 +182,7 @@
     "appcast": "https://service.codebyai.com/appcast.xml",
     "homepage": "https://github.com/laotian/CodeByAI",
     "version": "1.1.0",
-    "description" : "Export spec and handwritten codes from sketch",
+    "description" : "從設計稿匯出前端規範與程式碼",
     "authorEmail" : "tianlupan@126.com",
     "name" : "CodeByAI"
 }
