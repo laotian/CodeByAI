@@ -179,9 +179,9 @@
         "title" : "CodeByAI"
     },
     "identifier": "com.codebyai",
-    "appcast": "https://raw.githubusercontent.com/laotian/CodeByAI/master/appcast.xml",
+    "appcast": "https://service.codebyai.com/appcast.xml",
     "homepage": "https://github.com/laotian/CodeByAI",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description" : "Export spec and handwritten codes from sketch",
     "authorEmail" : "tianlupan@126.com",
     "name" : "CodeByAI"
