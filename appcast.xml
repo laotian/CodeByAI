@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <channel>
-    <title>CodeByAI</title>
-    <link>https://raw.githubusercontent.com/laotian/CodeByAI/master/appcast.xml</link>
-    <description>Export spec and handwritten codes from sketch</description>
-    <language>en</language>
+	<channel>
+		<title>CodeByAI</title>
+		<link>https://service.codebyai.com/appcast.xml</link>
+		<description>Export spec and handwritten codes from sketch</description>
+		<language>en</language>
 		<item>
-			<title>Version 1.0.2</title>
+			<title>Version 1.1.0</title>
 			<description>
 				<![CDATA[
 					<ul>
-						<li>Support Sketch v52</li>
+						<li>支持插件更新提示</li>
 					</ul>
 				]]>
 			</description>
-			<enclosure url="https://github.com/laotian/CodeByAI/archive/master.zip" sparkle:version="1.0.2" type="application/octet-stream" />
+			<enclosure url="https://github.com/laotian/CodeByAI/archive/master.zip" sparkle:version="1.1.0" type="application/octet-stream" />
 		</item>
-  </channel>
+	</channel>
 </rss>
