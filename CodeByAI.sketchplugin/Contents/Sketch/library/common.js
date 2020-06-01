@@ -2995,7 +2995,9 @@ SM.extend({
                     self.message(_("Export complete!"));
                 }else{
                     console.log("CodeByAI dir not found, export failed!")
-                    self.message(_("Generate code failed!"));
+                    var dialog = NSAlert.alloc().init()
+                    dialog.setInformativeText(_("Generate code failed!"));
+                    dialog.runModal();
                 }
                 // this.message(_("Export complete!"));
                 return interval.cancel();
@@ -3086,7 +3088,7 @@ SM.extend({
                           processing.evaluateWebScript("processing('100%', '')");
                           self.removeCurrentExportAboard();
                           var dialog = NSAlert.alloc().init()
-                          dialog.setMessageText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
+                          dialog.setInformativeText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
                           dialog.runModal();
                           // if(ga) ga.sendError(message)
                         }
@@ -3447,6 +3449,10 @@ SM.extend({
                     name: this.toHTMLEncode(this.emojiToEntities(layer.name())),
                     rect: rect ? rect : this.rectToJSON(exportLayerRect, artboardRect)
                 };
+
+        if(layerData.rect.width<=0 || layerData.rect.height<=0){
+            return this;
+        }
 
 
         if(layerShapeType) {
