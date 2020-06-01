@@ -2978,14 +2978,14 @@ SM.extend({
         task.launch();
         const startPercentage = 80;
         const startTime = new Date().getTime();
-        const PER_ART_BOARD_PROCESS_SECONDS = 5;
+        const PER_ART_BOARD_PROCESS_SECONDS = 3;
         const totalTime = artBoardCount*PER_ART_BOARD_PROCESS_SECONDS*1000;
         let percentage = startPercentage;
         let lastPercentage = -1;
         processing.evaluateWebScript("processing('" + percentage + "%', '" + _("Generating Codes... %@%", [percentage]) + "')");
         coscript.scheduleWithRepeatingInterval_jsFunction(1, function( interval ){
             const elapseMS = (new Date().getTime() - startTime);
-            percentage = Math.min(99, parseInt( startPercentage + (100 * (elapseMS/totalTime))));
+            percentage = Math.min(99, parseInt( startPercentage + ((100-startPercentage) * (elapseMS/totalTime))));
             if(!task.isRunning()) {
                 // task.waitUntilExit();
                 processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
@@ -3303,6 +3303,11 @@ SM.extend({
         var layerRight = layerRectTemp.x + layerRectTemp.width;
         var layerBottom = layerRectTemp.y + layerRectTemp.height;
         while(!isInSliceRegion && !this.is(tempGroup, MSPage) && !this.is(layer, MSSliceLayer)) {
+            // if group has export sizes, ignore
+            if (this.isSliceGroup(tempGroup)) {
+                isInSliceRegion = true;
+                break;
+            }
             var groupLayers = tempGroup.children().objectEnumerator();
             var groupLayer;
             var tempGroupRect = this.rectToJSON(tempGroup.absoluteRect(),artboardRect);
