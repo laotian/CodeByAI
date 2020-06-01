@@ -2986,7 +2986,7 @@ SM.extend({
         coscript.scheduleWithRepeatingInterval_jsFunction(1, function( interval ){
             const elapseMS = (new Date().getTime() - startTime);
             percentage = Math.min(99, parseInt( startPercentage + (100 * (elapseMS/totalTime))));
-            if(!task.running) {
+            if(!task.isRunning()) {
                 // task.waitUntilExit();
                 processing.evaluateWebScript("processing('100%', '" + _("Generating Codes...") + "')");
                 const CodeByAI_DIR = exportDir + "/CodeByAI";
