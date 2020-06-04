@@ -3399,22 +3399,29 @@ SM.extend({
         if(layerType=="text" && layer.replaceMissingFontsIfNecessary){
             layer.replaceMissingFontsIfNecessary();
             var oldBehaviour = layer.textBehaviour();
-            if(oldBehaviour!=0){
-                var oldFrame = layer.frame();
+            //2: fixed size
+            if(oldBehaviour==2){
+                layer.setTextBehaviour(1);
+                //1: auto height
+                oldBehaviour = 1;
+            }
+            var lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
+            let isSingleLine = (layer.frame().rect().size.height<lineHeight*2);
+            // 0: auto width
+            if(oldBehaviour!=0 && (layer.stringValue().includes("\n") || isSingleLine)){
+                var duplicateText = layer.duplicate();
+                var oldFrame = duplicateText.frame();
                 var oldRect = oldFrame.rect();
-                layer.setTextBehaviour(0);
-                var currentRect = layer.frame().rect();
-                //If after the automatic width, and long, need to restore
-                if(currentRect.size.width>oldRect.size.width){
-                    layer.setTextBehaviour(oldBehaviour);
-                    layer.setFrame(MSRect.rectWithRect(oldRect));
-                }else{
+                duplicateText.setTextBehaviour(0);
+                var currentRect = duplicateText.frame().rect();
+                if(currentRect.size.width<=oldRect.size.width){
+                    layer.setTextBehaviour(0);
                     //If there is only one line, change the alignment
-                    var lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
-                    if(currentRect.size.height<lineHeight*2){
+                    if(isSingleLine){
                         layer.setTextAlignment(0);
                     }
                 }
+                this.removeLayer(duplicateText);
             }
         }
 
