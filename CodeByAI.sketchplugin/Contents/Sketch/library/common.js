@@ -3405,8 +3405,20 @@ SM.extend({
                 //1: auto height
                 oldBehaviour = 1;
             }
-            var lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
+            let defaultLineHeight = layer.font().defaultLineHeightForFont();
+            var lineHeight = layer.lineHeight() || defaultLineHeight;
             let isSingleLine = (layer.frame().rect().size.height<lineHeight*2);
+            if(isSingleLine && layer.lineHeight && layer.lineHeight!=defaultLineHeight) {
+                const oldRect = this.getRect(layer);
+                const oldHeight = oldRect.height;
+                const oldY = oldRect.y;
+                layer.setLineHeight(defaultLineHeight);
+                const rect = this.getRect(layer);
+                const currentHeight = rect.height;
+                const offset = parseInt(((currentHeight - oldHeight) / 2).toFixed(0));
+                rect.setY(oldY - offset);
+                layer.finishEditing();
+            }
             // 0: auto width
             if(oldBehaviour!=0 && (layer.stringValue().includes("\n") || isSingleLine)){
                 var duplicateText = layer.duplicate();
