@@ -3408,7 +3408,7 @@ SM.extend({
             let defaultLineHeight = layer.font().defaultLineHeightForFont();
             var lineHeight = layer.lineHeight() || defaultLineHeight;
             let isSingleLine = (layer.frame().rect().size.height<lineHeight*2);
-            if(isSingleLine && layer.lineHeight && layer.lineHeight!=defaultLineHeight) {
+            if(isSingleLine && layer.lineHeight && layer.lineHeight!=defaultLineHeight && defaultLineHeight<=this.getRect(layer.parentGroup()).height) {
                 const oldRect = this.getRect(layer);
                 const oldHeight = oldRect.height;
                 const oldY = oldRect.y;
