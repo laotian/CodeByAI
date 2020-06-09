@@ -1005,9 +1005,7 @@ var I18N = {},
             }
         },
         inspector: function(){
-          console.log("inspector, selectedIndex:",this.selectedIndex);
             if(!this.selectedIndex || (!this.current && !this.current.layers && !this.current.layers[this.selectedIndex])) return false;
-          console.log("inspector, selectedIndex:",this.selectedIndex,"----line2--");
             var self = this,
                 layerData = this.current.layers[this.selectedIndex],
                 html = [];
@@ -1272,6 +1270,15 @@ var I18N = {},
               let match = codes[i].match(/styles.([a-zA-Z0-9_]+)/);
               if(match){
                 selectStyles.push(match[1]);
+              }
+              //vue
+              match = codes[i].match(/class='(.+)'/);
+              if(match){
+                match[1].split(" ").filter(function(item){
+                  return !item.startsWith("react-") && !item.startsWith("vue-");
+                }).forEach(function(item){
+                  selectStyles.push(item);
+                });
               }
               match = codes[i].match(/source=\{([a-zA-Z0-9_]+)\}/);
               if(match){
