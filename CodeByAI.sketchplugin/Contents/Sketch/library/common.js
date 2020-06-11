@@ -3128,7 +3128,7 @@ SM.extend({
                                 var newData =  JSON.parse(JSON.stringify(data));
                                 newData.artboards = [data.artboards[artboardIndex]];
                                 self.writeFile({
-                                        content: self.template(template, {lang: language, data: JSON.stringify(newData)}),
+                                        content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(newData)}),
                                         path: self.toJSString(savePath),
                                         fileName: slug + ".html"
                                     });
@@ -3176,7 +3176,7 @@ SM.extend({
                             });
                             if(self.configs.exportOption){
                                 self.writeFile({
-                                        content: self.template(template, {lang: language, data: JSON.stringify(data)}),
+                                        content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(data)}),
                                         path: self.toJSString(savePath),
                                         fileName: "index.html"
                                     });
