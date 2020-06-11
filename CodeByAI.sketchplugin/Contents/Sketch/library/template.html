@@ -1598,14 +1598,17 @@ var I18N = {},
                                   self.selectRegionData.maxY = event.clientY;
                                   self.selectRegionData.width = Math.abs(self.selectRegionData.maxX - self.selectRegionData.x);
                                   self.selectRegionData.height = Math.abs(self.selectRegionData.maxY - self.selectRegionData.y);
-                                  $('#select-region').css({
-                                    left: Math.min(self.selectRegionData.x,self.selectRegionData.maxX),
-                                    top: Math.min(self.selectRegionData.y,self.selectRegionData.maxY),
-                                    width: self.selectRegionData.width,
-                                    height: self.selectRegionData.height,
-                                  });
-                                  $('#select-region').show();
-                                  event.preventDefault();
+                                  //for magic mouse; magic mouse will trigger mouse move event when mouse down
+                                  if(self.selectRegionData.width * self.selectRegionData.height>30) {
+                                    $('#select-region').css({
+                                      left: Math.min(self.selectRegionData.x, self.selectRegionData.maxX),
+                                      top: Math.min(self.selectRegionData.y, self.selectRegionData.maxY),
+                                      width: self.selectRegionData.width,
+                                      height: self.selectRegionData.height,
+                                    });
+                                    $('#select-region').show();
+                                    event.preventDefault();
+                                  }
                                 }else if($(event.target).hasClass('layer')){
                                     self.targetIndex = self.getIndex(event.target);
                                     self.tempTargetRect = undefined;

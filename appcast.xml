@@ -6,15 +6,15 @@
 		<description>Export spec and handwritten codes from sketch</description>
 		<language>en</language>
 		<item>
-			<title>Version 1.2.0</title>
+			<title>Version 1.2.1</title>
 			<description>
 				<![CDATA[
 					<ul>
-						<li>支持VUE/REACT</li>
+						<li>support magic mouse select</li>
 					</ul>
 				]]>
 			</description>
-			<enclosure url="https://github.com/laotian/CodeByAI/archive/master.zip" sparkle:version="1.2.0" type="application/octet-stream" />
+			<enclosure url="https://github.com/laotian/CodeByAI/archive/master.zip" sparkle:version="1.2.1" type="application/octet-stream" />
 		</item>
 	</channel>
 </rss>
