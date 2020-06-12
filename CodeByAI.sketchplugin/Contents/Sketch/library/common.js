@@ -3278,7 +3278,7 @@ SM.extend({
         if (
             !this.isExportable(layer) ||
             !layerStates.isVisible ||
-            ( layerStates.isLocked && !this.is(layer, MSSliceLayer) ) ||
+            // ( layerStates.isLocked && !this.is(layer, MSSliceLayer) ) ||
             layerStates.isEmpty ||
             layerStates.hasSlice ||
             layerStates.isMeasure ||
