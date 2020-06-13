@@ -151,29 +151,20 @@
         "shortcut" : "",
         "items" : [
             "commandToolbar",
-            "commandToolbar2",
-            "-",
-            "commandOverlays",
-            "commandSizes",
-            "commandSpacings",
-            "commandProperties",
-            "commandNote",
             "-",
             "commandExportable",
-            "commandColor",
             "commandExport",
             "-",
             "commandHidden",
             "commandLocked",
-            "commandClear",
             "-",
             "commandSettings",
             {
-              "title": "幫助",
-              "items": [
-                "linkZhCNHelp",
-                "linkFeedback"
-              ]
+                "title": "幫助",
+                "items": [
+                    "linkHelp",
+                    "linkFeedback"
+                ]
             }
         ],
         "title" : "CodeByAI"
@@ -181,7 +172,7 @@
     "identifier": "com.codebyai",
     "appcast": "https://service.codebyai.com/appcast.xml",
     "homepage": "https://github.com/laotian/CodeByAI",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "description" : "從設計稿匯出前端規範與程式碼",
     "authorEmail" : "tianlupan@126.com",
     "name" : "CodeByAI"

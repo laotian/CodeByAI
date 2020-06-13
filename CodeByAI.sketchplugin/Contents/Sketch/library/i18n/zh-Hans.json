@@ -113,5 +113,6 @@
     "Error occur when processing %@ - %@ , error: %@":"当处理 %@ - %@ 时发生错误 %@",
     "Import": "导入",
     "Code": "代码",
-    "Style": "样式"
+    "Style": "样式",
+    "export 3x pic": "导出3x图"
 };
