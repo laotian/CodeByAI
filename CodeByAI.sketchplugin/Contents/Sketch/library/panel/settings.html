@@ -14,6 +14,7 @@
     <!--
     const codeTypes = ["RN","React","Vue","Android"];
     let export3xIdName = "export-3x";
+    let webScale;
     var getDesignResolutionID = function(scale, unit){
             var scale = scale || 1,
                 unit = unit || 'px';
@@ -56,6 +57,8 @@
           }else{
             data.export3x = false;
           }
+          data.scale = webScale;
+          data.unit = "rem";
           SMAction('submit', data);
             // console.log(window.location.hash)
         },
@@ -67,25 +70,73 @@
                 '<h3>' + _('Code type') + '</h3>',
           ];
 
-          const codeTypesHtml = codeTypes.map(function (type) {
-            const idName = "export-" + type;
-            return [
+          // const codeTypesHtml = codeTypes.map(function (type) {
+          //   const idName = "export-" + type;
+          //   return [
+          //     '<div class="item" style="margin-top:10px;">',
+          //       '<label>',
+          //         '<div class="checkbox">',
+          //           '<input id="' + idName + '" type="checkbox" name="' + idName + '" value="0">',
+          //           '<label for="' + idName + '"></label>',
+          //         '</div>',
+          //         _(type),
+          //       '</label>',
+          //     '</div>'
+          //   ];
+          // }).reduce(function (p,c) {
+          //   return p.concat(c);
+          // },[]);
+
+
+          const codeTypesHtml =  [
               '<div class="item" style="margin-top:10px;">',
                 '<label>',
                   '<div class="checkbox">',
-                    '<input id="' + idName + '" type="checkbox" name="' + idName + '" value="0">',
-                    '<label for="' + idName + '"></label>',
+                    '<input id="export-RN" type="checkbox" name="export-RN" value="0">',
+                    '<label for="export-RN"></label>',
                   '</div>',
-                  _(type),
+                  'RN&nbsp;',
+                '</label>',
+                '<label style="margin-left: 40px;">',
+                  '<div class="checkbox">',
+                    '<input id="export-React" type="checkbox" name="export-React" value="0">',
+                    '<label for="export-React"></label>',
+                  '</div>',
+                  _('React'),
+                '</label>',
+              '</div>',
+              '<div class="item" style="margin-top:14px;">',
+                '<label>',
+                  '<div class="checkbox">',
+                    '<input id="export-Vue" type="checkbox" name="export-Vue" value="0">',
+                    '<label for="export-Vue"></label>',
+                  '</div>',
+                  _('Vue'),
+                '</label>',
+                '<label style="margin-left: 40px;">',
+                  '<div class="checkbox">',
+                    '<input id="export-Android" type="checkbox" name="export-Android" value="0">',
+                    '<label for="export-Android"></label>',
+                  '</div>',
+                  _('Android'),
                 '</label>',
               '</div>'
             ];
-          }).reduce(function (p,c) {
-            return p.concat(c);
-          },[]);
 
 
           const bottomHtml = [
+                '<div class="resolution selectbox mrb16" style="margin-top: 20px;" tabindex="0">',
+                  '<div class="selectwrap">',
+                    '<h3>' + _('Design resolution') + '</h3>',
+                    '<p></p>',
+                    '<ul>',
+                      '<li class="sub-title">' + _('Web View') + '</li>',
+                      '<li><label id="rem-12"><input type="radio" name="resolution-type" value="rem-12"><span>' + _('CSS Rem') + ' 12px</span></label></li>',
+                      '<li><label id="rem-14"><input type="radio" name="resolution-type" value="rem-14"><span>' + _('CSS Rem') + ' 14px</span></label></li>',
+                      '<li><label id="rem-16"><input type="radio" name="resolution-type" value="rem-16"><span>' + _('CSS Rem') + ' 16px</span></label></li>',
+                    '</ul>',
+                  '</div>',
+                '</div>',
                 '<div class="item" style="margin-top:20px;">',
                   '<label>',
                     '<div class="checkbox">',
@@ -108,9 +159,8 @@
             //["RN","React","Vue","Android"]
 
             var data = $.extend({
-                            // scale: 1,
-                            // unit: 'px',
-                            // colorFormat: 'color-hex',
+                            scale: 14,
+                            unit: 'rem',
                             export3x: false,
                             RN: true,
                             React: true,
@@ -131,7 +181,9 @@
 
 
 
-            //     id = getDesignResolutionID(data.scale, data.unit);
+
+
+               let id = getDesignResolutionID(data.scale, data.unit);
             //  $('.resolution input').change(function(){
             //     var $this = $(this),
             //         id = $this.val(),
@@ -142,7 +194,7 @@
             //     $('input[name=unit]').val(scaleWidthUnit.unit);
             // });
             //
-            // checkResolution(id);
+            checkResolution(id);
             // $('#' + data.colorFormat).click();
             //
             // if(id == 'custom'){
@@ -150,28 +202,30 @@
             //     $('input[name=unit]').val(data.unit);
             // }
 
-            // $('.selectbox').each(function(index){
-            //     var $this = $(this);
-            //
-            //     $this.find('h3').on('click', function(){
-            //         $this.blur();
-            //     });
-            //
-            //     $this.find('input').change(function(){
-            //         var $parent = $this.find('input:checked').parent(),
-            //             text = $parent.find('span').text();
-            //         $this.find('p').html(text);
-            //         $this.blur();
-            //     });
-            //
-            //     var $parentLabel = $this.find('input:checked').parent(),
-            //         $parentLi = $parentLabel.parent(),
-            //         text = $parentLabel.find('span').text();
-            //
-            //     $this.find('ul').scrollTop($parentLi.position().top);
-            //
-            //     $this.find('p').html(text);
-            // });
+
+            $('.selectbox').each(function(index){
+                var $this = $(this);
+
+                $this.find('h3').on('click', function(){
+                    $this.blur();
+                });
+
+                $this.find('input').change(function(){
+                    var $parent = $this.find('input:checked').parent(),
+                        text = $parent.find('span').text();
+                    webScale = Number($this.find('input:checked').val().split("-")[1]);
+                    $this.find('p').html(text);
+                    $this.blur();
+                });
+
+                var $parentLabel = $this.find('input:checked').parent(),
+                    $parentLi = $parentLabel.parent(),
+                    text = $parentLabel.find('span').text();
+
+                $this.find('ul').scrollTop($parentLi.position().top);
+
+                $this.find('p').html(text);
+            });
 
             $('input[name=scale]').keypress(function(event){
                 var eventObj = event || e,

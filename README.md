@@ -15,7 +15,7 @@ The plug-in is based on [SketchMeasure](https://github.com/utom/sketch-measure),
 
 # Code Export
 1. Select artboards (multiple selections are supported), execute the menu Plug-in / CodeByAI / Export Code and Specification
-2. Select the screen resolution as the standard resolution in the pop-up settings panel. Check the "Export Code" on the export panel.  
+2. Select the type of code that needs to be exported; if Vue/React is included, the REM default font size needs to be set; if the client includes iOS, check "Export 3x image".  
 After export, server will generate the code running effect diagram. After about one minute, you can view the code and running effect diagram. 
 
 # Code View

@@ -169,7 +169,7 @@ SM.extend({
 });
 
 SM.extend({
-    prefix: "SMConfigs2",
+    prefix: "SMConfigs3",
     regexNames: /OVERLAY\#|WIDTH\#|HEIGHT\#|TOP\#|RIGHT\#|BOTTOM\#|LEFT\#|VERTICAL\#|HORIZONTAL\#|NOTE\#|PROPERTY\#|LITE\#/,
     colors: {
         overlay: {
@@ -1142,6 +1142,8 @@ SM.extend({
                     React: 1,
                     Vue: 1,
                     Android: 1,
+                    scale: 14,
+                    unit: 'rem',
                 },
                 callback: function( data ){ return data; }
             }),
@@ -1318,15 +1320,21 @@ SM.extend({
             data.React = this.configs.React;
             data.Vue = this.configs.Vue;
             data.Android = this.configs.Android;
+            data.scale = this.configs.remFontSize;
         }
-
+        data.unit = 'rem';
         return this.SMPanel({
             width: 240,
             height: 316,
             data: data,
             callback: function( data ){
-                data.exportCodes = data.RN || data.React || data.Vue || data.Android;
-                self.configs = self.setConfigs(data);
+                const dataResult = Object.assign({},data,{
+                    exportCodes:data.RN || data.React || data.Vue || data.Android,
+                    unit:"px",
+                    scale:1,
+                    remFontSize: data.scale,
+                })
+                self.configs = self.setConfigs(dataResult);
             }
         });
 
@@ -2981,6 +2989,7 @@ SM.extend({
                 }
 
                 self.configs = self.setConfigs({
+                    exportOption: true,
                     // exportOption: data.exportOption,
                     // exportInfluenceRect: data.exportInfluenceRect,
                     // exportCodes: data.exportCodes,
@@ -3056,6 +3065,7 @@ SM.extend({
                     data = {
                         scale: self.configs.scale,
                         unit: self.configs.unit,
+                        remFontSize: self.configs.remFontSize,
                         colorFormat: self.configs.colorFormat,
                         artboards: [],
                         slices: [],
