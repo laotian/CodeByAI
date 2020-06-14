@@ -172,7 +172,7 @@
     "identifier": "com.codebyai",
     "appcast": "https://service.codebyai.com/appcast.xml",
     "homepage": "https://github.com/laotian/CodeByAI",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "description" : "從設計稿匯出前端規範與程式碼",
     "authorEmail" : "tianlupan@126.com",
     "name" : "CodeByAI"

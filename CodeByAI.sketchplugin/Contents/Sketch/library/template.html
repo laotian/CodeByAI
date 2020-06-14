@@ -1148,21 +1148,6 @@ var I18N = {},
                 });
                 html.push(this.propertyType('SHADOWS', shadows.join('')));
             }
-            //  EXPORTABLE
-            if(layerData.exportable && layerData.exportable.length > 0){
-              var expHTML = [],
-                      path = this.codeMode ? '' : 'assets/';
-              expHTML.push('<ul class="exportable">')
-              $.each(layerData.exportable, function(index, exportable) {
-                var filePath = path + exportable.path;
-                expHTML.push(
-                        '<li>',
-                        '<a href="' + filePath + '" data-format="' + exportable.format.toUpperCase() + '"><img src="' + filePath + '" alt="' + exportable.path + '">' + exportable.path.replace('./CodeByAI/android/res/', '').replace('./CodeByAI/rn/images/', '').replace('drawable-', '') + '</a>',
-                        '</li>');
-              });
-              expHTML.push('</ul>')
-              html.push(this.propertyType('EXPORTABLE', expHTML.join('')));
-            }
             // CODE TEMPLATE
             if(layerData.css && layerData.css.length > 0){
                 var tab =  ['<ul class="tab" id="code-tab" >',
@@ -1312,9 +1297,6 @@ var I18N = {},
               '<li>',
               '<a href="'+codeFile+'" target="_blank">'+_('View source code')+'</a><br/>',
               '</li>',
-              '<li>',
-              '<a href="'+imagePath+'" target="_blank">'+_('View App snapshot')+'</a><br/>',
-              '</li>',
               '</ul>'].join('');
 
             var rnCode = [
@@ -1323,7 +1305,6 @@ var I18N = {},
               '</div>'
             ].join('');
 
-            //importLines.join("\n")
 
             var rnSelectCode = [
               '<div id="android-panel" class="code-item item select">',
@@ -1346,6 +1327,23 @@ var I18N = {},
 
             html.push(this.propertyType('CODE TEMPLATE', [exportable, tab,rnCode,rnSelectCode,rnSelectStyle].join(''), true));
           }
+
+          //  EXPORTABLE
+          if(layerData.exportable && layerData.exportable.length > 0){
+            var expHTML = [],
+                    path = this.codeMode ? '' : 'assets/';
+            expHTML.push('<ul class="exportable">')
+            $.each(layerData.exportable, function(index, exportable) {
+              var filePath = path + exportable.path;
+              expHTML.push(
+                      '<li>',
+                      '<a href="' + filePath + '" data-format="' + exportable.format.toUpperCase() + '"><img src="' + filePath + '" alt="' + exportable.path + '">' + exportable.path.replace(/\.\/([a-zA-Z0-9-_]+\/)+/,"") + '</a>',
+                      '</li>');
+            });
+            expHTML.push('</ul>')
+            html.push(this.propertyType('EXPORTABLE', expHTML.join('')));
+          }
+
           self.renderInspector(html);
           if(this.codeMode){
             $('#inspector').find('[data-codeType=android]').trigger('click');
