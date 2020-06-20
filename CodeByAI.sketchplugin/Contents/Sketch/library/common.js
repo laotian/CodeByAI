@@ -2631,6 +2631,20 @@ SM.extend({
 
         return exportable;
     },
+    increaseNo: function(id) {
+        //为重复的id编号尾号+1,如 ab=>ab2, ab3=>ab4
+        if(id==null || id.length==0){
+            throw new Error("id不合法,不能为空");
+        }
+        const match = id.match(/(\d+$)/g);
+        if(match){
+            const no = match[0];
+            const prefix = id.substring(0,id.length-no.length);
+            return prefix + (Number(no) + 1);
+        }else{
+            return id + "2";
+        }
+    },
     getSlice: function(layer, layerData, symbolLayer){
         var objectID = ( layerData.type == "symbol" )? this.toJSString(layer.symbolMaster().objectID()):
                         ( symbolLayer )? this.toJSString(symbolLayer.objectID()):
@@ -2656,42 +2670,19 @@ SM.extend({
                 .createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.assetsPath, true, nil, nil);
 
             //防止因重名导致的覆盖
-            let layerName = sliceLayer.name();
-            let duplicateCount = this.slices.filter(function(slice){
-                return new RegExp(`${layerName}(\d)*`).test(slice.name);
-            }).length;
-            if(duplicateCount){
-                layerName=`${layerName}${Math.max(2,duplicateCount+1)}`;
+            let layerName = sliceLayer.name().trim();
+            //判断targetSrc重复
+            while(this.slices.find(slice=>slice.exportName==layerName)){
+                layerName = this.increaseNo(layerName);
             }
-
-
-
-
-            var slice;
-            if(this.is(sliceLayer, MSLayerGroup)){
-                slice = MSSliceLayer.sliceLayerFromLayer(sliceLayer);
-
-                var msRect = MSRect.rectWithUnionOfRects([
-                    MSRect.alloc().initWithRect(slice.absoluteRect().rect()),
-                    MSRect.alloc().initWithRect(layer.absoluteRect().rect())
-                ]);
-
-                slice.absoluteRect().setRect(msRect.rect());
-                slice.moveToLayer_beforeLayer(sliceLayer, sliceLayer.firstLayer());
-                slice.exportOptions().setLayerOptions(2);
-            }
-
-            this.sliceCache[objectID] = layerData.exportable = this.getExportable(slice || sliceLayer,layerName);
+            this.sliceCache[objectID] = layerData.exportable = this.getExportable(sliceLayer,layerName);
             this.slices.push({
                 name: layerData.name,
+                exportName:layerName,
                 objectID: objectID,
                 rect: layerData.rect,
                 exportable: layerData.exportable
-            })
-
-            if(slice){
-                this.removeLayer(slice);
-            }
+            });
         }
         else if( this.sliceCache[objectID] ){
             layerData.exportable = this.sliceCache[objectID];
@@ -3384,7 +3375,9 @@ SM.extend({
             layerIsMask = false;
         }
 
-        var hasOutShadow = (layer.style && layer.style().shadows().count()>0);
+        var hasOutShadow = layer.style && this.getShadows(layer.style()).filter(function(shadow){
+            return shadow.type=='outer';
+        }).length>0;
 
         if(this.is(layer, MSShapeGroup) ||
             this.is(layer, MSShapePathLayer) ||
