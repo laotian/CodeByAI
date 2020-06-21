@@ -1258,7 +1258,7 @@ var I18N = {},
                 selectStyles.push(match[1]);
               }
               //vue
-              match = codes[i].match(/class='(.+)'/);
+              match = codes[i].match(/class='([\w-]+)'/);
               if(match){
                 match[1].split(" ").filter(function(item){
                   return !item.startsWith("react-") && !item.startsWith("vue-");

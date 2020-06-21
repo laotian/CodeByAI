@@ -140,6 +140,7 @@ var SM = {
     GradientTypes = ["linear", "radial", "angular"],
     ShadowTypes = ["outer", "inner"],
     TextAligns = ["left", "right", "center", "justify", "left"],
+    TextAlignsVertical = ["top", "center","bottom"],
     ResizingType = ["stretch", "corner", "resize", "float"];
 SM.extend({
     checkVersion: function(){
@@ -3421,46 +3422,51 @@ SM.extend({
         } // fixed for v40
 
         //Fix fonts that are not in the system to prevent layout distortion
-        if(layerType=="text" && layer.replaceMissingFontsIfNecessary){
+        if(layerType=="text" && layer.replaceMissingFontsIfNecessary) {
             layer.replaceMissingFontsIfNecessary();
-            var oldBehaviour = layer.textBehaviour();
-            //2: fixed size
-            if(oldBehaviour==2){
-                layer.setTextBehaviour(1);
-                //1: auto height
-                oldBehaviour = 1;
-            }
-            let defaultLineHeight = layer.font().defaultLineHeightForFont();
-            var lineHeight = layer.lineHeight() || defaultLineHeight;
-            let isSingleLine = (layer.frame().rect().size.height<lineHeight*2);
-            if(isSingleLine && layer.lineHeight && layer.lineHeight!=defaultLineHeight && defaultLineHeight<=this.getRect(layer.parentGroup()).height) {
-                const oldRect = this.getRect(layer);
-                const oldHeight = oldRect.height;
-                const oldY = oldRect.y;
-                layer.setLineHeight(defaultLineHeight);
-                const rect = this.getRect(layer);
-                const currentHeight = rect.height;
-                const offset = parseInt(((currentHeight - oldHeight) / 2).toFixed(0));
-                rect.setY(oldY - offset);
-                layer.finishEditing();
-            }
-            // 0: auto width
-            if(oldBehaviour!=0 && (layer.stringValue().includes("\n") || isSingleLine)){
-                var duplicateText = layer.duplicate();
-                var oldFrame = duplicateText.frame();
-                var oldRect = oldFrame.rect();
-                duplicateText.setTextBehaviour(0);
-                var currentRect = duplicateText.frame().rect();
-                if(currentRect.size.width<=oldRect.size.width){
-                    layer.setTextBehaviour(0);
-                    //If there is only one line, change the alignment
-                    if(isSingleLine){
-                        layer.setTextAlignment(0);
-                    }
-                }
-                this.removeLayer(duplicateText);
-            }
         }
+
+        // //Fix fonts that are not in the system to prevent layout distortion
+        // if(layerType=="text" && layer.replaceMissingFontsIfNecessary){
+        //     layer.replaceMissingFontsIfNecessary();
+        //     var oldBehaviour = layer.textBehaviour();
+        //     //2: fixed size
+        //     if(oldBehaviour==2){
+        //         layer.setTextBehaviour(1);
+        //         //1: auto height
+        //         oldBehaviour = 1;
+        //     }
+        //     let defaultLineHeight = layer.font().defaultLineHeightForFont();
+        //     var lineHeight = layer.lineHeight() || defaultLineHeight;
+        //     let isSingleLine = (layer.frame().rect().size.height<lineHeight*2);
+        //     if(isSingleLine && layer.lineHeight && layer.lineHeight!=defaultLineHeight && defaultLineHeight<=this.getRect(layer.parentGroup()).height) {
+        //         const oldRect = this.getRect(layer);
+        //         const oldHeight = oldRect.height;
+        //         const oldY = oldRect.y;
+        //         layer.setLineHeight(defaultLineHeight);
+        //         const rect = this.getRect(layer);
+        //         const currentHeight = rect.height;
+        //         const offset = parseInt(((currentHeight - oldHeight) / 2).toFixed(0));
+        //         rect.setY(oldY - offset);
+        //         layer.finishEditing();
+        //     }
+        //     // 0: auto width
+        //     if(oldBehaviour!=0 && (layer.stringValue().includes("\n") || isSingleLine)){
+        //         var duplicateText = layer.duplicate();
+        //         var oldFrame = duplicateText.frame();
+        //         var oldRect = oldFrame.rect();
+        //         duplicateText.setTextBehaviour(0);
+        //         var currentRect = duplicateText.frame().rect();
+        //         if(currentRect.size.width<=oldRect.size.width){
+        //             layer.setTextBehaviour(0);
+        //             //If there is only one line, change the alignment
+        //             if(isSingleLine){
+        //                 layer.setTextAlignment(0);
+        //             }
+        //         }
+        //         this.removeLayer(duplicateText);
+        //     }
+        // }
 
         var exportLayerRect;
         if(this.configs.exportInfluenceRect == true && layerType != "text"){
@@ -3526,6 +3532,10 @@ SM.extend({
             layerData.textAlign = TextAligns[layer.textAlignment()];
             layerData.letterSpacing = this.toJSNumber(layer.characterSpacing()) || 0;
             layerData.lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
+            layerData.textBehaviour = layer.textBehaviour();
+            if(layerData.textBehaviour==2) {
+                layerData.textAlignVertical = TextAlignsVertical[layer.verticalAlignment()];
+            }
         }
 
         var layerCSSAttributes = layer.CSSAttributes(),
