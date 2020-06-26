@@ -1237,6 +1237,7 @@ var I18N = {},
             const imagePath = self.current.imagePath;
             let code = self.current.codes;
             let codes = code.split("\n");
+            let styles = self.current.styles ? self.current.styles.split("\n") : codes;
             let beginLine = layerData.codeLine.from;
             let endLine = layerData.codeLine.end;
             if(self.selectRegionData && self.selectRegionData.beginLine && self.selectRegionData.endLine){
@@ -1257,8 +1258,8 @@ var I18N = {},
               if(match){
                 selectStyles.push(match[1]);
               }
-              //vue
-              match = codes[i].match(/class='([\w-]+)'/);
+              //react/vue
+              match = codes[i].match(/class\w*='([\w\s-]+)'/);
               if(match){
                 match[1].split(" ").filter(function(item){
                   return !item.startsWith("react-") && !item.startsWith("vue-");
@@ -1319,7 +1320,7 @@ var I18N = {},
 
             var rnSelectStyle = [
               '<div id="ios-panel" class="code-item item select">',
-              '<textarea id="css" rows="' + (Math.min(selectLine.length,16)) + '" readonly="readonly" wrap="off" style="overflow:scroll">' +  codes.filter(function(line,index){
+              '<textarea id="css" rows="' + (Math.min(selectLine.length,16)) + '" readonly="readonly" wrap="off" style="overflow:scroll">' +  styles.filter(function(line,index){
                 return  selectLine.includes(index);
               }).join("\r\n") + '</textarea>',
               '</div>'
