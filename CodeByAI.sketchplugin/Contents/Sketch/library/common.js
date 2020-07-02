@@ -2691,9 +2691,13 @@ SM.extend({
     getSymbol: function(artboard, layer, layerData, data){
         if( layerData.type == "symbol" ){
             var self = this;
-                // symbolObjectID = this.toJSString(layer.symbolMaster().objectID());
-
+            // var symbolObjectID = this.toJSString(layer.symbolMaster().objectID())
+            // console.log("getSymbol!",layer.symbolMaster().name(),"desc:",layer.symbolMaster().description(),"symbolId:",symbolObjectID);
             // layerData.objectID = symbolObjectID;
+            if(!layerData.symbol){
+                layerData.symbol = {};
+            }
+            layerData.symbol.type = this.toJSString(layer.symbolMaster().name());
 
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
                 var symbolRect = this.getRect(layer),
@@ -3503,8 +3507,12 @@ SM.extend({
             layerData.shapeType = layerShapeType;
         }
 
-         if(symbolLayer) layerData.symbolObjectID = this.toJSString( symbolLayer.objectID() );
-
+         if(symbolLayer){
+             layerData.symbol = {
+                 objectID:this.toJSString( symbolLayer.objectID() ),
+                 name:this.toJSString( symbolLayer.name() ),
+             }
+         }
 
         if ( layerType != "slice" ) {
             var layerStyle = layer.style();
