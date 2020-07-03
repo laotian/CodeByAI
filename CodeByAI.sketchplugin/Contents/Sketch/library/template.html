@@ -257,7 +257,7 @@ header .header-center .selectbox{margin-top:16px; width:140px;}
     }
     .selectwrap ul{
       position: relative;
-      height: 190px;
+      height: 300px;
       margin: 0;
       padding: 0;
       list-style: none;
@@ -458,20 +458,24 @@ var I18N = {},
                             '<p></p>',
                             '<ul>',
                               '<li><label id="code-hidden"><input type="radio" name="show-codes-type" value="code-hidden"><span>' + _('Code hidden') + '</span></label></li>',
-                              '<li><label id="code-rn"><input type="radio" name="show-codes-type" value="code-rn"><span>' + _('RN') + '</span></label></li>',
+                              '<li><label id="code-rn"><input type="radio" name="show-codes-type" value="code-rn"><span>' + 'RN' + '</span></label></li>',
                               '<li><label id="code-react"><input type="radio" name="show-codes-type" value="code-react"><span>' + 'React' + '</span></label></li>',
                               '<li><label id="code-vue"><input type="radio" name="show-codes-type" value="code-vue"><span>' + 'Vue' + '</span></label></li>',
-                              '<li><label id="code-android"><input type="radio" name="show-codes-type" value="code-android"><span>' + _('android') + '</span></label></li>',
+                              '<li><label id="code-android"><input type="radio" name="show-codes-type" value="code-android"><span>' + 'Android' + '</span></label></li>',
+                              '<li><label id="code-rnCustom"><input type="radio" name="show-codes-type" value="code-rnCustom"><span>' + 'RN ' + _('Customized') + '</span></label></li>',
+                              '<li><label id="code-reactCustom"><input type="radio" name="show-codes-type" value="code-reactCustom"><span>' + 'React ' + _('Customized') + '</span></label></li>',
+                              '<li><label id="code-vueCustom"><input type="radio" name="show-codes-type" value="code-vueCustom"><span>' + 'Vue ' + _('Customized') + '</span></label></li>',
+                              '<li><label id="code-androidCustom"><input type="radio" name="show-codes-type" value="code-androidCustom"><span>' + 'Android ' +  _('Customized') + '</span></label></li>',
                             '</ul>',
                           '</div>',
                         '</div>',
-                        '<div class="show-notes">',
-                            '<label for="show-notes">' + _('NOTES') + '</label>',
-                            '<div class="slidebox">',
-                                '<input id="show-notes" type="checkbox" name="show-notes" checked="checked">',
-                                '<label for="show-notes"></label>',
-                            '</div>',
-                        '</div>',
+                        // '<div class="show-notes">',
+                        //     '<label for="show-notes">' + _('NOTES') + '</label>',
+                        //     '<div class="slidebox">',
+                        //         '<input id="show-notes" type="checkbox" name="show-notes" checked="checked">',
+                        //         '<label for="show-notes"></label>',
+                        //     '</div>',
+                        // '</div>',
                     '</div>',
                     '<div class="header-right"><div id="unit" class="unit-box" tabindex="0">XHDPI @2x (dp/sp)</div></div>',
                 '</header>',
@@ -1482,21 +1486,6 @@ var I18N = {},
         },
         include:function(source, target){ //判断source 包含target 矩形
           return source.x<=target.x && source.y<=target.y && source.maxX>=target.maxX && source.maxY>=target.maxY;
-        },
-        getContainerRect: function(childs) { //获取由childs组成的新矩形
-          const lastIndex = childs.length - 1;
-          const x = childs.map(function(child){return child.x}).sort(function(a,b){return a-b})[0];
-          const y = childs.map(function(child){return child.y}).sort(function(a,b){return a-b})[0];
-          const maxX = childs.map(function(child){return child.maxX}).sort(function(a,b){return a-b})[lastIndex];
-          const maxY = childs.map(function(child){return child.maxY}).sort(function(a,b){return a-b})[lastIndex];
-          return {
-            x,
-            y,
-            width: maxX - x,
-            height: maxY - y,
-            maxX,
-            maxY
-          };
         },
         removeSelected: function(){
             if(!this.selectedIndex) return false;

@@ -102,12 +102,12 @@
     "Code type" : "程式碼類型",
     "Code hidden": "不顯示程式碼",
     "RN" : "RN",
-    "android" : "Android",
     "Code type not valid, export code with this type first": "程式碼類型無效，請先匯出此種類型程式碼",
     "Generate code failed!": "程式碼匯出失敗!",
     "Error occur when processing %@ - %@ , error: %@":"當處理 %@ - %@ 時發生錯誤 %@",
     "Import": "導入",
     "Code": "程式碼",
     "Style": "樣式",
-    "export 3x pic": "匯出3x圖"
+    "export 3x pic": "匯出3x圖",
+    "Customized": "定制"
 };
