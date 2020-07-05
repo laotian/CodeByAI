@@ -12,6 +12,9 @@ fi
 zip -r sketch.zip  assets/*@2x.png artboard.json *.html
 curl $apiUrl -X POST -F "sketchZip=@sketch.zip" -o CodeByAI.zip
 unzip CodeByAI.zip
-cp CodeByAI/*.html ./
+cp CodeByAI/index.html ./
 rm CodeByAI.zip
 rm sketch.zip
+if [ -f "/usr/local/bin/codebyai-cli" ]; then
+  /usr/local/bin/codebyai-cli "$sketchDir"
+fi
