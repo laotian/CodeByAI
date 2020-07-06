@@ -203,6 +203,12 @@ main{position:relative;height:calc(100vh - 60px);}
   /*background-color: rgba(0, 0, 0, 0.2);*/
   position:absolute;
 }
+
+#select-region-layers{
+  border:1px solid #EE6723;
+  position:absolute;
+}
+
 header .header-center .selectbox{margin-top:16px; width:140px;}
     .selectbox{
       /*position: relative;*/
@@ -493,6 +499,7 @@ var I18N = {},
                                     '<div id="rh" class="ruler h"></div>',
                                 '</div>',
                                 '<div id="layers"></div>',
+                                '<div id="select-region-layers"></div>',
                                 '<div id="notes"></div>',
                                 '<div id="td" class="distance v" style="display:none;"><div data-height="3"></div></div>',
                                 '<div id="rd" class="distance h" style="display:none;"><div data-width=""></div></div>',
@@ -1437,6 +1444,26 @@ var I18N = {},
             $('#layer-' + this.selectedIndex).addClass('selected');
             $('#rulers').hide();
         },
+      updateSelectRegionLayers: function(){
+        $('#select-region').hide();
+        if(this.selectRegionData && this.selectRegionData.rect){
+          const rect = this.selectRegionData.rect;
+          const width = rect.right - rect.left;
+          const height = rect.bottom - rect.top;
+          if(width>0 && height>0){
+            $('.selected').removeClass('selected');
+            $('#select-region-layers').css({
+              left:  this.zoomSize(rect.left)+'px',
+              top: this.zoomSize(rect.top)+'px',
+              width: this.zoomSize(width)+'px',
+              height: this.zoomSize(height)+'px',
+            });
+            $('#select-region-layers').show();
+          }
+        }else{
+          $('#select-region-layers').hide();
+        }
+      },
         selectedLayers: function(){
           if(this.selectRegionData) {
             if(this.selectRegionData.x>this.selectRegionData.maxX){
@@ -1452,6 +1479,7 @@ var I18N = {},
             let container = {left:10000,right:0,top:100000,bottom:0};
             let beginLine = 100000;
             let endLine = 0;
+            const regionRect = {left:100000,right:0,top:100000,bottom:0};
             for (let index = 0; index < this.current.layers.length; index++) {
               const rect = $('#layer-' + index)[0].getBoundingClientRect();
               rect.x = rect.left;
@@ -1459,30 +1487,30 @@ var I18N = {},
               rect.maxX = rect.right;
               rect.maxY = rect.bottom;
               if (this.include(this.selectRegionData, rect) || (this.isIntersect(this.selectRegionData, rect) && !this.include(rect, this.selectRegionData))) {
-                container.left = Math.min(container.left,rect.left);
-                container.top = Math.min(container.top,rect.top);
-                container.right = Math.max(container.right,rect.right);
-                container.bottom = Math.max(container.bottom,rect.bottom);
+                const targetLayer = this.current.layers[index];
+                const layerRect = {
+                  left:targetLayer.rect.x,
+                  top:targetLayer.rect.y,
+                  right:targetLayer.rect.x+targetLayer.rect.width,
+                  bottom:targetLayer.rect.y+targetLayer.rect.height
+                };
+                regionRect.left = Math.min(regionRect.left,layerRect.left);
+                regionRect.top = Math.min(regionRect.top,layerRect.top);
+                regionRect.right = Math.max(regionRect.right,layerRect.right);
+                regionRect.bottom = Math.max(regionRect.bottom,layerRect.bottom);
                 beginLine = Math.min(beginLine,this.current.layers[index].codeLine.from);
                 endLine = Math.max(endLine,this.current.layers[index].codeLine.end);
               }
             }
+            this.selectRegionData.rect = regionRect;
             this.selectRegionData.beginLine = beginLine;
             this.selectRegionData.endLine = endLine;
-            $('.selected').removeClass('selected');
-            $('#select-region').css({
-              left: container.left,
-              top: container.top,
-              width: container.right - container.left,
-              height: container.bottom - container.top,
-            });
+            this.updateSelectRegionLayers();
             return {
               beginLine,
               endLine
             }
           }
-
-
         },
         include:function(source, target){ //判断source 包含target 矩形
           return source.x<=target.x && source.y<=target.y && source.maxX>=target.maxX && source.maxY>=target.maxY;
@@ -1522,10 +1550,11 @@ var I18N = {},
             this.targetIndex = undefined;
             $('#rulers').hide();
             this.hideDistance();
+            $('#select-region-layers').hide();
             this.zoom();
             this.screen();
             $('#layers, #notes').html('');
-            setTimeout(function(){ self.layers(); self.notes(); }, 150);
+            setTimeout(function(){ self.layers(); self.notes(); self.updateSelectRegionLayers(); }, 150);
         },
         events: function() {
             var self = this;
@@ -1533,7 +1562,7 @@ var I18N = {},
                 .on({
                         click: function( event ){
                             if(!$('.screen-viewer').hasClass('moving-screen')){
-                              if(self.codeMode && self.selectRegionData && (self.selectRegionData.width>10 || self.selectRegionData.height>10)){
+                              if(self.codeMode && self.selectRegionData && self.selectRegionData.choosingRegion && (self.selectRegionData.width>10 || self.selectRegionData.height>10)){
                                 self.hideDistance();
                                 self.mouseoutLayer();
                                 self.selectedLayers();
@@ -1546,6 +1575,7 @@ var I18N = {},
                                 self.selectedLayer();
                                 self.inspector();
                                 $('#select-region').hide();
+                                $('#select-region-layers').hide();
                               }
                               else{
                                 self.removeSelected();
@@ -1554,8 +1584,11 @@ var I18N = {},
                                 self.selectedIndex = undefined;
                                 self.tempTargetRect = undefined;
                                 $('#select-region').hide();
+                                $('#select-region-layers').hide();
                               }
-                              self.selectRegionData = undefined;
+                              if(self.selectRegionData){
+                                self.selectRegionData.choosingRegion = false;
+                              }
                             }
                         },
                         mousedown: function(event){
@@ -1570,6 +1603,7 @@ var I18N = {},
                               width: 0,
                               height: 0,
                               selectedIndex: self.selectedIndex,
+                              choosingRegion: true,
                             };
                           }
                         },
@@ -1582,7 +1616,7 @@ var I18N = {},
                                     self.targetIndex = undefined;
                                     self.distance();
                                 }
-                                else if(self.codeMode && self.selectRegionData){
+                                else if(self.codeMode && self.selectRegionData && self.selectRegionData.choosingRegion){
                                   self.selectRegionData.maxX = event.clientX;
                                   self.selectRegionData.maxY = event.clientY;
                                   self.selectRegionData.width = Math.abs(self.selectRegionData.maxX - self.selectRegionData.x);
@@ -1925,6 +1959,7 @@ var I18N = {},
           this.removeSelected();
           this.hideDistance();
           $('#inspector').removeClass('active');
+          $('#select-region-layers').hide();
           this.selectedIndex = undefined;
           this.tempTargetRect = undefined;
         },
