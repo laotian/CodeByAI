@@ -9,8 +9,8 @@ A Sketch smart plug-in that can accurately convert the design draft into mobile 
 * Extensible: native support for picture/text/text input/View/touch background switching; supports secondary development, and the generated code can be replaced as the company's component
 * Visualization: You can view the actual running effect of the code, and developers can easily select part/full page code into the project.
 
-## Effect demo
-[Demo Address](https://service.codebyai.com/demo/index.html)  
+## Demo
+[Demo online](https://service.codebyai.com/demo/index.html)  
 
 [Demo sketch file download](https://service.codebyai.com/images/demo.sketch) 
 
