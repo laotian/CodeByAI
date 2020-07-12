@@ -31,7 +31,7 @@ Compliance with design specifications can guarantee the quality of the generated
 [Design Specification] (https://github.com/laotian/CodeByAI/wiki/Design-Specification)
 
 
-# Secondary development (customized)
+# Secondary development
 The plug-in can natively support picture/text/text input/View/touch background switching; for extended functions,
 CodeByAI provides the secondary development SDK, which can realize the replacement of the company's custom components.
 
