@@ -9,7 +9,7 @@
 * Visualization: You can view the actual running effect of the code, and developers can easily select part/full page code into the project.
 
 # Effect demo
-[Demo Address] (https://service.codebyai.com/demo/index.html)
+[Demo Address](https://service.codebyai.com/demo/index.html) 
 [Demo sketch file download](https://service.codebyai.com/images/demo.sketch) 
 
 After entering the page, select "Code Type" in the upper right corner to view a screenshot of the running effect.  
@@ -23,7 +23,7 @@ In the RN customization mode, select the switch/checkbox interactive component t
 3. Open the generated index.html to view the specifications and code. The complete page code and resources are located in the "CodeByAI" folder
 
 ## Design specifications
-Compliance with design specifications can guarantee the quality of the generated code.
+Compliance with design specifications can guarantee the quality of the generated code.  
 [Design Specification] (https://github.com/laotian/CodeByAI/wiki/Design-Specification)
 
 
