@@ -3208,6 +3208,11 @@ SM.extend({
                                         path: self.toJSString(savePath),
                                         fileName: "index.html"
                                     });
+                                self.writeFile({
+                                    content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(data)}),
+                                    path: self.toJSString(savePath),
+                                    fileName: "index.html.bak"
+                                });
                                 selectingPath = savePath + "/index.html";
                             }
                             //生成
