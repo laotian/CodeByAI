@@ -1318,6 +1318,7 @@ var I18N = {},
             ].join('');
 
 
+            var firstLineWhiteSpace = "";
             var rnSelectCode = [
               '<div id="android-panel" class="code-item item select">',
               '<textarea id="css" rows="' + (Math.min(endLine-beginLine,16)) + '" readonly="readonly"  wrap="off" style="overflow:scroll">' +   codes.filter(function(line,index){
@@ -1325,6 +1326,23 @@ var I18N = {},
                   return true;
                 }
                 return false;
+              }).map(function(line,index){
+                //trim left whitespace
+                let whitespace = "";
+                if(index==0){
+                  let match = line.match(/^(\s+)/);
+                  if(match){
+                    firstLineWhiteSpace = match[1];
+                    whitespace = firstLineWhiteSpace;
+                  }
+                }else if(firstLineWhiteSpace && line.startsWith(firstLineWhiteSpace)){
+                  whitespace = firstLineWhiteSpace;
+                }
+                if(whitespace){
+                  return line.substring(whitespace.length);
+                }else{
+                  return line;
+                }
               }).join("\n").replace(/</gm,"&lt;").replace(/>/gm,"&gt;") + '</textarea>',
               '</div>'
             ].join('');
