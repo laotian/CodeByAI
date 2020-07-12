@@ -20,13 +20,13 @@ Click to select a single element or select multiple elements, and view the corre
 In the RN customization mode, select the switch/checkbox interactive component to view the corresponding component information in the code area. The DEMO demo only includes customization of RN components, which are supported by vue/react/android.
 
 ## Plugin usage
-1. This plugin supports the minimum version of Sketch as 52.5, recommended version 60; [download plugin] (https://github.com/laotian/CodeByAI/archive/master.zip) and unzip it, open `CodeByAI.sketchplugin`;
+1. This plugin supports the minimum version of Sketch as 52.5, recommended version 60; [download plugin](https://github.com/laotian/CodeByAI/archive/master.zip) and unzip it, open `CodeByAI.sketchplugin`;
 2. Open the design draft, select the artboard to be exported (multiple selections are supported), execute the menu Plug-in/CodeByAI/Export Code and Specification, select the export code type and click Export.
 3. Open the generated index.html to view the specifications and code. The complete page code and resources are located in the "CodeByAI" folder
 
 ## Design specifications
 Compliance with design specifications can guarantee the quality of the generated code.  
-[Design Specification] (https://github.com/laotian/CodeByAI/wiki/Design-Specification)
+[Design Specification](https://github.com/laotian/CodeByAI/wiki/Design-Specification)
 
 
 ## Secondary development
