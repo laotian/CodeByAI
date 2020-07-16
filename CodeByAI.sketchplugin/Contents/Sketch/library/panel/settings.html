@@ -12,9 +12,6 @@
     <script type="text/javascript" src="assets/js/common.js"></script>
     <script type="text/javascript">
     <!--
-    const codeTypes = ["RN","React","Vue","Android"];
-    let export3xIdName = "export-3x";
-    let webScale;
     var getDesignResolutionID = function(scale, unit){
             var scale = scale || 1,
                 unit = unit || 'px';
@@ -44,164 +41,94 @@
             $('#' + DRID).click();
         },
         submit = function(){
-          var data = {}
-          codeTypes.forEach(function (type) {
-            if( $('input[name=export-' + type + ']:checked').length > 0 ){
-              data[type] = true;
-            }else{
-              data[type] = false;
-            }
-          });
-          if( $('input[name=' + export3xIdName +  ']:checked').length > 0 ) {
-            data.export3x = true;
-          }else{
-            data.export3x = false;
-          }
-          data.scale = webScale;
-          data.unit = "rem";
-          SMAction('submit', data);
-            // console.log(window.location.hash)
+            SMAction('submit', {
+                scale: $('input[name=scale]').val(),
+                unit: $('input[name=unit]').val(),
+                colorFormat: $('input[name=format]:checked').val()
+            });
+            console.log(window.location.hash)
         },
         init = function(data){
-
-          const headHtml = [
-            '<div class="container">',
-              '<div class="options" style="height:194px">',
-                '<h3>' + _('Code type') + '</h3>',
-          ];
-
-          // const codeTypesHtml = codeTypes.map(function (type) {
-          //   const idName = "export-" + type;
-          //   return [
-          //     '<div class="item" style="margin-top:10px;">',
-          //       '<label>',
-          //         '<div class="checkbox">',
-          //           '<input id="' + idName + '" type="checkbox" name="' + idName + '" value="0">',
-          //           '<label for="' + idName + '"></label>',
-          //         '</div>',
-          //         _(type),
-          //       '</label>',
-          //     '</div>'
-          //   ];
-          // }).reduce(function (p,c) {
-          //   return p.concat(c);
-          // },[]);
-
-
-          const codeTypesHtml =  [
-              '<div class="item" style="margin-top:10px;">',
-                '<label>',
-                  '<div class="checkbox">',
-                    '<input id="export-RN" type="checkbox" name="export-RN" value="0">',
-                    '<label for="export-RN"></label>',
-                  '</div>',
-                  'RN&nbsp;',
-                '</label>',
-                '<label style="margin-left: 40px;">',
-                  '<div class="checkbox">',
-                    '<input id="export-React" type="checkbox" name="export-React" value="0">',
-                    '<label for="export-React"></label>',
-                  '</div>',
-                  _('React'),
-                '</label>',
-              '</div>',
-              '<div class="item" style="margin-top:14px;">',
-                '<label>',
-                  '<div class="checkbox">',
-                    '<input id="export-Vue" type="checkbox" name="export-Vue" value="0">',
-                    '<label for="export-Vue"></label>',
-                  '</div>',
-                  _('Vue'),
-                '</label>',
-                '<label style="margin-left: 40px;">',
-                  '<div class="checkbox">',
-                    '<input id="export-Android" type="checkbox" name="export-Android" value="0">',
-                    '<label for="export-Android"></label>',
-                  '</div>',
-                  _('Android'),
-                '</label>',
-              '</div>'
-            ];
-
-
-          const bottomHtml = [
-                '<div class="resolution selectbox mrb16" style="margin-top: 20px;" tabindex="0">',
-                  '<div class="selectwrap">',
-                    '<h3>' + _('Design resolution') + '</h3>',
-                    '<p></p>',
-                    '<ul>',
-                      '<li class="sub-title">' + _('Web View') + '</li>',
-                      '<li><label id="rem-12"><input type="radio" name="resolution-type" value="rem-12"><span>' + _('CSS Rem') + ' 12px</span></label></li>',
-                      '<li><label id="rem-14"><input type="radio" name="resolution-type" value="rem-14"><span>' + _('CSS Rem') + ' 14px</span></label></li>',
-                      '<li><label id="rem-16"><input type="radio" name="resolution-type" value="rem-16"><span>' + _('CSS Rem') + ' 16px</span></label></li>',
-                    '</ul>',
-                  '</div>',
-                '</div>',
-                '<div class="item" style="margin-top:20px;">',
-                  '<label>',
-                    '<div class="checkbox">',
-                      '<input id="' + export3xIdName + '" type="checkbox" name="' + export3xIdName + '" value="0">',
-                      '<label for="' + export3xIdName + '"></label>',
+            $('body').html([
+                '<div class="container">',
+                    '<div class="options" style="height:194px">',
+                        '<div class="resolution selectbox mrb16" tabindex="0">',
+                            '<div class="selectwrap">',
+                                '<h3>' + _('Design resolution') + '</h3>',
+                                '<p></p>',
+                                '<ul>',
+                                    '<li><label id="custom"><input type="radio" name="resolution-type" value="custom"><span>' + _('Custom') + '</span></label></li>',
+                                    '<li><label id="px-1"><input type="radio" name="resolution-type" value="px-1"><span>' + _('Standard') + '</span></label></li>',
+                                    '<li class="sub-title">' + _('iOS Devices') + '</li>',
+                                    '<li><label id="pt-1"><input type="radio" name="resolution-type" value="pt-1"><span>' + _('Points') + ' @1x</span></label></li>',
+                                    '<li><label id="pt-2"><input type="radio" name="resolution-type" value="pt-2"><span>' + _('Retina') + ' @2x</span></label></li>',
+                                    '<li><label id="pt-3"><input type="radio" name="resolution-type" value="pt-3"><span>' + _('Retina HD') + ' @3x</span></label></li>',
+                                    '<li class="sub-title">' + _('Android Devices') + '</li>',
+                                    '<li><label id="dp_sp-0_75"><input type="radio" name="resolution-type" value="dp_sp-0_75"><span>' + _('LDPI') + ' @0.75x</span></label></li>',
+                                    '<li><label id="dp_sp-1"><input type="radio" name="resolution-type" value="dp_sp-1"><span>' + _('MDPI') + ' @1x</span></label></li>',
+                                    '<li><label id="dp_sp-1_5"><input type="radio" name="resolution-type" value="dp_sp-1_5"><span>' + _('HDPI') + ' @1.5x</span></label></li>',
+                                    '<li><label id="dp_sp-2"><input type="radio" name="resolution-type" value="dp_sp-2"><span>' + _('XHDPI') + ' @2x</span></label></li>',
+                                    '<li><label id="dp_sp-3"><input type="radio" name="resolution-type" value="dp_sp-3"><span>' + _('XXHDPI') + ' @3x</span></label></li>',
+                                    '<li><label id="dp_sp-4"><input type="radio" name="resolution-type" value="dp_sp-4"><span>' + _('XXXHDPI') + ' @4x</span></label></li>',
+                                    '<li class="sub-title">' + _('Other Devices') + '</li>',
+                                    '<li><label id="gu-27"><input type="radio" name="resolution-type" value="gu-27"><span>' + _('Ubuntu Grid') + '</span></label></li>',
+                                    '<li class="sub-title">' + _('Web View') + '</li>',
+                                    '<li><label id="rem-12"><input type="radio" name="resolution-type" value="rem-12"><span>' + _('CSS Rem') + ' 12px</span></label></li>',
+                                    '<li><label id="rem-14"><input type="radio" name="resolution-type" value="rem-14"><span>' + _('CSS Rem') + ' 14px</span></label></li>',
+                                    '<li><label id="rem-16"><input type="radio" name="resolution-type" value="rem-16"><span>' + _('CSS Rem') + ' 16px</span></label></li>',
+                                '</ul>',
+                            '</div>',
+                        '</div>',
+                        '<div class="input-text mrb16">',
+                            '<input type="text" name="scale" value="2">',
+                            '<label for="top">' + _('Scale') + '</label>',
+                        '</div>',
+                        '<div class="input-text mrb24">',
+                            '<input type="text" name="unit" value="dp/sp">',
+                            '<label for="top">' + _('Unit') + '</label>',
+                        '</div>',
+                        '<h3 class="title">' + _('Color format') + '</h3>',
+                        '<div class="color-format selectbox" tabindex="0">',
+                            '<div class="selectwrap">',
+                                '<h3>' + _('Color format') + '</h3>',
+                                '<p></p>',
+                                '<ul>',
+                                    '<li><label id="color-hex"><input type="radio" name="format" value="color-hex"><span>' + _('Color hex') + '</span><i>#000000 100%</i></label></li>',
+                                    '<li><label id="argb-hex"><input type="radio" name="format" value="argb-hex"><span>' + _('ARGB hex') + '</span><i>#FF000000</i></label></li>',
+                                    '<li><label id="css-rgba"><input type="radio" name="format" value="css-rgba"><span>' + _('RGBA CSS') + '</span><i>rgba(0, 0, 0, 1)</i></label></li>',
+                                    '<li><label id="ui-color"><input type="radio" name="format" value="ui-color"><span>' + _('UIColor') + '</span><i>r: 1.0, g: 0.0, b: 0.0, a: 1.0</i></label></li>',
+                                '</ul>',
+                            '</div>',
+                        '</div>',
                     '</div>',
-                    _('export 3x pic'),
-                  '</label>',
-                '</div>',
-              '</div>',
-              '<div class="footer">',
-                '<button id="submit" class="submit">' + _('Save') + '</button>',
-                '</div>',
-              '</div>',
-            '</div>'
-          ];
-
-            $('body').html([].concat(headHtml).concat(codeTypesHtml).concat(bottomHtml).join(''));
-
-            //["RN","React","Vue","Android"]
-
+                    '<div class="footer">',
+                        '<button id="submit" class="submit">' + _('Save') + '</button>',
+                    '</div>',
+                '</div>'
+                ].join(''));
             var data = $.extend({
-                            scale: 14,
-                            unit: 'rem',
-                            export3x: false,
-                            RN: true,
-                            React: true,
-                            Vue: true,
-                            Android: true,
-                        }, data);
+                            scale: 1,
+                            unit: 'px',
+                            colorFormat: 'color-hex'
+                        }, data),
+                id = getDesignResolutionID(data.scale, data.unit);
+             $('.resolution input').change(function(){
+                var $this = $(this),
+                    id = $this.val(),
+                    scaleWidthUnit = getScaleWidthUnit(id);
 
-          codeTypes.forEach(function (type) {
-            const idName = "#export-" + type;
-            if(data[type]){
-              $(idName).attr('checked', true);
-            }
-          });
+                if(!scaleWidthUnit) return false;
+                $('input[name=scale]').val(scaleWidthUnit.scale);
+                $('input[name=unit]').val(scaleWidthUnit.unit);
+            });
 
-          if(data.export3x){
-            $('#'+export3xIdName).attr('checked', true);
-          }
-
-
-
-
-
-               let id = getDesignResolutionID(data.scale, data.unit);
-            //  $('.resolution input').change(function(){
-            //     var $this = $(this),
-            //         id = $this.val(),
-            //         scaleWidthUnit = getScaleWidthUnit(id);
-            //
-            //     if(!scaleWidthUnit) return false;
-            //     $('input[name=scale]').val(scaleWidthUnit.scale);
-            //     $('input[name=unit]').val(scaleWidthUnit.unit);
-            // });
-            //
             checkResolution(id);
-            // $('#' + data.colorFormat).click();
-            //
-            // if(id == 'custom'){
-            //     $('input[name=scale]').val(data.scale);
-            //     $('input[name=unit]').val(data.unit);
-            // }
+            $('#' + data.colorFormat).click();
 
+            if(id == 'custom'){
+                $('input[name=scale]').val(data.scale);
+                $('input[name=unit]').val(data.unit);
+            }
 
             $('.selectbox').each(function(index){
                 var $this = $(this);
@@ -213,7 +140,6 @@
                 $this.find('input').change(function(){
                     var $parent = $this.find('input:checked').parent(),
                         text = $parent.find('span').text();
-                    webScale = Number($this.find('input:checked').val().split("-")[1]);
                     $this.find('p').html(text);
                     $this.blur();
                 });
