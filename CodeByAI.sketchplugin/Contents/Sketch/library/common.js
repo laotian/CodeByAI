@@ -2893,6 +2893,16 @@ SM.extend({
         data.current = [];
         data.pages = [];
 
+        if(this.configs){
+            data.export3x = this.configs.export3x;
+            data.RN = this.configs.RN;
+            data.React = this.configs.React;
+            data.Vue = this.configs.Vue;
+            data.Android = this.configs.Android;
+            data.scale = this.configs.remFontSize;
+        }
+        data.unit = 'rem';
+
         // data.exportOption = self.configs.exportOption;
         // if(data.exportOption == undefined){
         //     data.exportOption = true;
@@ -2948,7 +2958,7 @@ SM.extend({
         return this.SMPanel({
             url: this.pluginSketch + "/panel/export.html",
             width: 320,
-            height: 480,
+            height: 610,
             data: data,
             callback: function( data ){
                 var allData = self.allData;
