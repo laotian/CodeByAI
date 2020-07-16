@@ -2894,6 +2894,14 @@ SM.extend({
         //     data.exportCodes = true;
         // }
 
+        if(this.configs){
+            data.export3x = this.configs.export3x;
+            data.RN = this.configs.RN;
+            data.React = this.configs.React;
+            data.Vue = this.configs.Vue;
+            data.Android = this.configs.Android;
+        }
+
         self.configs.order = (self.configs.order)? self.configs.order: "positive";
         data.order = self.configs.order;
 
@@ -2971,10 +2979,15 @@ SM.extend({
                 }
 
                 self.configs = self.setConfigs({
+                    RN:data.RN,
+                    React:data.React,
+                    Vue:data.Vue,
+                    Android:data.Android,
+                    export3x:data.export3x,
                     exportOption: true,
                     // exportOption: data.exportOption,
                     // exportInfluenceRect: data.exportInfluenceRect,
-                    // exportCodes: data.exportCodes,
+                    exportCodes: data.RN || data.React || data.Vue || data.Android,
                     order: data.order
                 });
             }
