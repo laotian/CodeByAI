@@ -1006,7 +1006,7 @@ SM.extend({
             Toolbar.setTitleVisibility(NSWindowTitleHidden);
             Toolbar.setTitlebarAppearsTransparent(true);
 
-            Toolbar.setFrame_display(NSMakeRect(0, 0, 300, 48), false);
+            Toolbar.setFrame_display(NSMakeRect(0, 0, 584, 48), false);
             Toolbar.setMovableByWindowBackground(true);
             Toolbar.becomeKeyWindow();
             Toolbar.setLevel(NSFloatingWindowLevel);
@@ -1018,48 +1018,48 @@ SM.extend({
                             threadDictionary.removeObjectForKey(identifier);
                             Toolbar.close();
                         }),
-                // overlayButton = self.addButton( NSMakeRect(64, 14, 20, 20), "icon-overlay",
-                //         function(sender){
-                //             self.updateContext();
-                //             self.init(self.context, "mark-overlays");
-                //         }),
-                // sizesButton = self.addButton( NSMakeRect(112, 14, 20, 20), "icon-sizes",
-                //         function(sender){
-                //             self.updateContext();
-                //             if(NSEvent.modifierFlags() == NSAlternateKeyMask){
-                //                 self.init(self.context, "mark-sizes");
-                //             }
-                //             else{
-                //                 self.init(self.context, "lite-sizes");
-                //             }
-                //         }),
-                // spacingsButton = self.addButton( NSMakeRect(160, 14, 20, 20), "icon-spacings",
-                //         function(sender){
-                //             self.updateContext();
-                //             if(NSEvent.modifierFlags() == NSAlternateKeyMask){
-                //                 self.init(self.context, "mark-spacings");
-                //             }
-                //             else{
-                //                 self.init(self.context, "lite-spacings");
-                //             }
-                //         }),
-                // propertiesButton = self.addButton( NSMakeRect(208, 14, 20, 20), "icon-properties",
-                //         function(sender){
-                //             self.updateContext();
-                //             if(NSEvent.modifierFlags() == NSAlternateKeyMask){
-                //                 self.init(self.context, "mark-properties");
-                //             }
-                //             else{
-                //                 self.init(self.context, "lite-properties");
-                //             }
-                //
-                //         }),
-                // notesButton = self.addButton( NSMakeRect(258, 14, 20, 20), "icon-notes",
-                //         function(sender){
-                //             self.updateContext();
-                //             self.init(self.context, "mark-note");
-                //         }),
-                exportableButton = self.addButton( NSMakeRect(64, 14, 20, 20), "icon-slice",
+                overlayButton = self.addButton( NSMakeRect(64, 14, 20, 20), "icon-overlay",
+                        function(sender){
+                            self.updateContext();
+                            self.init(self.context, "mark-overlays");
+                        }),
+                sizesButton = self.addButton( NSMakeRect(112, 14, 20, 20), "icon-sizes",
+                        function(sender){
+                            self.updateContext();
+                            if(NSEvent.modifierFlags() == NSAlternateKeyMask){
+                                self.init(self.context, "mark-sizes");
+                            }
+                            else{
+                                self.init(self.context, "lite-sizes");
+                            }
+                        }),
+                spacingsButton = self.addButton( NSMakeRect(160, 14, 20, 20), "icon-spacings",
+                        function(sender){
+                            self.updateContext();
+                            if(NSEvent.modifierFlags() == NSAlternateKeyMask){
+                                self.init(self.context, "mark-spacings");
+                            }
+                            else{
+                                self.init(self.context, "lite-spacings");
+                            }
+                        }),
+                propertiesButton = self.addButton( NSMakeRect(208, 14, 20, 20), "icon-properties",
+                        function(sender){
+                            self.updateContext();
+                            if(NSEvent.modifierFlags() == NSAlternateKeyMask){
+                                self.init(self.context, "mark-properties");
+                            }
+                            else{
+                                self.init(self.context, "lite-properties");
+                            }
+
+                        }),
+                notesButton = self.addButton( NSMakeRect(258, 14, 20, 20), "icon-notes",
+                        function(sender){
+                            self.updateContext();
+                            self.init(self.context, "mark-note");
+                        }),
+                exportableButton = self.addButton( NSMakeRect(306, 14, 20, 20), "icon-slice",
                         function(sender){
                             self.updateContext();
                             if(NSEvent.modifierFlags() == NSAlternateKeyMask){
@@ -1069,44 +1069,44 @@ SM.extend({
                                 self.init(self.context, "exportable");
                             }
                         }),
-                // colorsButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-colors",
-                //         function(sender){
-                //             self.updateContext();
-                //             self.init(self.context, "color");
-                //         }),
-                exportButton = self.addButton( NSMakeRect(112, 14, 20, 20), "icon-export",
+                colorsButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-colors",
+                        function(sender){
+                            self.updateContext();
+                            self.init(self.context, "color");
+                        }),
+                exportButton = self.addButton( NSMakeRect(402, 14, 20, 20), "icon-export",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "export");
                         }),
-                hiddenButton = self.addButton( NSMakeRect(162, 14, 20, 20), "icon-hidden",
+                hiddenButton = self.addButton( NSMakeRect(452, 14, 20, 20), "icon-hidden",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "hidden");
                         }),
-                lockedButton = self.addButton( NSMakeRect(210, 14, 20, 20), "icon-locked",
+                lockedButton = self.addButton( NSMakeRect(500, 14, 20, 20), "icon-locked",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "locked");
                         }),
-                settingsButton = self.addButton( NSMakeRect(260, 14, 20, 20), "icon-settings",
+                settingsButton = self.addButton( NSMakeRect(548, 14, 20, 20), "icon-settings",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "settings");
                         }),
                 divider1 = self.addImage( NSMakeRect(48, 8, 2, 32), "divider"),
-                divider2 = self.addImage( NSMakeRect(148, 8, 2, 32), "divider"),
-                divider3 = self.addImage( NSMakeRect(246, 8, 2, 32), "divider");
+                divider2 = self.addImage( NSMakeRect(242, 8, 2, 32), "divider"),
+                divider3 = self.addImage( NSMakeRect(436, 8, 2, 32), "divider");
 
             contentView.addSubview(closeButton);
-            // contentView.addSubview(overlayButton);
-            // contentView.addSubview(sizesButton);
-            // contentView.addSubview(spacingsButton);
-            // contentView.addSubview(propertiesButton);
+            contentView.addSubview(overlayButton);
+            contentView.addSubview(sizesButton);
+            contentView.addSubview(spacingsButton);
+            contentView.addSubview(propertiesButton);
 
-            // contentView.addSubview(notesButton);
+            contentView.addSubview(notesButton);
             contentView.addSubview(exportableButton);
-            // contentView.addSubview(colorsButton);
+            contentView.addSubview(colorsButton);
             contentView.addSubview(exportButton);
 
             contentView.addSubview(hiddenButton);
@@ -1138,13 +1138,8 @@ SM.extend({
                 floatWindow: false,
                 hiddenClose: false,
                 data: {
-                    export3x: 0,
-                    RN: 1,
-                    React: 1,
-                    Vue: 1,
-                    Android: 1,
-                    scale: 14,
-                    unit: 'rem',
+                    density: 2,
+                    unit: "dp/sp"
                 },
                 callback: function( data ){ return data; }
             }),
@@ -1316,26 +1311,17 @@ SM.extend({
             data = {};
 
         if(this.configs){
-            data.export3x = this.configs.export3x;
-            data.RN = this.configs.RN;
-            data.React = this.configs.React;
-            data.Vue = this.configs.Vue;
-            data.Android = this.configs.Android;
-            data.scale = this.configs.remFontSize;
+            data.scale = this.configs.scale;
+            data.unit = this.configs.unit;
+            data.colorFormat = this.configs.colorFormat;
         }
-        data.unit = 'rem';
+
         return this.SMPanel({
             width: 240,
             height: 316,
             data: data,
             callback: function( data ){
-                const dataResult = Object.assign({},data,{
-                    exportCodes:data.RN || data.React || data.Vue || data.Android,
-                    unit:"px",
-                    scale:1,
-                    remFontSize: data.scale,
-                })
-                self.configs = self.setConfigs(dataResult);
+                self.configs = self.setConfigs(data);
             }
         });
 
@@ -2892,16 +2878,6 @@ SM.extend({
         data.selection = [];
         data.current = [];
         data.pages = [];
-
-        if(this.configs){
-            data.export3x = this.configs.export3x;
-            data.RN = this.configs.RN;
-            data.React = this.configs.React;
-            data.Vue = this.configs.Vue;
-            data.Android = this.configs.Android;
-            data.scale = this.configs.remFontSize;
-        }
-        data.unit = 'rem';
 
         // data.exportOption = self.configs.exportOption;
         // if(data.exportOption == undefined){
