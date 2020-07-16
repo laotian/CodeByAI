@@ -152,11 +152,19 @@
         "items" : [
             "commandToolbar",
             "-",
+            "commandOverlays",
+            "commandSizes",
+            "commandSpacings",
+            "commandProperties",
+            "commandNote",
+            "-",
             "commandExportable",
+            "commandColor",
             "commandExport",
             "-",
             "commandHidden",
             "commandLocked",
+            "commandClear",
             "-",
             "commandSettings",
             {
@@ -172,7 +180,7 @@
     "identifier": "com.codebyai",
     "appcast": "https://service.codebyai.com/appcast.xml",
     "homepage": "https://github.com/laotian/CodeByAI",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description" : "從設計稿匯出前端規範與程式碼",
     "authorEmail" : "tianlupan@126.com",
     "name" : "CodeByAI"
