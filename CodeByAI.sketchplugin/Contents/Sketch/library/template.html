@@ -1989,14 +1989,15 @@ var I18N = {},
           if(this.codeMode===codeMode){
             return;
           }
-          this.codeMode = codeMode;
-          if(this.codeMode){
-            if(this.project.codeArtboards && this.project.codeArtboards[this.codeMode] && this.project.codeArtboards[this.codeMode][this.artboardIndex]){
+          if(codeMode){
+            if(this.project.codeArtboards && this.project.codeArtboards[codeMode] && this.project.codeArtboards[codeMode][this.artboardIndex]){
+              this.codeMode = codeMode;
               this.resetCodeMode();
             }else{
               this.message(_('Code type not valid, export code with this type first'));
             }
           }else{
+            this.codeMode = codeMode;
             this.resetCodeMode();
           }
         },
