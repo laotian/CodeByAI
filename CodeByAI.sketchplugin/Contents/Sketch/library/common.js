@@ -672,7 +672,16 @@ SM.extend({
         else{
             configsData = this.UIMetadata.setObject_forKey (null, this.prefix);
         }
-
+    },
+    getComponentLibraryNamePrefix(){
+        let componentLibraryNamePrefix = this.prefs.stringForKey("componentLibraryNamePrefix") + "" || "";
+        if(componentLibraryNamePrefix=="null") {
+            componentLibraryNamePrefix = "";
+        }
+        return componentLibraryNamePrefix;
+    },
+    setComponentLibraryNamePrefix(value){
+        this.prefs.setObject_forKey(value, "componentLibraryNamePrefix")
     }
 });
 
@@ -2880,22 +2889,6 @@ SM.extend({
         data.selection = [];
         data.current = [];
         data.pages = [];
-
-        // data.exportOption = self.configs.exportOption;
-        // if(data.exportOption == undefined){
-        //     data.exportOption = true;
-        // }
-        //
-        // data.exportInfluenceRect = self.configs.exportInfluenceRect;
-        // if(data.exportInfluenceRect == undefined){
-        //     data.exportInfluenceRect = false;
-        // }
-        //
-        // data.exportCodes = self.configs.exportCodes;
-        // if(data.exportCodes == undefined){
-        //     data.exportCodes = true;
-        // }
-
         if(this.configs){
             data.export3x = this.configs.export3x;
             data.RN = this.configs.RN;
@@ -2904,10 +2897,7 @@ SM.extend({
             data.Android = this.configs.Android;
         }
 
-        data.componentLibraryNamePrefix = this.prefs.stringForKey("componentLibraryNamePrefix8") + "";
-        if(data.componentLibraryNamePrefix=="null"){
-            data.componentLibraryNamePrefix="";
-        }
+        data.componentLibraryNamePrefix = this.getComponentLibraryNamePrefix();
         self.configs.order = (self.configs.order)? self.configs.order: "positive";
         data.order = self.configs.order;
 
@@ -2996,7 +2986,7 @@ SM.extend({
                     exportCodes: data.RN || data.React || data.Vue || data.Android,
                     order: data.order
                 });
-                self.prefs.setObject_forKey(data.componentLibraryNamePrefix, "componentLibraryNamePrefix")
+                self.setComponentLibraryNamePrefix(data.componentLibraryNamePrefix);
             }
         });
     },
@@ -3069,6 +3059,7 @@ SM.extend({
                         unit: self.configs.unit,
                         remFontSize: self.configs.remFontSize,
                         colorFormat: self.configs.colorFormat,
+                        componentLibraryNamePrefix: self.getComponentLibraryNamePrefix(),
                         artboards: [],
                         slices: [],
                         colors: [],

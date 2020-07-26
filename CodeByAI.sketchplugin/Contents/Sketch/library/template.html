@@ -126,6 +126,7 @@ main{position:relative;height:calc(100vh - 60px);}
 .inspector{overflow:auto;}
 .inspector h2,.inspector h3{margin:0;padding:0;font-weight:400;}
 .inspector h2{font-size:12px;line-height:24px;padding:12px 16px;text-align:center;}
+.inspector h2 .symbol{background-image:linear-gradient(90deg,rgba(0,4,9,.32) 0,rgba(0,2,4,0) 100%);}
 .inspector h3{height:32px;font-size:12px;line-height:32px;padding:0 16px;background-image:linear-gradient(90deg,rgba(0,4,9,.32) 0,rgba(0,2,4,0) 100%);}
 .inspector .context{padding:16px;}
 .inspector .color,.inspector .item{display:flex;margin:0 0 8px;}
@@ -1021,11 +1022,14 @@ var I18N = {},
             var self = this,
                 layerData = this.current.layers[this.selectedIndex],
                 html = [];
-            html.push('<h2>' + layerData.name + '</h2>');
             if(layerData.symbol) {
               let symbolType = layerData.symbol.type || layerData.symbol.parentSymbolType;
-              html.push('<h2>' + symbolType + '</h2>');
+              const prefix = this.project.componentLibraryNamePrefix;
+              if(prefix && symbolType && symbolType.startsWith(prefix)){
+                html.push('<h2 style="background:#EE6723; color:#ffffff">' + symbolType + '</h2>');
+              }
             }
+            html.push('<h2>' + layerData.name + '</h2>');
             // fix 0 [opacity]
             // PROPERTIES
             var position = [
