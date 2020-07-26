@@ -2690,11 +2690,17 @@ SM.extend({
             // var symbolObjectID = this.toJSString(layer.symbolMaster().objectID())
             // console.log("getSymbol!",layer.symbolMaster().name(),"desc:",layer.symbolMaster().description(),"symbolId:",symbolObjectID);
             // layerData.objectID = symbolObjectID;
+            let componentName = this.toJSString(layer.symbolMaster().name());
+            var prefix = this.getComponentLibraryNamePrefix();
+            if(!(prefix && componentName && componentName.startsWith(prefix))){
+                componentName = '';
+            }
+
+            layerData.componentName = componentName;
             if(!layerData.symbol){
                 layerData.symbol = {};
             }
-            const symbolType = this.toJSString(layer.symbolMaster().name());
-            layerData.symbol.type = symbolType;
+            layerData.symbol.type = componentName;
 
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
                 var symbolRect = this.getRect(layer),
@@ -2750,7 +2756,7 @@ SM.extend({
                           tempSymbolLayer,
                           data,
                           symbolLayer,
-                          symbolType
+                          componentName
                       );
                     }
                     idx++
@@ -3290,7 +3296,7 @@ SM.extend({
 
         return savePathName;
     },
-    getLayer: function(artboard, layer, data, symbolLayer, parentSymbolType){
+    getLayer: function(artboard, layer, data, symbolLayer, componentName){
         var artboardRect = artboard.absoluteRect(),
             group = layer.parentGroup(),
             layerStates = this.getStates(layer);
@@ -3519,8 +3525,8 @@ SM.extend({
              layerData.symbol = {
                  objectID:this.toJSString( symbolLayer.objectID() ),
                  name:this.toJSString( symbolLayer.name() ),
-                 parentSymbolType,
              }
+             layerData.componentName = componentName;
          }
 
         if ( layerType != "slice" ) {

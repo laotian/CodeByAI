@@ -1023,12 +1023,8 @@ var I18N = {},
                 layerData = this.current.layers[this.selectedIndex],
                 html = [];
             html.push('<h2>' + layerData.name + '</h2>');
-            if(layerData.symbol) {
-              var symbolType = layerData.symbol.type || layerData.symbol.parentSymbolType;
-              var prefix = this.project.componentLibraryNamePrefix;
-              if(prefix && symbolType && symbolType.startsWith(prefix)){
-                html.push(this.propertyType('COMPONENT', symbolType));
-              }
+            if(layerData.componentName) {
+              html.push(this.propertyType('COMPONENT', layerData.componentName));
             }
             // fix 0 [opacity]
             // PROPERTIES
