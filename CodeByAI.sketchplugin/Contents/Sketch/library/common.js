@@ -2684,7 +2684,8 @@ SM.extend({
             if(!layerData.symbol){
                 layerData.symbol = {};
             }
-            layerData.symbol.type = this.toJSString(layer.symbolMaster().name());
+            const symbolType = this.toJSString(layer.symbolMaster().name());
+            layerData.symbol.type = symbolType;
 
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
                 var symbolRect = this.getRect(layer),
@@ -2739,7 +2740,8 @@ SM.extend({
                           artboard,
                           tempSymbolLayer,
                           data,
-                          symbolLayer
+                          symbolLayer,
+                          symbolType
                       );
                     }
                     idx++
@@ -2902,6 +2904,10 @@ SM.extend({
             data.Android = this.configs.Android;
         }
 
+        data.componentLibraryNamePrefix = this.prefs.stringForKey("componentLibraryNamePrefix8") + "";
+        if(data.componentLibraryNamePrefix=="null"){
+            data.componentLibraryNamePrefix="";
+        }
         self.configs.order = (self.configs.order)? self.configs.order: "positive";
         data.order = self.configs.order;
 
@@ -2990,6 +2996,7 @@ SM.extend({
                     exportCodes: data.RN || data.React || data.Vue || data.Android,
                     order: data.order
                 });
+                self.prefs.setObject_forKey(data.componentLibraryNamePrefix, "componentLibraryNamePrefix")
             }
         });
     },
@@ -3292,7 +3299,7 @@ SM.extend({
 
         return savePathName;
     },
-    getLayer: function(artboard, layer, data, symbolLayer){
+    getLayer: function(artboard, layer, data, symbolLayer, parentSymbolType){
         var artboardRect = artboard.absoluteRect(),
             group = layer.parentGroup(),
             layerStates = this.getStates(layer);
@@ -3521,6 +3528,7 @@ SM.extend({
              layerData.symbol = {
                  objectID:this.toJSString( symbolLayer.objectID() ),
                  name:this.toJSString( symbolLayer.name() ),
+                 parentSymbolType,
              }
          }
 

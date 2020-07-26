@@ -1022,6 +1022,10 @@ var I18N = {},
                 layerData = this.current.layers[this.selectedIndex],
                 html = [];
             html.push('<h2>' + layerData.name + '</h2>');
+            if(layerData.symbol) {
+              let symbolType = layerData.symbol.type || layerData.symbol.parentSymbolType;
+              html.push('<h2>' + symbolType + '</h2>');
+            }
             // fix 0 [opacity]
             // PROPERTIES
             var position = [

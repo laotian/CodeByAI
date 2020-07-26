@@ -109,5 +109,6 @@
     "Code": "程式碼",
     "Style": "樣式",
     "export 3x pic": "匯出3x圖",
-    "Customized": "定制"
+    "Customized": "定制",
+    "Component library name prefix" : "組件庫名稱首碼"
 };
