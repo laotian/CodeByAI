@@ -2568,7 +2568,7 @@ SM.extend({
       }
       return formats;
     },
-    getExportable: function(layer, savePath = layer.name()){
+    getExportable: function(layer, savePath){
         var self = this,
             exportable = [],
             size, sizes = layer.exportOptions().exportFormats();
@@ -2592,10 +2592,10 @@ SM.extend({
         //     ]:
         //     self.getFormats(sizes);
 
-        savePath = savePath.replace(/(@2x)+/,"")
-            .replace(/(@3x)+/,"")
-            .replace(/\/+/g,"_")
-            .replace(/\s+/g,"");
+        // savePath = savePath.replace(/(@2x)+/,"")
+        //     .replace(/(@3x)+/,"")
+        //     .replace(/\/+/g,"_")
+        //     .replace(/\s+/g,"");
 
         var exportFormats =[
               { scale: 1, suffix: "@2x", format: fileFormat }
@@ -2652,8 +2652,8 @@ SM.extend({
                     layerData.type == "symbol" &&
                     this.hasExportSizes(layer.symbolMaster())
                 )
-            ) &&
-            !this.sliceCache[objectID]
+            )
+            // && !this.sliceCache[objectID]
         ){
             var sliceLayer = ( layerData.type == "symbol" )? layer.symbolMaster(): layer;
             if(symbolLayer && this.is(symbolLayer.parentGroup(), MSSymbolMaster)){
@@ -2666,7 +2666,11 @@ SM.extend({
                 .createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.assetsPath, true, nil, nil);
 
             //防止因重名导致的覆盖
-            let layerName = sliceLayer.name().trim();
+            let layerName = sliceLayer.name()
+                .replace(/(@2x)+/,"")
+                .replace(/(@3x)+/,"")
+                .replace(/\/+/g,"_")
+                .replace(/\s+/g,"")
             //判断targetSrc重复
             while(this.slices.find(slice=>slice.exportName==layerName)){
                 layerName = this.increaseNo(layerName);
@@ -2680,9 +2684,9 @@ SM.extend({
                 exportable: layerData.exportable
             });
         }
-        else if( this.sliceCache[objectID] ){
-            layerData.exportable = this.sliceCache[objectID];
-        }
+        // else if( this.sliceCache[objectID] ){
+        //     layerData.exportable = this.sliceCache[objectID];
+        // }
     },
     getSymbol: function(artboard, layer, layerData, data){
         if( layerData.type == "symbol" ){
