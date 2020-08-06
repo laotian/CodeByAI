@@ -672,7 +672,16 @@ SM.extend({
         else{
             configsData = this.UIMetadata.setObject_forKey (null, this.prefix);
         }
-
+    },
+    getComponentLibraryNamePrefix(){
+        let componentLibraryNamePrefix = this.prefs.stringForKey("componentLibraryNamePrefix") + "" || "";
+        if(componentLibraryNamePrefix=="null") {
+            componentLibraryNamePrefix = "";
+        }
+        return componentLibraryNamePrefix;
+    },
+    setComponentLibraryNamePrefix(value){
+        this.prefs.setObject_forKey(value, "componentLibraryNamePrefix")
     }
 });
 
@@ -2559,7 +2568,7 @@ SM.extend({
       }
       return formats;
     },
-    getExportable: function(layer, savePath = layer.name()){
+    getExportable: function(layer, savePath){
         var self = this,
             exportable = [],
             size, sizes = layer.exportOptions().exportFormats();
@@ -2583,10 +2592,10 @@ SM.extend({
         //     ]:
         //     self.getFormats(sizes);
 
-        savePath = savePath.replace(/(@2x)+/,"")
-            .replace(/(@3x)+/,"")
-            .replace(/\/+/g,"_")
-            .replace(/\s+/g,"");
+        // savePath = savePath.replace(/(@2x)+/,"")
+        //     .replace(/(@3x)+/,"")
+        //     .replace(/\/+/g,"_")
+        //     .replace(/\s+/g,"");
 
         var exportFormats =[
               { scale: 1, suffix: "@2x", format: fileFormat }
@@ -2643,8 +2652,8 @@ SM.extend({
                     layerData.type == "symbol" &&
                     this.hasExportSizes(layer.symbolMaster())
                 )
-            ) &&
-            !this.sliceCache[objectID]
+            )
+            // && !this.sliceCache[objectID]
         ){
             var sliceLayer = ( layerData.type == "symbol" )? layer.symbolMaster(): layer;
             if(symbolLayer && this.is(symbolLayer.parentGroup(), MSSymbolMaster)){
@@ -2657,7 +2666,11 @@ SM.extend({
                 .createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.assetsPath, true, nil, nil);
 
             //防止因重名导致的覆盖
-            let layerName = sliceLayer.name().trim();
+            let layerName = sliceLayer.name()
+                .replace(/(@2x)+/,"")
+                .replace(/(@3x)+/,"")
+                .replace(/\/+/g,"_")
+                .replace(/\s+/g,"")
             //判断targetSrc重复
             while(this.slices.find(slice=>slice.exportName==layerName)){
                 layerName = this.increaseNo(layerName);
@@ -2671,9 +2684,9 @@ SM.extend({
                 exportable: layerData.exportable
             });
         }
-        else if( this.sliceCache[objectID] ){
-            layerData.exportable = this.sliceCache[objectID];
-        }
+        // else if( this.sliceCache[objectID] ){
+        //     layerData.exportable = this.sliceCache[objectID];
+        // }
     },
     getSymbol: function(artboard, layer, layerData, data){
         if( layerData.type == "symbol" ){
@@ -2681,10 +2694,17 @@ SM.extend({
             // var symbolObjectID = this.toJSString(layer.symbolMaster().objectID())
             // console.log("getSymbol!",layer.symbolMaster().name(),"desc:",layer.symbolMaster().description(),"symbolId:",symbolObjectID);
             // layerData.objectID = symbolObjectID;
+            let componentName = this.toJSString(layer.symbolMaster().name());
+            var prefix = this.getComponentLibraryNamePrefix();
+            if(!(prefix && componentName && componentName.startsWith(prefix))){
+                componentName = '';
+            }
+
+            layerData.componentName = componentName;
             if(!layerData.symbol){
                 layerData.symbol = {};
             }
-            layerData.symbol.type = this.toJSString(layer.symbolMaster().name());
+            layerData.symbol.type = componentName;
 
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
                 var symbolRect = this.getRect(layer),
@@ -2739,7 +2759,8 @@ SM.extend({
                           artboard,
                           tempSymbolLayer,
                           data,
-                          symbolLayer
+                          symbolLayer,
+                          componentName
                       );
                     }
                     idx++
@@ -2878,22 +2899,6 @@ SM.extend({
         data.selection = [];
         data.current = [];
         data.pages = [];
-
-        // data.exportOption = self.configs.exportOption;
-        // if(data.exportOption == undefined){
-        //     data.exportOption = true;
-        // }
-        //
-        // data.exportInfluenceRect = self.configs.exportInfluenceRect;
-        // if(data.exportInfluenceRect == undefined){
-        //     data.exportInfluenceRect = false;
-        // }
-        //
-        // data.exportCodes = self.configs.exportCodes;
-        // if(data.exportCodes == undefined){
-        //     data.exportCodes = true;
-        // }
-
         if(this.configs){
             data.export3x = this.configs.export3x;
             data.RN = this.configs.RN;
@@ -2902,6 +2907,7 @@ SM.extend({
             data.Android = this.configs.Android;
         }
 
+        data.componentLibraryNamePrefix = this.getComponentLibraryNamePrefix();
         self.configs.order = (self.configs.order)? self.configs.order: "positive";
         data.order = self.configs.order;
 
@@ -2990,6 +2996,7 @@ SM.extend({
                     exportCodes: data.RN || data.React || data.Vue || data.Android,
                     order: data.order
                 });
+                self.setComponentLibraryNamePrefix(data.componentLibraryNamePrefix);
             }
         });
     },
@@ -3062,6 +3069,7 @@ SM.extend({
                         unit: self.configs.unit,
                         remFontSize: self.configs.remFontSize,
                         colorFormat: self.configs.colorFormat,
+                        componentLibraryNamePrefix: self.getComponentLibraryNamePrefix(),
                         artboards: [],
                         slices: [],
                         colors: [],
@@ -3292,7 +3300,7 @@ SM.extend({
 
         return savePathName;
     },
-    getLayer: function(artboard, layer, data, symbolLayer){
+    getLayer: function(artboard, layer, data, symbolLayer, componentName){
         var artboardRect = artboard.absoluteRect(),
             group = layer.parentGroup(),
             layerStates = this.getStates(layer);
@@ -3522,6 +3530,7 @@ SM.extend({
                  objectID:this.toJSString( symbolLayer.objectID() ),
                  name:this.toJSString( symbolLayer.name() ),
              }
+             layerData.componentName = componentName;
          }
 
         if ( layerType != "slice" ) {

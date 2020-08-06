@@ -114,5 +114,7 @@
     "Code": "代码",
     "Style": "样式",
     "export 3x pic": "导出3x图",
-    "Customized": "定制"
+    "Customized": "定制",
+    "Component library name prefix" : "组件库名称前缀",
+    "COMPONENT": "组件"
 };

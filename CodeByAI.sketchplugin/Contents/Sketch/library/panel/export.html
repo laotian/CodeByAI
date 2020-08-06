@@ -222,13 +222,18 @@
         init = function(data) {
             $('body').html([
               '<div class="container">',
-                  '<div id="artboards-list" class="list">',
+                  '<div id="artboards-list" class="list" style="height: 320px">',
                       '<div class="empty" style="padding-top:128px;">',
                           '<h3>' + _('No artboards!') + '</h3>',
                           '<p>' + _('You need add some artboards.') + '</p>',
                       '</div>',
                   '</div>',
                   '<div class="options">',
+
+                  '<div class="input-text mrb16">',
+                    '<input type="text" id="componentLibraryNamePrefix" name="componentLibraryNamePrefix" placeholder=' + _('Component library name prefix') + ' value="" style="width: 100%; text-align:left">',
+                  '</div>',
+
                     '<div class="resolution selectbox mrb16" tabindex="0">',
                       '<div class="selectwrap">',
                         '<h3>H5 Rem</h3>',
@@ -388,6 +393,11 @@
           if(data.export3x){
             $('#'+export3xIdName).attr('checked', true);
           }
+
+          if(data.componentLibraryNamePrefix){
+            $('#componentLibraryNamePrefix').attr('value', data.componentLibraryNamePrefix);
+          }
+          // $('#componentLibraryNamePrefix').attr('value', JSON.stringify(data.componentLibraryNamePrefix));
 
           // let id = getDesignResolutionID(data.scale, data.unit);
           // checkResolution(id);
@@ -573,6 +583,8 @@
               }
               data.scale = webScale;
               data.unit = "rem";
+              data.componentLibraryNamePrefix = $('#componentLibraryNamePrefix').val();
+              // data.componentLibraryNamePrefix = "测试symbolName";
               SMAction('submit', data);
             });
 
