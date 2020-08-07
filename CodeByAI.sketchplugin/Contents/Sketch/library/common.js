@@ -2728,8 +2728,15 @@ SM.extend({
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
 
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
+
+                    let symbolChildIndex =  idx;
+                    // symbol has background, if detached,add a child rect, so count+1,
+                    if(tempGroup.children().count()==symbolChildren.count()+1){
+                        symbolChildIndex--;
+                    }
+
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
-                        var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
+                        var symbolMasterObjectID = self.toJSString(symbolChildren[symbolChildIndex].objectID());
                         if(
                           overrides &&
                           overrides[symbolMasterObjectID] &&
@@ -2745,11 +2752,6 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
-                      let symbolChildIndex =  idx;
-                      // symbol has background, if detached,add a child rect, so count+1,
-                      if(tempGroup.children().count()==symbolChildren.count()+1){
-                          symbolChildIndex--;
-                      }
                       var symbolLayer = undefined;
                       if(symbolChildIndex>=0 && symbolChildIndex< symbolChildren.count()){
                           symbolLayer = symbolChildren[symbolChildIndex];
@@ -3307,11 +3309,12 @@ SM.extend({
 
         if(layer && this.is(layer, MSLayerGroup) && /NOTE\#/.exec(layer.name())){
             var textLayer = layer.children()[2];
-
-            data.notes.push({
-                rect: this.rectToJSON(textLayer.absoluteRect(), artboardRect),
-                note: this.toHTMLEncode(this.emojiToEntities(textLayer.stringValue())).replace(/\n/g, "<br>")
-            });
+            if(this.is(textLayer, MSTextLayer)) {
+                data.notes.push({
+                    rect: this.rectToJSON(textLayer.absoluteRect(), artboardRect),
+                    note: this.toHTMLEncode(this.emojiToEntities(textLayer.stringValue())).replace(/\n/g, "<br>")
+                });
+            }
             layer.setIsVisible(false);
         }
 
