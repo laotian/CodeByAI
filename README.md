@@ -37,7 +37,7 @@ CodeByAI provides the secondary development SDK, which can realize the replaceme
 
 ## Thanks
 - The front-end of the plugin is based on [SketchMeasure](https://github.com/utom/sketch-measure)
-
+- Designer [@leyu123](https://github.com/leyu123)
 
 ## feedback
 - [ISSUE](https://github.com/laotian/CodeByAI/issues/new)
