@@ -634,6 +634,79 @@ SM.extend({
             }
         }
     },
+    getDirectChildren: function(parentLayer){
+      const children = [];
+      if(parentLayer && this.is(parentLayer, MSLayerGroup)){
+          const parentLayerId = parentLayer.objectID();
+          var layers = parentLayer.children().objectEnumerator();
+          let layer;
+          while(layer = layers.nextObject()) {
+              if(parentLayerId==layer.parentGroup().objectID()){
+                  children.push(layer);
+              }
+          }
+      }
+      return children;
+    },
+    markExportable: function(layer){
+        if(this.hasExportSizes(layer)){
+            return;
+        }
+        var size = layer.exportOptions().addExportFormat();
+        size.setName("");
+        size.setScale(1);
+    },
+    processMask: function (artBoard) {
+        var layers = artBoard.children().objectEnumerator();
+        var maskLayers = [];
+        let layer;
+        while(layer = layers.nextObject()) {
+            if(!this.is(layer, MSLayerGroup) && layer.hasClippingMask()){
+                maskLayers.push(layer);
+            }
+        }
+        for(let mIndex =0;mIndex<maskLayers.length;mIndex++){
+            const maskLayer = maskLayers[mIndex];
+            const maskRect = this.getRect(maskLayer);
+            const parentGroup = maskLayer.parentGroup();
+            if(this.hasExportSizes(parentGroup)){
+                continue;
+            }
+            const directChildren = this.getDirectChildren(parentGroup);
+            const maskIndex = directChildren.indexOf(maskLayer);
+            let i;
+            for(i= maskIndex+1;i<directChildren.length;i++){
+                const layer = directChildren[i];
+                if(layer.shouldBreakMaskChain()){
+                    break;
+                }
+            }
+            const lastIndex = i - 1;
+            if(maskIndex==0 && lastIndex==directChildren.length-1){
+                //make exportable
+                this.markExportable(parentGroup);
+                continue;
+            }
+            const targetChildren = directChildren.filter(function (child,index) {
+                return index>= maskIndex && index<=lastIndex;
+            });
+            const group = this.addGroup();
+            // move mask and top masked layers to new group and make exportable
+            [].concat(targetChildren).reverse().forEach(function (child) {
+                child.moveToLayer_beforeLayer(group, group.firstLayer());
+            });
+            group.setName((maskRect.width * maskRect.height < 160)  ? "icon" : parentGroup.name() + "_image");
+            this.markExportable(group);
+            parentGroup.addLayers([group]);
+            if(lastIndex<directChildren.length-1){
+                group.moveToLayer_beforeLayer(parentGroup, directChildren[lastIndex+1]);
+            }
+            const groupRect = this.getRect(group);
+            groupRect.setX(maskRect.x);
+            groupRect.setY(maskRect.y);
+            group.fixGeometryWithOptions(0);
+        }
+    }
 });
 
 // configs.js
@@ -2503,6 +2576,7 @@ SM.extend({
             this.maskRect = undefined;
         }
 
+        let maskLayer = undefined;
         if (layerStates.isMaskChildLayer){
             var layerRect = layerData.rect,
                 maskRect = this.maskRect;
@@ -2527,17 +2601,24 @@ SM.extend({
                     width: width,
                     height: height
                 }
+            maskLayer = layer.closestClippingLayer();
+        }
 
+        if(this.is(layer, MSLayerGroup) && this.hasExportSizes(layer)){
+            const firstLayer = layer.firstLayer();
+            if(firstLayer && firstLayer.hasClippingMask()){
+                maskLayer = firstLayer;
+            }
+        }
+        if(maskLayer) {
             // add border radius for images
-            const maskLayer = layer.closestClippingLayer();
-            if(maskLayer && !layerData.radius){
-                if(this.is(maskLayer, MSRectangleShape)){
+            if (maskLayer && !layerData.radius) {
+                if (this.is(maskLayer, MSRectangleShape)) {
                     layerData.radius = this.getRadius(maskLayer);
-                }else if(this.is(maskLayer, MSOvalShape)){
-                    layerData.radius = width/2;
+                } else if (this.is(maskLayer, MSOvalShape)) {
+                    layerData.radius = width / 2;
                 }
             }
-
         }
     },
     getFormats: function( exportFormats ) {
@@ -3103,6 +3184,8 @@ SM.extend({
                         exporting = true;
                         if(!self.currentExportAboard){
                             self.currentExportAboard = self.selectionArtboards[artboardIndex].duplicate();
+                            //process Mask Layer
+                            self.processMask(self.currentExportAboard);
                         }
                         var artboard = self.currentExportAboard,
                             page = artboard.parentGroup(),
