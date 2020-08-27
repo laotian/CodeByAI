@@ -49,9 +49,24 @@ var SM = {
             }
 
             if(command && command == "init"){
-                this.checkVersion();
+                console.log("init..");
+                const self = this;
+                setTimeout(function () {
+                    const currentDoc = context.document || NSDocumentController.sharedDocumentController().currentDocument();
+                    if(currentDoc) {
+                        const fileUrl = currentDoc.fileURL();
+                        if (fileUrl) {
+                            const filePath = fileUrl.path();
+                            self.autoProcess(filePath);
+                        }
+                    }else{
+                        console.log("currentDoc is null");
+                    }
+                },8000);
                 return false;
             }
+
+            console.log("command:"+command);
 
             this.document = context.document;
             this.documentData = this.document.documentData();
@@ -121,7 +136,7 @@ var SM = {
                         this.settingsPanel();
                         break;
                     case "export":
-                        this.export();
+                        this.export(false,undefined);
                         break;
                 }
             }
@@ -166,7 +181,93 @@ SM.extend({
               }
           });
         }
-    }
+    },
+    autoProcess: function(filePath, artBoardObjectIds){
+        const self = this;
+        if (filePath.includes("worker_workspace") && !self.exporting) {
+            const parts = filePath.split("/");
+            const fileName = parts[parts.length-1];
+            const match = fileName.match(/^(\d+)\.sketch$/);
+            if(match) {
+                const draftId = match[1];
+                parts[parts.length-1] = draftId;
+                const exportDir =  parts.slice(0,parts.length-1).join("/");
+                console.log(exportDir);
+                self.writeFile({
+                    content: `working`,
+                    path: exportDir,
+                    fileName: draftId + ".json.working"
+                });
+                this.autoConfig();
+                this.export(true,parts.join("/")+"/",function (exportSuccess) {
+                    self.writeFile({
+                        content: exportSuccess ? 'success' : 'failed',
+                        path: exportDir,
+                        fileName: draftId + ".json.done"
+                    });
+                });
+            }else{
+                console.log("not match:"+fileName);
+            }
+        }
+
+        // console.log(sketchFile);
+        // console.log(JSON.stringify(this.context));
+        // console.log(NSDocumentController.sharedDocumentController());
+        // const url = NSURL.fileURLWithPath(sketchFile);
+        // // this.context.document.readFromURL(url,nil,nil);
+        // [[NSDocumentController sharedDocumentController] openLocalDocumentWithContentsOfURL:url display:true completionHandler:nil];
+        // const self = this;
+        // setTimeout(function () {
+        //     console.log("auto export");
+        //     self.autoConfig();
+        //     self.export(true,zipFile);
+        // },5000);
+
+        // NSDocumentController.sharedDocumentController().openLocalDocumentWithContentsOfURL_display_completionHandler(url,true,nil);
+        // ,
+        // NSDocumentController.sharedDocumentController().open(sketchFile);
+        // console.log(this.context.sketch2);
+        // this.context.open(sketchFile);
+        // this.document.open
+        // console.log("autoProgress!");
+    },
+    // observeForRemote: function(){
+    //     const queue_dir = '/Users/lupantian/WebstormProjects/ui2code/worker_workspace/queue'
+    //     const iter = NSFileManager
+    //         .defaultManager()
+    //         .contentsOfDirectoryAtPath_error(queue_dir,nil)
+    //         .objectEnumerator();
+    //     let fileName;
+    //     let drafts = [];
+    //     let drafts_working = [];
+    //     while (fileName = iter.nextObject()) {
+    //         const match = fileName.match(/^(\d+)\.json(.*)$/);
+    //         if(match) {
+    //             const id = match[1];
+    //             const suffix = match[2];
+    //             if(suffix){
+    //                 drafts_working.push(id);
+    //             }else{
+    //                 drafts.push(id);
+    //             }
+    //         }
+    //     }
+    //     drafts = drafts.filter(d=>!drafts_working.includes(d)).map(d=>Number(d));
+    //     drafts.sort();
+    //     if(drafts.length>0){
+    //         const draftId = drafts[0];
+    //         // this.writeFile({
+    //         //     content: `${draftId}`,
+    //         //     path: queue_dir,
+    //         //     fileName: draftId + ".json.working"
+    //         // });
+    //         const draftConfig = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(queue_dir+"/"+draftId+".json", 4, nil));
+    //         const sketchFile = queue_dir + "/" +  draftConfig.savePath;
+    //         const artBoardObjectIds = draftConfig.artBoardSelectIndex;
+    //         this.autoProcess(sketchFile,queue_dir + "/" + draftId + "/",    artBoardObjectIds);
+    //     }
+    // }
 });
 
 SM.extend({
@@ -634,6 +735,79 @@ SM.extend({
             }
         }
     },
+    getDirectChildren: function(parentLayer){
+      const children = [];
+      if(parentLayer && this.is(parentLayer, MSLayerGroup)){
+          const parentLayerId = parentLayer.objectID();
+          var layers = parentLayer.children().objectEnumerator();
+          let layer;
+          while(layer = layers.nextObject()) {
+              if(parentLayerId==layer.parentGroup().objectID()){
+                  children.push(layer);
+              }
+          }
+      }
+      return children;
+    },
+    markExportable: function(layer){
+        if(this.hasExportSizes(layer)){
+            return;
+        }
+        var size = layer.exportOptions().addExportFormat();
+        size.setName("");
+        size.setScale(1);
+    },
+    processMask: function (artBoard) {
+        var layers = artBoard.children().objectEnumerator();
+        var maskLayers = [];
+        let layer;
+        while(layer = layers.nextObject()) {
+            if(!this.is(layer, MSLayerGroup) && layer.hasClippingMask()){
+                maskLayers.push(layer);
+            }
+        }
+        for(let mIndex =0;mIndex<maskLayers.length;mIndex++){
+            const maskLayer = maskLayers[mIndex];
+            const maskRect = this.getRect(maskLayer);
+            const parentGroup = maskLayer.parentGroup();
+            if(this.hasExportSizes(parentGroup)){
+                continue;
+            }
+            const directChildren = this.getDirectChildren(parentGroup);
+            const maskIndex = directChildren.indexOf(maskLayer);
+            let i;
+            for(i= maskIndex+1;i<directChildren.length;i++){
+                const layer = directChildren[i];
+                if(layer.shouldBreakMaskChain()){
+                    break;
+                }
+            }
+            const lastIndex = i - 1;
+            if(maskIndex==0 && lastIndex==directChildren.length-1){
+                //make exportable
+                this.markExportable(parentGroup);
+                continue;
+            }
+            const targetChildren = directChildren.filter(function (child,index) {
+                return index>= maskIndex && index<=lastIndex;
+            });
+            const group = this.addGroup();
+            // move mask and top masked layers to new group and make exportable
+            [].concat(targetChildren).reverse().forEach(function (child) {
+                child.moveToLayer_beforeLayer(group, group.firstLayer());
+            });
+            group.setName((maskRect.width * maskRect.height < 160)  ? "icon" : parentGroup.name() + "_image");
+            this.markExportable(group);
+            parentGroup.addLayers([group]);
+            if(lastIndex<directChildren.length-1){
+                group.moveToLayer_beforeLayer(parentGroup, directChildren[lastIndex+1]);
+            }
+            const groupRect = this.getRect(group);
+            groupRect.setX(maskRect.x);
+            groupRect.setY(maskRect.y);
+            group.fixGeometryWithOptions(0);
+        }
+    }
 });
 
 // configs.js
@@ -2503,6 +2677,7 @@ SM.extend({
             this.maskRect = undefined;
         }
 
+        let maskLayer = undefined;
         if (layerStates.isMaskChildLayer){
             var layerRect = layerData.rect,
                 maskRect = this.maskRect;
@@ -2527,17 +2702,24 @@ SM.extend({
                     width: width,
                     height: height
                 }
+            maskLayer = layer.closestClippingLayer();
+        }
 
+        if(this.is(layer, MSLayerGroup) && this.hasExportSizes(layer)){
+            const firstLayer = layer.firstLayer();
+            if(firstLayer && firstLayer.hasClippingMask()){
+                maskLayer = firstLayer;
+            }
+        }
+        if(maskLayer) {
             // add border radius for images
-            const maskLayer = layer.closestClippingLayer();
-            if(maskLayer && !layerData.radius){
-                if(this.is(maskLayer, MSRectangleShape)){
+            if (maskLayer && !layerData.radius) {
+                if (this.is(maskLayer, MSRectangleShape)) {
                     layerData.radius = this.getRadius(maskLayer);
-                }else if(this.is(maskLayer, MSOvalShape)){
-                    layerData.radius = width/2;
+                } else if (this.is(maskLayer, MSOvalShape)) {
+                    layerData.radius = width / 2;
                 }
             }
-
         }
     },
     getFormats: function( exportFormats ) {
@@ -2728,8 +2910,15 @@ SM.extend({
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
 
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
+
+                    let symbolChildIndex =  idx;
+                    // symbol has background, if detached,add a child rect, so count+1,
+                    if(tempGroup.children().count()==symbolChildren.count()+1){
+                        symbolChildIndex--;
+                    }
+
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
-                        var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
+                        var symbolMasterObjectID = self.toJSString(symbolChildren[symbolChildIndex].objectID());
                         if(
                           overrides &&
                           overrides[symbolMasterObjectID] &&
@@ -2745,11 +2934,6 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
-                      let symbolChildIndex =  idx;
-                      // symbol has background, if detached,add a child rect, so count+1,
-                      if(tempGroup.children().count()==symbolChildren.count()+1){
-                          symbolChildIndex--;
-                      }
                       var symbolLayer = undefined;
                       if(symbolChildIndex>=0 && symbolChildIndex< symbolChildren.count()){
                           symbolLayer = symbolChildren[symbolChildIndex];
@@ -3039,13 +3223,57 @@ SM.extend({
             }
         });
     },
-    export: function(){
-        if(this.exportPanel()){
+
+    autoConfig: function() {
+        // '{"scale":"1","unit":"px","colorFormat":"color-hex","timestamp":1598514115454,"RN":true,"React":true,"Vue":true,"Android":true,"export3x":false,"exportOption":true,"exportCodes":true}'
+        this.configs = {
+            scale: "1",
+            unit:"px",
+            colorFormat:"color-hex",
+            timestamp:Date.now(),
+            RN: false,
+            Android: false,
+            Vue:false,
+            React: false,
+            export3x: false,
+            exportOption: true,
+            exportCodes: false,
+        }
+
+        this.updateContext();
+        this.document =this.context.document;
+            // this.document = context.document;
+        this.documentData = this.document.documentData();
+        this.UIMetadata = this.document.mutableUIMetadata();
+        this.window = this.document.window();
+        this.pages = this.document.pages();
+        this.page = this.document.currentPage();
+        this.artboard = this.page.currentArtboard();
+        this.current = this.artboard || this.page;
+
+        // var allData = self.allData;
+        this.selectionArtboards = [];
+        this.allCount = 0;
+
+        let page,artboard;
+        var pages = this.document.pages().objectEnumerator();
+        while(page = pages.nextObject()){
+            var artboards = page.artboards().objectEnumerator();
+            while(artboard = artboards.nextObject()){
+                if(!this.is(artboard, MSSymbolMaster)){
+                    this.allCount += artboard.children().count();
+                    this.selectionArtboards.push(artboard);
+                }
+            }
+        }
+    },
+    export: function(_autoMode, _savePath , callback){
+        if(_autoMode || this.exportPanel()){
             if(this.selectionArtboards.length <= 0){
                 return false;
             }
             var self = this,
-                savePath = this.getSavePath();
+                savePath =  _savePath || this.getSavePath();
 
             if(savePath){
                 // self.message(_("Exporting..."));
@@ -3062,8 +3290,8 @@ SM.extend({
                 var idx = 1,
                     artboardIndex = 0,
                     layerIndex = 0,
-                    layerCount = 0,
-                    exporting = false,
+                    layerCount = 0;
+                    self.exporting = false,
                     data = {
                         scale: self.configs.scale,
                         unit: self.configs.unit,
@@ -3084,6 +3312,7 @@ SM.extend({
                 self.wantsStop = false;
                 self.currentExportAboard = undefined;
                 // var removeCurrentExportAboard = self.removeCurrentExportAboard.bind(self);
+                let exportSuccess = true;
 
                 coscript.scheduleWithRepeatingInterval_jsFunction( 0, function( interval ){
                     // self.message('Processing layer ' + idx + ' of ' + self.allCount);
@@ -3097,10 +3326,12 @@ SM.extend({
                         self.maskRect = undefined;
                     }
 
-                    if(!exporting) {
-                        exporting = true;
+                    if(!self.exporting) {
+                        self.exporting = true;
                         if(!self.currentExportAboard){
                             self.currentExportAboard = self.selectionArtboards[artboardIndex].duplicate();
+                            //process Mask Layer
+                            self.processMask(self.currentExportAboard);
                         }
                         var artboard = self.currentExportAboard,
                             page = artboard.parentGroup(),
@@ -3116,7 +3347,7 @@ SM.extend({
                           );
                           layerIndex++;
                           layerCount++;
-                          exporting = false;
+                          self.exporting = false;
                         } catch (e) {
                           self.wantsStop = true;
                           log(e)
@@ -3125,6 +3356,7 @@ SM.extend({
                           var dialog = NSAlert.alloc().init()
                           dialog.setInformativeText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
                           dialog.runModal();
+                          exportSuccess = false;
                           // if(ga) ga.sendError(message)
                         }
 
@@ -3236,7 +3468,9 @@ SM.extend({
                     }
 
                     if( self.wantsStop === true ){
+                        self.exporting = false;
                         self.removeCurrentExportAboard();
+                        callback(exportSuccess);
                                        // if(ga) ga.sendEvent('spec', 'spec done');
                         return interval.cancel();
                     }
@@ -3307,11 +3541,12 @@ SM.extend({
 
         if(layer && this.is(layer, MSLayerGroup) && /NOTE\#/.exec(layer.name())){
             var textLayer = layer.children()[2];
-
-            data.notes.push({
-                rect: this.rectToJSON(textLayer.absoluteRect(), artboardRect),
-                note: this.toHTMLEncode(this.emojiToEntities(textLayer.stringValue())).replace(/\n/g, "<br>")
-            });
+            if(this.is(textLayer, MSTextLayer)) {
+                data.notes.push({
+                    rect: this.rectToJSON(textLayer.absoluteRect(), artboardRect),
+                    note: this.toHTMLEncode(this.emojiToEntities(textLayer.stringValue())).replace(/\n/g, "<br>")
+                });
+            }
             layer.setIsVisible(false);
         }
 
