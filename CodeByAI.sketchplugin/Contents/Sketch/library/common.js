@@ -49,9 +49,24 @@ var SM = {
             }
 
             if(command && command == "init"){
-                this.checkVersion();
+                console.log("init..");
+                const self = this;
+                setTimeout(function () {
+                    const currentDoc = context.document || NSDocumentController.sharedDocumentController().currentDocument();
+                    if(currentDoc) {
+                        const fileUrl = currentDoc.fileURL();
+                        if (fileUrl) {
+                            const filePath = fileUrl.path();
+                            self.autoProcess(filePath);
+                        }
+                    }else{
+                        console.log("currentDoc is null");
+                    }
+                },8000);
                 return false;
             }
+
+            console.log("command:"+command);
 
             this.document = context.document;
             this.documentData = this.document.documentData();
@@ -121,7 +136,7 @@ var SM = {
                         this.settingsPanel();
                         break;
                     case "export":
-                        this.export();
+                        this.export(false,undefined);
                         break;
                 }
             }
@@ -166,7 +181,93 @@ SM.extend({
               }
           });
         }
-    }
+    },
+    autoProcess: function(filePath, artBoardObjectIds){
+        const self = this;
+        if (filePath.includes("worker_workspace") && !self.exporting) {
+            const parts = filePath.split("/");
+            const fileName = parts[parts.length-1];
+            const match = fileName.match(/^(\d+)\.sketch$/);
+            if(match) {
+                const draftId = match[1];
+                parts[parts.length-1] = draftId;
+                const exportDir =  parts.slice(0,parts.length-1).join("/");
+                console.log(exportDir);
+                self.writeFile({
+                    content: `working`,
+                    path: exportDir,
+                    fileName: draftId + ".json.working"
+                });
+                this.autoConfig();
+                this.export(true,parts.join("/")+"/",function (exportSuccess) {
+                    self.writeFile({
+                        content: exportSuccess ? 'success' : 'failed',
+                        path: exportDir,
+                        fileName: draftId + ".json.done"
+                    });
+                });
+            }else{
+                console.log("not match:"+fileName);
+            }
+        }
+
+        // console.log(sketchFile);
+        // console.log(JSON.stringify(this.context));
+        // console.log(NSDocumentController.sharedDocumentController());
+        // const url = NSURL.fileURLWithPath(sketchFile);
+        // // this.context.document.readFromURL(url,nil,nil);
+        // [[NSDocumentController sharedDocumentController] openLocalDocumentWithContentsOfURL:url display:true completionHandler:nil];
+        // const self = this;
+        // setTimeout(function () {
+        //     console.log("auto export");
+        //     self.autoConfig();
+        //     self.export(true,zipFile);
+        // },5000);
+
+        // NSDocumentController.sharedDocumentController().openLocalDocumentWithContentsOfURL_display_completionHandler(url,true,nil);
+        // ,
+        // NSDocumentController.sharedDocumentController().open(sketchFile);
+        // console.log(this.context.sketch2);
+        // this.context.open(sketchFile);
+        // this.document.open
+        // console.log("autoProgress!");
+    },
+    // observeForRemote: function(){
+    //     const queue_dir = '/Users/lupantian/WebstormProjects/ui2code/worker_workspace/queue'
+    //     const iter = NSFileManager
+    //         .defaultManager()
+    //         .contentsOfDirectoryAtPath_error(queue_dir,nil)
+    //         .objectEnumerator();
+    //     let fileName;
+    //     let drafts = [];
+    //     let drafts_working = [];
+    //     while (fileName = iter.nextObject()) {
+    //         const match = fileName.match(/^(\d+)\.json(.*)$/);
+    //         if(match) {
+    //             const id = match[1];
+    //             const suffix = match[2];
+    //             if(suffix){
+    //                 drafts_working.push(id);
+    //             }else{
+    //                 drafts.push(id);
+    //             }
+    //         }
+    //     }
+    //     drafts = drafts.filter(d=>!drafts_working.includes(d)).map(d=>Number(d));
+    //     drafts.sort();
+    //     if(drafts.length>0){
+    //         const draftId = drafts[0];
+    //         // this.writeFile({
+    //         //     content: `${draftId}`,
+    //         //     path: queue_dir,
+    //         //     fileName: draftId + ".json.working"
+    //         // });
+    //         const draftConfig = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(queue_dir+"/"+draftId+".json", 4, nil));
+    //         const sketchFile = queue_dir + "/" +  draftConfig.savePath;
+    //         const artBoardObjectIds = draftConfig.artBoardSelectIndex;
+    //         this.autoProcess(sketchFile,queue_dir + "/" + draftId + "/",    artBoardObjectIds);
+    //     }
+    // }
 });
 
 SM.extend({
@@ -3122,13 +3223,57 @@ SM.extend({
             }
         });
     },
-    export: function(){
-        if(this.exportPanel()){
+
+    autoConfig: function() {
+        // '{"scale":"1","unit":"px","colorFormat":"color-hex","timestamp":1598514115454,"RN":true,"React":true,"Vue":true,"Android":true,"export3x":false,"exportOption":true,"exportCodes":true}'
+        this.configs = {
+            scale: "1",
+            unit:"px",
+            colorFormat:"color-hex",
+            timestamp:Date.now(),
+            RN: false,
+            Android: false,
+            Vue:false,
+            React: false,
+            export3x: false,
+            exportOption: true,
+            exportCodes: false,
+        }
+
+        this.updateContext();
+        this.document =this.context.document;
+            // this.document = context.document;
+        this.documentData = this.document.documentData();
+        this.UIMetadata = this.document.mutableUIMetadata();
+        this.window = this.document.window();
+        this.pages = this.document.pages();
+        this.page = this.document.currentPage();
+        this.artboard = this.page.currentArtboard();
+        this.current = this.artboard || this.page;
+
+        // var allData = self.allData;
+        this.selectionArtboards = [];
+        this.allCount = 0;
+
+        let page,artboard;
+        var pages = this.document.pages().objectEnumerator();
+        while(page = pages.nextObject()){
+            var artboards = page.artboards().objectEnumerator();
+            while(artboard = artboards.nextObject()){
+                if(!this.is(artboard, MSSymbolMaster)){
+                    this.allCount += artboard.children().count();
+                    this.selectionArtboards.push(artboard);
+                }
+            }
+        }
+    },
+    export: function(_autoMode, _savePath , callback){
+        if(_autoMode || this.exportPanel()){
             if(this.selectionArtboards.length <= 0){
                 return false;
             }
             var self = this,
-                savePath = this.getSavePath();
+                savePath =  _savePath || this.getSavePath();
 
             if(savePath){
                 // self.message(_("Exporting..."));
@@ -3145,8 +3290,8 @@ SM.extend({
                 var idx = 1,
                     artboardIndex = 0,
                     layerIndex = 0,
-                    layerCount = 0,
-                    exporting = false,
+                    layerCount = 0;
+                    self.exporting = false,
                     data = {
                         scale: self.configs.scale,
                         unit: self.configs.unit,
@@ -3167,6 +3312,7 @@ SM.extend({
                 self.wantsStop = false;
                 self.currentExportAboard = undefined;
                 // var removeCurrentExportAboard = self.removeCurrentExportAboard.bind(self);
+                let exportSuccess = true;
 
                 coscript.scheduleWithRepeatingInterval_jsFunction( 0, function( interval ){
                     // self.message('Processing layer ' + idx + ' of ' + self.allCount);
@@ -3180,8 +3326,8 @@ SM.extend({
                         self.maskRect = undefined;
                     }
 
-                    if(!exporting) {
-                        exporting = true;
+                    if(!self.exporting) {
+                        self.exporting = true;
                         if(!self.currentExportAboard){
                             self.currentExportAboard = self.selectionArtboards[artboardIndex].duplicate();
                             //process Mask Layer
@@ -3201,7 +3347,7 @@ SM.extend({
                           );
                           layerIndex++;
                           layerCount++;
-                          exporting = false;
+                          self.exporting = false;
                         } catch (e) {
                           self.wantsStop = true;
                           log(e)
@@ -3210,6 +3356,7 @@ SM.extend({
                           var dialog = NSAlert.alloc().init()
                           dialog.setInformativeText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
                           dialog.runModal();
+                          exportSuccess = false;
                           // if(ga) ga.sendError(message)
                         }
 
@@ -3321,7 +3468,9 @@ SM.extend({
                     }
 
                     if( self.wantsStop === true ){
+                        self.exporting = false;
                         self.removeCurrentExportAboard();
+                        callback(exportSuccess);
                                        // if(ga) ga.sendEvent('spec', 'spec done');
                         return interval.cancel();
                     }
