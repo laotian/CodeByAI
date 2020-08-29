@@ -3458,12 +3458,14 @@ SM.extend({
                                 selectingPath = savePath + "/index.html";
                             }
                             //生成
-                            if(self.configs.exportCodes) {
-                                const generateService = self.generateService.bind(self);
-                                generateService(savePath,processing,self.selectionArtboards.length,selectingPath);
-                            }else {
-                                NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
-                                self.message(_("Export complete!"));
+                            if(!_autoMode) {
+                                if (self.configs.exportCodes) {
+                                    const generateService = self.generateService.bind(self);
+                                    generateService(savePath, processing, self.selectionArtboards.length, selectingPath);
+                                } else {
+                                    NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
+                                    self.message(_("Export complete!"));
+                                }
                             }
                             self.wantsStop = true;
                         }
