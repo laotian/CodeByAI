@@ -49,24 +49,20 @@ var SM = {
             }
 
             if(command && command == "init"){
-                console.log("init..");
                 const self = this;
-                setTimeout(function () {
+                let timeId = setInterval(function () {
                     const currentDoc = context.document || NSDocumentController.sharedDocumentController().currentDocument();
                     if(currentDoc) {
                         const fileUrl = currentDoc.fileURL();
                         if (fileUrl) {
                             const filePath = fileUrl.path();
                             self.autoProcess(filePath);
+                            clearInterval(timeId);
                         }
-                    }else{
-                        console.log("currentDoc is null");
                     }
-                },8000);
+                },1000);
                 return false;
             }
-
-            console.log("command:"+command);
 
             this.document = context.document;
             this.documentData = this.document.documentData();
@@ -184,30 +180,35 @@ SM.extend({
     },
     autoProcess: function(filePath, artBoardObjectIds){
         const self = this;
-        if (filePath.includes("worker_workspace") && !self.exporting) {
+        if (filePath.includes("worker_workspace") && !self.isExporting) {
             const parts = filePath.split("/");
             const fileName = parts[parts.length-1];
             const match = fileName.match(/^(\d+)\.sketch$/);
             if(match) {
                 const draftId = match[1];
                 parts[parts.length-1] = draftId;
-                const exportDir =  parts.slice(0,parts.length-1).join("/");
+                const exportDir = parts.slice(0,parts.length-1).join("/");
                 console.log(exportDir);
+                const lockFileName = draftId + ".json.working";
+                if(NSFileManager.defaultManager().fileExistsAtPath(exportDir + "/" + lockFileName)) {
+                    console.log(`${draftId}文件正在被别的sketch进程处理,忽略`);
+                    return;
+                }
                 self.writeFile({
                     content: `working`,
                     path: exportDir,
-                    fileName: draftId + ".json.working"
+                    fileName: lockFileName,
                 });
                 this.autoConfig();
+                self.isExporting = true;
                 this.export(true,parts.join("/")+"/",function (exportSuccess) {
                     self.writeFile({
                         content: exportSuccess ? 'success' : 'failed',
                         path: exportDir,
                         fileName: draftId + ".json.done"
                     });
+                    self.isExporting = false;
                 });
-            }else{
-                console.log("not match:"+fileName);
             }
         }
 
@@ -3290,8 +3291,9 @@ SM.extend({
                 var idx = 1,
                     artboardIndex = 0,
                     layerIndex = 0,
-                    layerCount = 0;
-                    self.exporting = false,
+                    layerCount = 0,
+                    exporting = false,
+                    exportSuccess = true,
                     data = {
                         scale: self.configs.scale,
                         unit: self.configs.unit,
@@ -3311,8 +3313,6 @@ SM.extend({
                 self.maskCache = [];
                 self.wantsStop = false;
                 self.currentExportAboard = undefined;
-                // var removeCurrentExportAboard = self.removeCurrentExportAboard.bind(self);
-                let exportSuccess = true;
 
                 coscript.scheduleWithRepeatingInterval_jsFunction( 0, function( interval ){
                     // self.message('Processing layer ' + idx + ' of ' + self.allCount);
@@ -3326,8 +3326,8 @@ SM.extend({
                         self.maskRect = undefined;
                     }
 
-                    if(!self.exporting) {
-                        self.exporting = true;
+                    if(!exporting) {
+                        exporting = true;
                         if(!self.currentExportAboard){
                             self.currentExportAboard = self.selectionArtboards[artboardIndex].duplicate();
                             //process Mask Layer
@@ -3347,7 +3347,7 @@ SM.extend({
                           );
                           layerIndex++;
                           layerCount++;
-                          self.exporting = false;
+                          exporting = false;
                         } catch (e) {
                           self.wantsStop = true;
                           log(e)
@@ -3468,13 +3468,11 @@ SM.extend({
                     }
 
                     if( self.wantsStop === true ){
-                        self.exporting = false;
                         self.removeCurrentExportAboard();
                         callback(exportSuccess);
-                                       // if(ga) ga.sendEvent('spec', 'spec done');
+                        // if(ga) ga.sendEvent('spec', 'spec done');
                         return interval.cancel();
                     }
-
 
                 });
             }
