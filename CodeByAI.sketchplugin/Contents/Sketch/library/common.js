@@ -192,6 +192,7 @@ SM.extend({
                 const lockFileName = draftId + ".json.working";
                 if(NSFileManager.defaultManager().fileExistsAtPath(exportDir + "/" + lockFileName)) {
                     console.log(`${draftId}文件正在被别的sketch进程处理,忽略`);
+                    [NSApp terminate:self];
                     return;
                 }
                 self.writeFile({
@@ -209,6 +210,7 @@ SM.extend({
                     });
                     self.isExporting = false;
                     self.document.close();
+                    [NSApp terminate:self];
                 });
             }
         }
