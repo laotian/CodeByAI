@@ -208,6 +208,7 @@ SM.extend({
                         fileName: draftId + ".json.done"
                     });
                     self.isExporting = false;
+                    self.document.close();
                 });
             }
         }
