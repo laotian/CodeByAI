@@ -3273,7 +3273,7 @@ SM.extend({
         while(page = pages.nextObject()){
             var artboards = page.artboards().objectEnumerator();
             while(artboard = artboards.nextObject()){
-                if(!this.is(artboard, MSSymbolMaster) && selectedArtBoards.includes(artboard.objectID()+"")>=0){
+                if(!this.is(artboard, MSSymbolMaster) && selectedArtBoards.includes(artboard.objectID()+"")){
                     this.allCount += artboard.children().count();
                     this.selectionArtboards.push(artboard);
                 }
