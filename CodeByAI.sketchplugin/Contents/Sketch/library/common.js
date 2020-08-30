@@ -192,15 +192,24 @@ SM.extend({
                 const lockFileName = draftId + ".json.working";
                 if(NSFileManager.defaultManager().fileExistsAtPath(exportDir + "/" + lockFileName)) {
                     console.log(`${draftId}文件正在被别的sketch进程处理,忽略`);
-                    [NSApp terminate:self];
+                    NSApp.terminate(self);
                     return;
                 }
+
+                // artBoardSelectIndex
                 self.writeFile({
                     content: `working`,
                     path: exportDir,
                     fileName: lockFileName,
                 });
-                this.autoConfig();
+
+                //
+                const draftConfig = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(exportDir+"/"+draftId+".json", 4, nil));
+                let selectArtBoards = [];
+                if(draftConfig.artBoardSelectIndex){
+                    selectArtBoards = draftConfig.artBoardSelectIndex.split(",");
+                }
+                this.autoConfig(selectArtBoards);
                 self.isExporting = true;
                 this.export(true,parts.join("/")+"/",function (exportSuccess) {
                     self.writeFile({
@@ -210,7 +219,7 @@ SM.extend({
                     });
                     self.isExporting = false;
                     self.document.close();
-                    [NSApp terminate:self];
+                    NSApp.terminate(self);
                 });
             }
         }
@@ -3228,7 +3237,7 @@ SM.extend({
         });
     },
 
-    autoConfig: function() {
+    autoConfig: function(selectedArtBoards) {
         // '{"scale":"1","unit":"px","colorFormat":"color-hex","timestamp":1598514115454,"RN":true,"React":true,"Vue":true,"Android":true,"export3x":false,"exportOption":true,"exportCodes":true}'
         this.configs = {
             scale: "1",
@@ -3264,7 +3273,7 @@ SM.extend({
         while(page = pages.nextObject()){
             var artboards = page.artboards().objectEnumerator();
             while(artboard = artboards.nextObject()){
-                if(!this.is(artboard, MSSymbolMaster)){
+                if(!this.is(artboard, MSSymbolMaster) && selectedArtBoards.includes(artboard.objectID()+"")>=0){
                     this.allCount += artboard.children().count();
                     this.selectionArtboards.push(artboard);
                 }
