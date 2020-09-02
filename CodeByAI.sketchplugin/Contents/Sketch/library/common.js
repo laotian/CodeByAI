@@ -3365,9 +3365,11 @@ SM.extend({
                           log(e)
                           processing.evaluateWebScript("processing('100%', '')");
                           self.removeCurrentExportAboard();
-                          var dialog = NSAlert.alloc().init()
-                          dialog.setInformativeText(_("Error occur when processing %@ - %@ , error: %@",[artboard.name(),layer.name(),e.message]));
-                          dialog.runModal();
+                          if(!_autoMode) {
+                              var dialog = NSAlert.alloc().init()
+                              dialog.setInformativeText(_("Error occur when processing %@ - %@ , error: %@", [artboard.name(), layer.name(), e.message]));
+                              dialog.runModal();
+                          }
                           exportSuccess = false;
                           // if(ga) ga.sendError(message)
                         }
