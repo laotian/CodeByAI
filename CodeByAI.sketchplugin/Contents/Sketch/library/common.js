@@ -132,7 +132,7 @@ var SM = {
                         this.settingsPanel();
                         break;
                     case "export":
-                        this.export(false,undefined);
+                        this.export(false);
                         break;
                 }
             }
@@ -3483,7 +3483,9 @@ SM.extend({
 
                     if( self.wantsStop === true ){
                         self.removeCurrentExportAboard();
-                        callback(exportSuccess);
+                        if(callback){
+                            callback(exportSuccess);
+                        }
                         // if(ga) ga.sendEvent('spec', 'spec done');
                         return interval.cancel();
                     }
