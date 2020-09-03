@@ -2824,8 +2824,11 @@ SM.extend({
     },
     increaseNo: function(id) {
         //为重复的id编号尾号+1,如 ab=>ab2, ab3=>ab4
-        if(id==null || id.length==0){
+        if(id==null){
             throw new Error("id不合法,不能为空");
+        }
+        if(id.length==0){
+            id = "unName";
         }
         const match = id.match(/(\d+$)/g);
         if(match){
@@ -2859,6 +2862,7 @@ SM.extend({
             NSFileManager
                 .defaultManager()
                 .createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.assetsPath, true, nil, nil);
+
 
             //防止因重名导致的覆盖
             let layerName = sliceLayer.name()
