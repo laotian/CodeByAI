@@ -3314,7 +3314,7 @@ SM.extend({
                         scale: self.configs.scale,
                         unit: self.configs.unit,
                         remFontSize: self.configs.remFontSize,
-                        colorFormat: self.configs.colorFormat,
+                        colorFormat: self.configs.colorFormat || "color-hex",
                         componentLibraryNamePrefix: self.getComponentLibraryNamePrefix(),
                         artboards: [],
                         slices: [],
