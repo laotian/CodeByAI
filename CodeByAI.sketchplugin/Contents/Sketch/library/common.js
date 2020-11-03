@@ -3026,9 +3026,20 @@ SM.extend({
                     NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
                     self.message(_("Export complete!"));
                 }else{
+                    const CodeByAI_ZIP = CodeByAI_DIR + ".zip";
+                    let returnUserMessage  = '';
+                    if(NSFileManager.defaultManager().fileExistsAtPath(CodeByAI_ZIP)){
+                        try {
+                            const resultJson = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(CodeByAI_ZIP, 4, nil));
+                            returnUserMessage = resultJson.returnUserMessage || '';
+                            NSFileManager.defaultManager().removeItemAtPath_error(CodeByAI_ZIP,nil);
+                        }catch (error){
+                            console.log("parse post result json failed");
+                        }
+                    }
                     console.log("CodeByAI dir not found, export failed!")
                     var dialog = NSAlert.alloc().init()
-                    dialog.setInformativeText(_("Generate code failed!"));
+                    dialog.setInformativeText(returnUserMessage ? returnUserMessage : _("Generate code failed!"));
                     dialog.runModal();
                 }
                 // this.message(_("Export complete!"));
