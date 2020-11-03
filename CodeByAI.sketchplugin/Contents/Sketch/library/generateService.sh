@@ -1,6 +1,6 @@
 #!/bin/sh
 sketchDir=$1
-apiUrl="http://codebyai.com/api/sketch"
+apiUrl="https://www.codebyai.com/api/sketch"
 cd "$sketchDir"
 if [ -f "sketch.zip" ]; then
   rm sketch.zip

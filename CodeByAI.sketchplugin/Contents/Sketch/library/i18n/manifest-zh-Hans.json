@@ -178,9 +178,9 @@
         "title" : "CodeByAI"
     },
     "identifier": "com.codebyai",
-    "appcast": "https://service.codebyai.com/appcast.xml",
+    "appcast": "https://www.codebyai.com/appcast.xml",
     "homepage": "https://github.com/laotian/CodeByAI",
-    "version": "2.2.2",
+    "version": "2.3.0",
     "description" : "从设计稿导出前端规范与代码",
     "authorEmail" : "tianlupan@126.com",
     "name" : "CodeByAI"
