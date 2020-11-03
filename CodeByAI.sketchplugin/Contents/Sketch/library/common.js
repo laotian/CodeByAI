@@ -3223,7 +3223,7 @@ SM.extend({
                             //存储JSON信息
                             self.writeFile({
                                 content: JSON.stringify(data,undefined, 2),
-                                path: self.toJSString(savePath),
+                                path: self.toJSString(savePath+"/bak/"),
                                 fileName: "artboard.json"
                             });
                             if(self.configs.exportOption){
@@ -3234,8 +3234,8 @@ SM.extend({
                                     });
                                 self.writeFile({
                                     content: self.template(template, {htmlLang:lang, lang: language, pluginVersion: self.version, data: JSON.stringify(data)}),
-                                    path: self.toJSString(savePath),
-                                    fileName: "index.html.bak"
+                                    path: self.toJSString(savePath + "/bak/"),
+                                    fileName: "index.html"
                                 });
                                 selectingPath = savePath + "/index.html";
                             }
