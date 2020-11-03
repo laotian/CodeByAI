@@ -2907,6 +2907,7 @@ SM.extend({
             data.React = this.configs.React;
             data.Vue = this.configs.Vue;
             data.Android = this.configs.Android;
+            data.remFontSize = this.configs.remFontSize || 0;
         }
 
         data.componentLibraryNamePrefix = this.getComponentLibraryNamePrefix();
@@ -2956,7 +2957,6 @@ SM.extend({
                 var allData = self.allData;
                 self.selectionArtboards = [];
                 self.allCount = 0;
-                console.log("data.order:",data.order);
                 for (var p = 0; p < allData.pages.length; p++) {
                     var artboards = allData.pages[p].artboards;
                     if(data.order == 'reverse'){
@@ -2993,6 +2993,7 @@ SM.extend({
                     Android:data.Android,
                     export3x:data.export3x,
                     exportOption: true,
+                    remFontSize: data.remFontSize,
                     // exportOption: data.exportOption,
                     // exportInfluenceRect: data.exportInfluenceRect,
                     exportCodes: data.RN || data.React || data.Vue || data.Android,
@@ -3082,7 +3083,7 @@ SM.extend({
                     data = {
                         scale: self.configs.scale,
                         unit: self.configs.unit,
-                        remFontSize: self.configs.remFontSize,
+                        remFontSize: self.configs.remFontSize || 0,
                         colorFormat: self.configs.colorFormat,
                         sketchLanguage: lang,
                         pluginVersion: self.version,

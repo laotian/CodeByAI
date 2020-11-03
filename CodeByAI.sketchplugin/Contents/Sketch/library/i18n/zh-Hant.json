@@ -110,6 +110,7 @@
     "Style": "樣式",
     "3x pic": "3x圖",
     "Customized": "定制",
-    "Component library name prefix" : "組件庫名稱首碼",
-    "COMPONENT": "組件"
+    "Component library name prefix" : "組件庫名稱首碼,可選",
+    "COMPONENT": "組件",
+    "Pixel": "點數"
 };

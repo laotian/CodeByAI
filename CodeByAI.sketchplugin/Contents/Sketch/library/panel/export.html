@@ -11,14 +11,14 @@
     <style type="text/css">
       .selectwrap ul{
         position: relative;
-        height: 128px;
+        height: 160px;
         margin: 0;
         padding: 0;
         list-style: none;
         overflow: auto;
       }
       .selectbox:focus .selectwrap{
-        height: 128px;
+        height: 160px;
         z-index: 1;
       }
     </style>
@@ -83,7 +83,7 @@
 
     const codeTypes = ["RN","React","Vue","Android"];
     let export3xIdName = "export-3x";
-    let webScale;
+    let remFontSize;
 
     var checkVCheckbox = function(){
             // var allCheckboxLength = $('input[name=artboards]').length,
@@ -254,6 +254,7 @@
                         '<h3>H5 Rem</h3>',
                         '<p></p>',
                         '<ul>',
+                          '<li><label id="rem-0"><input type="radio" name="resolution-type" value="rem-0"><span>' + _('Pixel') + '</span></label></li>',
                           '<li><label id="rem-12"><input type="radio" name="resolution-type" value="rem-12"><span>' + _('CSS Rem') + ' 12px</span></label></li>',
                           '<li><label id="rem-14"><input type="radio" name="resolution-type" value="rem-14"><span>' + _('CSS Rem') + ' 14px</span></label></li>',
                           '<li><label id="rem-16"><input type="radio" name="resolution-type" value="rem-16"><span>' + _('CSS Rem') + ' 16px</span></label></li>',
@@ -387,7 +388,7 @@
                 // ].join(''))
 
           var data = $.extend({
-            scale: 14,
+            remFontSize: 0,
             unit: 'rem',
             export3x: false,
             RN: true,
@@ -414,7 +415,7 @@
 
           // let id = getDesignResolutionID(data.scale, data.unit);
           // checkResolution(id);
-          $(`#rem-${data.scale}`).click();
+          $(`#rem-${data.remFontSize}`).click();
 
           $('.selectbox').each(function(index){
             var $this = $(this);
@@ -426,7 +427,7 @@
             $this.find('input').change(function(){
               var $parent = $this.find('input:checked').parent(),
                       text = $parent.find('span').text();
-              webScale = Number($this.find('input:checked').val().split("-")[1]);
+              remFontSize = Number($this.find('input:checked').val().split("-")[1]);
               $this.find('p').html(text);
               $this.blur();
             });
@@ -592,7 +593,7 @@
               }else{
                 data.export3x = false;
               }
-              data.scale = webScale;
+              data.remFontSize = remFontSize;
               data.unit = "rem";
               data.componentLibraryNamePrefix = $('#componentLibraryNamePrefix').val();
               // data.componentLibraryNamePrefix = "测试symbolName";

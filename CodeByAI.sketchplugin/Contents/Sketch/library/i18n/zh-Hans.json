@@ -115,6 +115,7 @@
     "Style": "样式",
     "3x pic": "3x图",
     "Customized": "定制",
-    "Component library name prefix" : "组件库名称前缀",
-    "COMPONENT": "组件"
+    "Component library name prefix" : "组件库名称前缀,可选",
+    "COMPONENT": "组件",
+    "Pixel": "像素"
 };
