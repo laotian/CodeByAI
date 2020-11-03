@@ -3031,7 +3031,9 @@ SM.extend({
                     if(NSFileManager.defaultManager().fileExistsAtPath(CodeByAI_ZIP)){
                         try {
                             const resultJson = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(CodeByAI_ZIP, 4, nil));
-                            returnUserMessage = resultJson.returnUserMessage || '';
+                            if(resultJson && resultJson.error && resultJson.error.returnCode !== 0 && resultJson.error.returnUserMessage){
+                                returnUserMessage = resultJson.error.returnUserMessage;
+                            }
                             NSFileManager.defaultManager().removeItemAtPath_error(CodeByAI_ZIP,nil);
                         }catch (error){
                             console.log("parse post result json failed");
@@ -3082,6 +3084,8 @@ SM.extend({
                         unit: self.configs.unit,
                         remFontSize: self.configs.remFontSize,
                         colorFormat: self.configs.colorFormat,
+                        sketchLanguage: lang,
+                        pluginVersion: self.version,
                         componentLibraryNamePrefix: self.getComponentLibraryNamePrefix(),
                         artboards: [],
                         slices: [],
@@ -3224,12 +3228,12 @@ SM.extend({
                             });
                             if(self.configs.exportOption){
                                 self.writeFile({
-                                        content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(data)}),
+                                        content: self.template(template, {htmlLang:lang, lang: language, pluginVersion: self.version, data: JSON.stringify(data)}),
                                         path: self.toJSString(savePath),
                                         fileName: "index.html"
                                     });
                                 self.writeFile({
-                                    content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(data)}),
+                                    content: self.template(template, {htmlLang:lang, lang: language, pluginVersion: self.version, data: JSON.stringify(data)}),
                                     path: self.toJSString(savePath),
                                     fileName: "index.html.bak"
                                 });
