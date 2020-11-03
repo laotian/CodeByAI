@@ -121,45 +121,45 @@
     //
     //         });
     //     },
-        // order = function(data){
-        //     var order = $('input[name=order]:checked').val();
-        //     $.each(data.pages, function(index, page){
-        //         if(page.artboards.length > 0){
-        //             var artboardsData = page.artboards;
-        //
-        //             if(order == 'reverse'){
-        //                 artboardsData = JSON.parse(JSON.stringify(page.artboards)).reverse();
-        //             }
-        //             else if(order == 'alphabet'){
-        //                 artboardsData = JSON.parse(JSON.stringify(page.artboards)).sort(function(a, b) {
-        //                     var nameA = a.name.toUpperCase(),
-        //                         nameB = b.name.toUpperCase();
-        //                     if (nameA < nameB) {
-        //                         return -1;
-        //                     }
-        //                     if (nameA > nameB) {
-        //                         return 1;
-        //                     }
-        //                     return 0;
-        //                 });
-        //             }
-        //
-        //             pagesData[page.objectID] = artboardsData;
-        //             pagesName[page.objectID] = page.name;
-        //             $.each(artboardsData, function(index, artboard){
-        //                 var $a = $('#aid-' + artboard.objectID);
-        //                 $a.removeClass('alt');
-        //                 if(index%2){
-        //                     $a.addClass('alt');
-        //                 }
-        //                 $a
-        //                     .removeAttr('cache-top')
-        //                     .css('top', index * 48);
-        //             });
-        //         }
-        //     });
-        //     filter(data);
-        // },
+        order = function(data){
+            var order = $('input[name=order]:checked').val();
+            $.each(data.pages, function(index, page){
+                if(page.artboards.length > 0){
+                    var artboardsData = page.artboards;
+
+                    if(order == 'reverse'){
+                        artboardsData = JSON.parse(JSON.stringify(page.artboards)).reverse();
+                    }
+                    else if(order == 'alphabet'){
+                        artboardsData = JSON.parse(JSON.stringify(page.artboards)).sort(function(a, b) {
+                            var nameA = a.name.toUpperCase(),
+                                nameB = b.name.toUpperCase();
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+
+                    pagesData[page.objectID] = artboardsData;
+                    pagesName[page.objectID] = page.name;
+                    $.each(artboardsData, function(index, artboard){
+                        var $a = $('#aid-' + artboard.objectID);
+                        $a.removeClass('alt');
+                        if(index%2){
+                            $a.addClass('alt');
+                        }
+                        $a
+                            .removeAttr('cache-top')
+                            .css('top', index * 48);
+                    });
+                }
+            });
+            // filter(data);
+        },
         // filter = function(data){
         //     var $filter = $('#filter'),
         //         filterText = $filter.val().toLowerCase().trim();
@@ -229,7 +229,22 @@
                       '</div>',
                   '</div>',
                   '<div class="options">',
-
+                    '<div class="item" style="height: 20px; margin-bottom: 20px;">',
+                      '<div class="orderbox">',
+                          '<div class="radiobox positive-radio">',
+                              '<input id="positive" type="radio" name="order" value="positive">',
+                              '<label for="positive"></label>',
+                          '</div>',
+                          '<div class="radiobox reverse-radio">',
+                              '<input id="reverse" type="radio" name="order" value="reverse">',
+                              '<label for="reverse"></label>',
+                          '</div>',
+                          '<div class="radiobox alphabet-radio">',
+                              '<input id="alphabet" type="radio" name="order" value="alphabet">',
+                              '<label for="alphabet"></label>',
+                          '</div>',
+                      '</div>',
+                    '</div>',
                   '<div class="input-text mrb16">',
                     '<input type="text" id="componentLibraryNamePrefix" name="componentLibraryNamePrefix" placeholder=' + _('Component library name prefix') + ' value="" style="width: 100%; text-align:left">',
                   '</div>',
@@ -246,17 +261,15 @@
                       '</div>',
                     '</div>',
 
-                    '<div class="item" style="margin-top: 20px">',
+                    '<div class="item" style="margin-top:10px; position: relative; display: flex; flex-direction: row; justify-content: space-between">',
                       '<label>',
                         '<div class="checkbox">',
                           '<input id="' + export3xIdName + '" type="checkbox" name="' + export3xIdName + '" value="0">',
                           '<label for="' + export3xIdName + '"></label>',
                         '</div>',
-                        _('export 3x pic'),
+                        _('3x pic'),
                       '</label>',
-                    '</div>',
 
-                    '<div class="item" style="margin-top:10px; position: relative; display: flex; flex-direction: row; justify-content: space-between">',
                       '<label>',
                         '<div class="checkbox">',
                           '<input id="export-RN" type="checkbox" name="export-RN" value="0">',
@@ -542,12 +555,12 @@
             //     filter(data);
             // });
 
-            // $('#' + data.order).attr('checked', true);
+            $('#' + data.order).attr('checked', true);
 
 
-            // $('input[name=order]').change(function(){
-            //     order(data);
-            // });
+            $('input[name=order]').change(function(){
+                order(data);
+            });
 
             // $('input[name=export-option]').change(checkedOption);
 
@@ -566,9 +579,7 @@
                 // data.exportCodes = false;
                 // if( $('input[name=export-codes]:checked').length > 0 ) data.exportCodes = true;
 
-                // data.order = $('input[name=order]:checked').val();
-
-
+                data.order = $('input[name=order]:checked').val();
               codeTypes.forEach(function (type) {
                 if( $('input[name=export-' + type + ']:checked').length > 0 ){
                   data[type] = true;

@@ -2949,32 +2949,32 @@ SM.extend({
 
         return this.SMPanel({
             url: this.pluginSketch + "/panel/export.html",
-            width: 320,
-            height: 610,
+            width: 360,
+            height: 600,
             data: data,
             callback: function( data ){
                 var allData = self.allData;
                 self.selectionArtboards = [];
                 self.allCount = 0;
-
+                console.log("data.order:",data.order);
                 for (var p = 0; p < allData.pages.length; p++) {
                     var artboards = allData.pages[p].artboards;
-                    // if(data.order == 'reverse'){
-                    //     artboards = artboards.reverse();
-                    // }
-                    // else if(data.order == 'alphabet'){
-                    //     artboards = artboards.sort(function(a, b) {
-                    //         var nameA = a.name.toUpperCase(),
-                    //             nameB = b.name.toUpperCase();
-                    //         if (nameA < nameB) {
-                    //             return -1;
-                    //         }
-                    //         if (nameA > nameB) {
-                    //             return 1;
-                    //         }
-                    //         return 0;
-                    //     });
-                    // }
+                    if(data.order == 'reverse'){
+                        artboards = artboards.reverse();
+                    }
+                    else if(data.order == 'alphabet'){
+                        artboards = artboards.sort(function(a, b) {
+                            var nameA = a.name.toUpperCase(),
+                                nameB = b.name.toUpperCase();
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
 
                     for (var a = 0; a < artboards.length; a++) {
                         var artboard = artboards[a].MSArtboardGroup,
