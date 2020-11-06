@@ -86,17 +86,17 @@
             "script": "mark.sketchscript"
         },
         {
+            "name": "Make Interactive",
+            "identifier": "commandInteractive",
+            "shortcut": "ctrl shift i",
+            "handler": "commandInteractive",
+            "script": "mark.sketchscript"
+        },
+        {
             "name": "Color Names",
             "identifier": "commandColor",
             "shortcut": "ctrl shift c",
             "handler": "commandColor",
-            "script": "mark.sketchscript"
-        },
-        {
-            "name": "Interactive",
-            "identifier": "commandInteractive",
-            "shortcut": "ctrl shift i",
-            "handler": "commandInteractive",
             "script": "mark.sketchscript"
         },
         {
@@ -166,8 +166,8 @@
             "commandNote",
             "-",
             "commandExportable",
-            "commandColor",
             "commandInteractive",
+            "commandColor",
             "commandExport",
             "-",
             "commandHidden",

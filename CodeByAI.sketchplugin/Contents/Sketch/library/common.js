@@ -1018,7 +1018,7 @@ SM.extend({
             Toolbar.setTitleVisibility(NSWindowTitleHidden);
             Toolbar.setTitlebarAppearsTransparent(true);
 
-            Toolbar.setFrame_display(NSMakeRect(0, 0, 584, 48), false);
+            Toolbar.setFrame_display(NSMakeRect(0, 0, 632, 48), false);
             Toolbar.setMovableByWindowBackground(true);
             Toolbar.becomeKeyWindow();
             Toolbar.setLevel(NSFloatingWindowLevel);
@@ -1081,34 +1081,44 @@ SM.extend({
                                 self.init(self.context, "exportable");
                             }
                         }),
-                colorsButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-colors",
+                interactiveButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-slice",
+                    function(sender){
+                        self.updateContext();
+                        if(NSEvent.modifierFlags() == NSAlternateKeyMask){
+                            // self.init(self.context, "slice");
+                        }
+                        else{
+                            self.init(self.context, "interactive");
+                        }
+                    }),
+                colorsButton = self.addButton( NSMakeRect(402, 14, 20, 20), "icon-colors",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "color");
                         }),
-                exportButton = self.addButton( NSMakeRect(402, 14, 20, 20), "icon-export",
+                exportButton = self.addButton( NSMakeRect(450, 14, 20, 20), "icon-export",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "export");
                         }),
-                hiddenButton = self.addButton( NSMakeRect(452, 14, 20, 20), "icon-hidden",
+                hiddenButton = self.addButton( NSMakeRect(500, 14, 20, 20), "icon-hidden",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "hidden");
                         }),
-                lockedButton = self.addButton( NSMakeRect(500, 14, 20, 20), "icon-locked",
+                lockedButton = self.addButton( NSMakeRect(548, 14, 20, 20), "icon-locked",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "locked");
                         }),
-                settingsButton = self.addButton( NSMakeRect(548, 14, 20, 20), "icon-settings",
+                settingsButton = self.addButton( NSMakeRect(596, 14, 20, 20), "icon-settings",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "settings");
                         }),
                 divider1 = self.addImage( NSMakeRect(48, 8, 2, 32), "divider"),
                 divider2 = self.addImage( NSMakeRect(242, 8, 2, 32), "divider"),
-                divider3 = self.addImage( NSMakeRect(436, 8, 2, 32), "divider");
+                divider3 = self.addImage( NSMakeRect(482, 8, 2, 32), "divider");
 
             contentView.addSubview(closeButton);
             contentView.addSubview(overlayButton);
@@ -1118,6 +1128,7 @@ SM.extend({
 
             contentView.addSubview(notesButton);
             contentView.addSubview(exportableButton);
+            contentView.addSubview(interactiveButton);
             contentView.addSubview(colorsButton);
             contentView.addSubview(exportButton);
 
@@ -2376,7 +2387,7 @@ SM.extend({
       let name = this.toJSString(layer.name());
       return this.SMPanel({
           url: this.pluginSketch + "/panel/interactive.html",
-          width: 200,
+          width: 260,
           height: 160,
           data: {
               //shape 或 text
@@ -2384,12 +2395,8 @@ SM.extend({
               name,
               colors,
           },
-          floatWindow: false,
-          identifier: "com.codebyai.interactive",
           callback: function( data ){
-              if(this.selection.count()==1 && this.selection[0] == layer){
-                  // selectLayer.setName(data);
-              }
+              layer.setName(data);
           },
       });
   }

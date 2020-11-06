@@ -93,7 +93,7 @@
             "script": "mark.sketchscript"
         },
         {
-            "name": "互動",
+            "name": "設定互動",
             "identifier": "commandInteractive",
             "shortcut": "ctrl shift i",
             "handler": "commandInteractive",
@@ -166,8 +166,8 @@
             "commandNote",
             "-",
             "commandExportable",
-            "commandColor",
             "commandInteractive",
+            "commandColor",
             "commandExport",
             "-",
             "commandHidden",

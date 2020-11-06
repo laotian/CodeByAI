@@ -117,5 +117,8 @@
     "Editable": "可編輯",
     "Select a layer first": "先選擇一個圖層",
     "Touchable, but no feed back": "可点击，但无背景色变换",
-    "Touch not support": "不支持点击"
+    "Touch not support": "不支持点击",
+    "Current Color": "当前颜色",
+    "OK": "确认",
+    "Touch background color": "触控时背景色"
 };

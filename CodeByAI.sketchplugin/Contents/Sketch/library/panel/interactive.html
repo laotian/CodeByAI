@@ -13,8 +13,25 @@
 
     <style type="text/css">
       #page{
+        display: flex;
         padding: 20px;
+        flex-direction: column;
+        align-items: center;
+        font-size: 16px;
       }
+      #text-settings{
+        margin-bottom: 16px;
+      }
+      #shape-settings{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      #shape-settings Label{
+        margin-bottom: 4px;
+      }
+
     </style>
 
     <script type="text/javascript">
@@ -48,8 +65,14 @@
                   '</label>',
                 '</div>',
                 '<div id="shape-settings">',
+                    '<label>',
+                      _("Touch background color"),
+                    '</label>',
                     '<select id="colors" />',
                 '</div>',
+            '</div>',
+            '<div class="footer">',
+              '<button id="submit" class="submit">' + _('OK') + '</button>',
             '</div>',
             '<div id="message" class="message"></div>',
             ].join(''));
@@ -60,14 +83,37 @@
 
         if(settings.type==='shape'){
           $('#text-settings').hide();
-          $('#colors').append('<option value="NoTouchable">'+ _("Touch not support")  +  '</option>')
-          $('#colors').append('<option value="NoFeedBack">'+ _("Touchable, but no feed back")  +  '</option>')
+          $('#colors').append('<option value="">'+ _("Touch not support")  +  '</option>')
+          $('#colors').append('<option value="#T">'+ _("Touchable, but no feed back")  +  '</option>')
+          const colors = [];
           $.each(settings.colors, function(index, color){
-            $('#colors').append('<option value="' + color.color['color-hex'] + '">'+  color.name + '(' + color.color['color-hex'] + ')' +  '</option>')
+            let hexColor = color.color['argb-hex'];
+            if(hexColor.length==9 && hexColor.startsWith("#FF")){
+              hexColor = "#" + hexColor.substr(3);
+            }
+            colors.push({
+              name: color.name,
+              hexColor
+            });
           });
           let match = settings.name.match(/(#[A-F0-9]{6,8})\s*(#|$)/i);
+          let currentColor = '';
           if(match){
-            $('#colors').append('<option value="' + match[1] + '">'+  match[1]  +  '</option>')
+            currentColor = match[1];
+            $('#colors').append('<option value="' + currentColor + '">'+ _("Current Color") + '(' + currentColor  + ')' + '</option>')
+          }
+          colors.forEach(function (color){
+            let hexColor = color.hexColor;
+            if(!currentColor || currentColor!=hexColor) {
+              $('#colors').append('<option value="' + hexColor + '">' + color.name + '(' + hexColor + ')' + '</option>');
+            }
+          });
+          match = settings.name.match(/#T\s*(#|$)/i);
+          if(match){
+            currentColor="#T";
+          }
+          if(currentColor){
+            $('#colors').val(currentColor);
           }
         }else{
           $('#shape-settings').hide();
@@ -75,15 +121,27 @@
           if(match){
             $("#cb-editable").attr("checked", true);
           }
-          $('#cb-editable').change(function(){
-            // if(this.checked ){
-            //   $('#notes').fadeIn('fast');
-            // }
-            // else{
-            //   $('#notes').fadeOut('fast');
-            // }
-          });
         }
+
+        $("#submit").click(function (){
+            let baseName = settings.name;
+            const index = baseName.indexOf("#");
+            if(index==0){
+              baseName = "";
+            }else if(index>0){
+              baseName = baseName.substr(0,index);
+            }
+            if(settings.type==='shape'){
+              const bg = $('#colors').val();
+              baseName+=bg;
+              SMAction('submit', baseName);
+            }else if(settings.type==='text'){
+              if($("#cb-editable").attr("checked")==true){
+                baseName+="#E";
+              }
+              SMAction('submit', baseName);
+            }
+        });
 
         // $('#color-list').on({
         //     click: function(event){
