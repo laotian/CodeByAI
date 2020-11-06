@@ -59,6 +59,10 @@ function commandColor(context) {
     SM.init(context, "color");
 }
 
+function commandInteractive(context){
+    SM.init(context, "interactive");
+}
+
 function commandExportable(context) {
     if(NSEvent.modifierFlags() == 917504){
         SM.init(context, "slice");

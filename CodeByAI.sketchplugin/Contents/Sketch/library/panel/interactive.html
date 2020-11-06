@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Interactive - Sketch Measure 2.0</title>
+
+    <link href="assets/css/normalize.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
+    <script type="text/javascript" src="assets/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="assets/js/common.js"></script>
+
+    <style type="text/css">
+      #page{
+        padding: 20px;
+      }
+    </style>
+
+    <script type="text/javascript">
+    <!--
+    var colorsData = {},
+        init = function(settings) {
+        $(document).on({
+            dragleave:function(event){
+                event.preventDefault();
+            },
+            drop:function(event){
+                event.preventDefault();
+            },
+            dragenter:function(event){
+                event.preventDefault();
+            },
+            dragover:function(event){
+                event.preventDefault();
+            }
+        });
+
+        $('body').html([
+            '<div id="page" class="container">',
+                '<div id="text-settings">',
+                  '<label>',
+                    '<div class="checkbox">',
+                      '<input id="cb-editable" type="checkbox" name="cb-editable" value="0">',
+                      '<label for="cb-editable"></label>',
+                    '</div>',
+                    _('Editable'),
+                  '</label>',
+                '</div>',
+                '<div id="shape-settings">',
+                    '<select id="colors" />',
+                '</div>',
+            '</div>',
+            '<div id="message" class="message"></div>',
+            ].join(''));
+
+        // if(data.length > 0){
+        //     $('#color-list').empty();
+        // }
+
+        if(settings.type==='shape'){
+          $('#text-settings').hide();
+          $('#colors').append('<option value="NoTouchable">'+ _("Touch not support")  +  '</option>')
+          $('#colors').append('<option value="NoFeedBack">'+ _("Touchable, but no feed back")  +  '</option>')
+          $.each(settings.colors, function(index, color){
+            $('#colors').append('<option value="' + color.color['color-hex'] + '">'+  color.name + '(' + color.color['color-hex'] + ')' +  '</option>')
+          });
+          let match = settings.name.match(/(#[A-F0-9]{6,8})\s*(#|$)/i);
+          if(match){
+            $('#colors').append('<option value="' + match[1] + '">'+  match[1]  +  '</option>')
+          }
+        }else{
+          $('#shape-settings').hide();
+          let match = settings.name.match(/#E\s*(#|$)/i);
+          if(match){
+            $("#cb-editable").attr("checked", true);
+          }
+          $('#cb-editable').change(function(){
+            // if(this.checked ){
+            //   $('#notes').fadeIn('fast');
+            // }
+            // else{
+            //   $('#notes').fadeOut('fast');
+            // }
+          });
+        }
+
+        // $('#color-list').on({
+        //     click: function(event){
+        //         if(!selectMultiple) $('.selected').removeClass('selected');
+        //         if($(this).hasClass('selected')){
+        //             $(this).removeClass('selected');
+        //         }
+        //         else{
+        //             $(this).addClass('selected');
+        //         }
+        //         event.stopPropagation();
+        //     }
+        // }, '.color-item');
+        // $('#color-list').on({
+        //     dblclick: function(){
+        //         $(this).addClass('edit');
+        //         $(this).find('.color-name-edit input').select();
+        //     }
+        // }, '.color-item');
+        // $('#color-list').on({
+        //     click: function(){
+        //         var colorID = $(this).attr('color-id');
+        //         delete colorsData[colorID];
+        //         $(this).parent().remove();
+        //         pullData();
+        //     }
+        // }, '.remove');
+        // $('#color-list').on({
+        //     blur: function(){
+        //         var text = $(this).val();
+        //         if(text){
+        //             $(this).parent().parent().parent().removeClass('edit');
+        //             $(this).parent().parent().find('.color-name').text(text);
+        //         }
+        //         pullData();
+        //     },
+        //     keypress: function(event){
+        //         var eventObj = event || e,
+        //             keyCode = eventObj.keyCode || eventObj.which;
+        //
+        //         if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (keyCode >= 48 && keyCode <= 57) || keyCode == 95){
+        //             return true;
+        //         }
+        //         else if(keyCode == 13){
+        //             var text = $(this).val();
+        //             $(this).blur();
+        //             return false;
+        //         }
+        //         else{
+        //             return false;
+        //         }
+        //     }
+        // }, 'input');
+        //
+        // $('.file-import,.c-import').click(function(){
+        //     SMAction('import');
+        //     $('.button-settings').blur();
+        // });
+        // $('.c-export').click(function(){
+        //     SMAction('export');
+        //     $('.button-settings').blur();
+        // });
+        // $('.c-export-xml').click(function(){
+        //     SMAction('export-xml');
+        //     $('.button-settings').blur();
+        // });
+        // $('.button-add').click(function(){
+        //     SMAction('add');
+        // });
+
+        $('body').click(function(){
+            $('.selected').removeClass('selected');
+        })
+
+    },
+    pullData = function(){
+        var colorNames = [];
+        $('input[name=color-name]').each(function(){
+            var $this = $(this),
+                name = $this.val(),
+                color = JSON.parse(decodeURI($this.attr('data-colors')));
+            colorNames.push({
+                name: name,
+                color: color
+            });
+        });
+        SMAction('submit', colorNames);
+    },
+
+    message = function(msg){
+        var $message = $('#message').text(msg);
+        $message.hide().fadeIn().delay( 1000 ).fadeOut('fast');
+    }
+
+    // $(function(){
+    //     init([{"name":"","color":{"r":255,"g":255,"b":255,"a":1,"color-hex":"#FFFFFF 100%","argb-hex":"#FFFFFFFF","css-rgba":"rgba(255,255,255,1)","ui-color":"(r:1.00 g:1.00 b:1.00 a:1.00)"}},{"name":"defaultBlue","color":{"r":15,"g":136,"b":224,"a":1,"color-hex":"#0F88E0 100%","argb-hex":"#FF0F88E0","css-rgba":"rgba(15,136,224,1)","ui-color":"(r:0.06 g:0.53 b:0.88 a:1.00)"}}]);
+    // });
+    -->
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

@@ -93,6 +93,13 @@
             "script": "mark.sketchscript"
         },
         {
+            "name": "Interactive",
+            "identifier": "commandInteractive",
+            "shortcut": "ctrl shift i",
+            "handler": "commandInteractive",
+            "script": "mark.sketchscript"
+        },
+        {
             "name": "Make Exportable",
             "identifier": "commandExportable",
             "shortcut": "ctrl shift s",
@@ -160,6 +167,7 @@
             "-",
             "commandExportable",
             "commandColor",
+            "commandInteractive",
             "commandExport",
             "-",
             "commandHidden",

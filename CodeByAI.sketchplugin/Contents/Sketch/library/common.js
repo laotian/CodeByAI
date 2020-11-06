@@ -111,6 +111,9 @@ var SM = {
                     case "color":
                         this.manageColors();
                         break;
+                    case "interactive":
+                        this.makeInteractive();
+                        break;
                     case "exportable":
                         this.makeExportable();
                         break;
@@ -2206,7 +2209,7 @@ SM.extend({
             width: 320,
             height: 451,
             data: data,
-            floatWindow: true,
+            floatWindow: false,
             identifier: "com.codebyai.colors",
             callback: function( data ){
                 var colors = data;
@@ -2345,6 +2348,51 @@ SM.extend({
 
         return true;
     }
+})
+
+// interactive.js
+SM.extend({
+  makeInteractive: function (){
+      var self = this,
+          colors = (this.configs.colors)? this.configs.colors: [];
+      let type = '';
+      if(this.selection.count()==0){
+          this.message(_("Select a layer first"));
+          return;
+      }
+      if(this.selection.count()!==1){
+          this.message(_("Select a layer first"));
+          return;
+      }
+      const layer = this.selection[0];
+      if (this.is(layer, MSTextLayer)) {
+          type = 'text';
+      }else if(this.is(layer, MSRectangleShape) || this.is(layer, MSOvalShape)){
+          type = 'shape';
+      }else{
+          this.message(_("Only support text/rectangle/oval type"));
+          return;
+      }
+      let name = this.toJSString(layer.name());
+      return this.SMPanel({
+          url: this.pluginSketch + "/panel/interactive.html",
+          width: 200,
+          height: 160,
+          data: {
+              //shape 或 text
+              type,
+              name,
+              colors,
+          },
+          floatWindow: false,
+          identifier: "com.codebyai.interactive",
+          callback: function( data ){
+              if(this.selection.count()==1 && this.selection[0] == layer){
+                  // selectLayer.setName(data);
+              }
+          },
+      });
+  }
 })
 
 // exportable.js

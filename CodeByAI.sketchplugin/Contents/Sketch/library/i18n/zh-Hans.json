@@ -117,5 +117,10 @@
     "Customized": "定制",
     "Component library name prefix" : "组件库名称前缀,可选",
     "COMPONENT": "组件",
-    "Pixel": "像素"
+    "Pixel": "像素",
+    "Only support text/rectangle/oval type" : "仅支持文本/矩形/椭圆形状",
+    "Editable": "可编辑",
+    "Select a layer first": "先选择一个图层",
+    "Touchable, but no feed back": "可点击，但无背景色变换",
+    "Touch not support": "不支持点击"
 };

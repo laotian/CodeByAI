@@ -93,6 +93,13 @@
             "script": "mark.sketchscript"
         },
         {
+            "name": "互動",
+            "identifier": "commandInteractive",
+            "shortcut": "ctrl shift i",
+            "handler": "commandInteractive",
+            "script": "mark.sketchscript"
+        },
+        {
             "name": "設定切圖",
             "identifier": "commandExportable",
             "shortcut": "ctrl shift s",
@@ -160,6 +167,7 @@
             "-",
             "commandExportable",
             "commandColor",
+            "commandInteractive",
             "commandExport",
             "-",
             "commandHidden",
