@@ -1081,7 +1081,7 @@ SM.extend({
                                 self.init(self.context, "exportable");
                             }
                         }),
-                interactiveButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-slice",
+                interactiveButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-tap",
                     function(sender){
                         self.updateContext();
                         if(NSEvent.modifierFlags() == NSAlternateKeyMask){
