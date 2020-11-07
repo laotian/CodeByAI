@@ -113,8 +113,17 @@
     "Import": "导入",
     "Code": "代码",
     "Style": "样式",
-    "export 3x pic": "导出3x图",
+    "3x pic": "3x图",
     "Customized": "定制",
-    "Component library name prefix" : "组件库名称前缀",
-    "COMPONENT": "组件"
+    "Component library name prefix" : "组件库名称前缀,可选",
+    "COMPONENT": "组件",
+    "Pixel": "像素",
+    "Only support text/rectangle/oval type" : "仅支持文本/矩形/椭圆形状",
+    "Editable": "可编辑",
+    "Select a layer first": "先选择一个图层",
+    "Touchable, but no feed back": "可点击，但无背景色变换",
+    "Touch not support": "不支持点击",
+    "Current Color": "当前颜色",
+    "OK": "确认",
+    "Touch background color": "触控时背景色"
 };

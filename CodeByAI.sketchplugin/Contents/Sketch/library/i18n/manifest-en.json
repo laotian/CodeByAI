@@ -140,10 +140,10 @@
             "name": "Init",
             "identifier": "commandInit",
             "handlers": {
-                "actions": {
-                    "OpenDocument": "commandInit"
-                }
-            },
+                    "actions": {
+                        "OpenDocument": "commandInit"
+                    }
+                },
             "script": "mark.sketchscript"
         },
         {
@@ -176,11 +176,11 @@
             "-",
             "commandSettings",
             {
-                "title": "Help",
-                "items": [
-                    "linkHelp",
-                    "linkFeedback"
-                ]
+              "title": "Help",
+              "items": [
+                "linkHelp",
+                "linkFeedback"
+              ]
             }
         ],
         "title" : "CodeByAI"

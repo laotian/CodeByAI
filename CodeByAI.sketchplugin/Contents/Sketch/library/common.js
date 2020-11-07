@@ -122,6 +122,9 @@ var SM = {
                     case "color":
                         this.manageColors();
                         break;
+                    case "interactive":
+                        this.makeInteractive();
+                        break;
                     case "exportable":
                         this.makeExportable();
                         break;
@@ -1202,7 +1205,7 @@ SM.extend({
             Toolbar.setTitleVisibility(NSWindowTitleHidden);
             Toolbar.setTitlebarAppearsTransparent(true);
 
-            Toolbar.setFrame_display(NSMakeRect(0, 0, 584, 48), false);
+            Toolbar.setFrame_display(NSMakeRect(0, 0, 632, 48), false);
             Toolbar.setMovableByWindowBackground(true);
             Toolbar.becomeKeyWindow();
             Toolbar.setLevel(NSFloatingWindowLevel);
@@ -1265,34 +1268,44 @@ SM.extend({
                                 self.init(self.context, "exportable");
                             }
                         }),
-                colorsButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-colors",
+                interactiveButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-slice",
+                    function(sender){
+                        self.updateContext();
+                        if(NSEvent.modifierFlags() == NSAlternateKeyMask){
+                            // self.init(self.context, "slice");
+                        }
+                        else{
+                            self.init(self.context, "interactive");
+                        }
+                    }),
+                colorsButton = self.addButton( NSMakeRect(402, 14, 20, 20), "icon-colors",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "color");
                         }),
-                exportButton = self.addButton( NSMakeRect(402, 14, 20, 20), "icon-export",
+                exportButton = self.addButton( NSMakeRect(450, 14, 20, 20), "icon-export",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "export");
                         }),
-                hiddenButton = self.addButton( NSMakeRect(452, 14, 20, 20), "icon-hidden",
+                hiddenButton = self.addButton( NSMakeRect(500, 14, 20, 20), "icon-hidden",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "hidden");
                         }),
-                lockedButton = self.addButton( NSMakeRect(500, 14, 20, 20), "icon-locked",
+                lockedButton = self.addButton( NSMakeRect(548, 14, 20, 20), "icon-locked",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "locked");
                         }),
-                settingsButton = self.addButton( NSMakeRect(548, 14, 20, 20), "icon-settings",
+                settingsButton = self.addButton( NSMakeRect(596, 14, 20, 20), "icon-settings",
                         function(sender){
                             self.updateContext();
                             self.init(self.context, "settings");
                         }),
                 divider1 = self.addImage( NSMakeRect(48, 8, 2, 32), "divider"),
                 divider2 = self.addImage( NSMakeRect(242, 8, 2, 32), "divider"),
-                divider3 = self.addImage( NSMakeRect(436, 8, 2, 32), "divider");
+                divider3 = self.addImage( NSMakeRect(482, 8, 2, 32), "divider");
 
             contentView.addSubview(closeButton);
             contentView.addSubview(overlayButton);
@@ -1302,6 +1315,7 @@ SM.extend({
 
             contentView.addSubview(notesButton);
             contentView.addSubview(exportableButton);
+            contentView.addSubview(interactiveButton);
             contentView.addSubview(colorsButton);
             contentView.addSubview(exportButton);
 
@@ -2393,7 +2407,7 @@ SM.extend({
             width: 320,
             height: 451,
             data: data,
-            floatWindow: true,
+            floatWindow: false,
             identifier: "com.codebyai.colors",
             callback: function( data ){
                 var colors = data;
@@ -2532,6 +2546,47 @@ SM.extend({
 
         return true;
     }
+})
+
+// interactive.js
+SM.extend({
+  makeInteractive: function (){
+      var self = this,
+          colors = (this.configs.colors)? this.configs.colors: [];
+      let type = '';
+      if(this.selection.count()==0){
+          this.message(_("Select a layer first"));
+          return;
+      }
+      if(this.selection.count()!==1){
+          this.message(_("Select a layer first"));
+          return;
+      }
+      const layer = this.selection[0];
+      if (this.is(layer, MSTextLayer)) {
+          type = 'text';
+      }else if(this.is(layer, MSRectangleShape) || this.is(layer, MSOvalShape)){
+          type = 'shape';
+      }else{
+          this.message(_("Only support text/rectangle/oval type"));
+          return;
+      }
+      let name = this.toJSString(layer.name());
+      return this.SMPanel({
+          url: this.pluginSketch + "/panel/interactive.html",
+          width: 260,
+          height: 160,
+          data: {
+              //shape 或 text
+              type,
+              name,
+              colors,
+          },
+          callback: function( data ){
+              layer.setName(data);
+          },
+      });
+  }
 })
 
 // exportable.js
@@ -3106,6 +3161,7 @@ SM.extend({
             data.React = this.configs.React;
             data.Vue = this.configs.Vue;
             data.Android = this.configs.Android;
+            data.remFontSize = this.configs.remFontSize || 0;
         }
 
         data.componentLibraryNamePrefix = this.getComponentLibraryNamePrefix();
@@ -3148,32 +3204,31 @@ SM.extend({
 
         return this.SMPanel({
             url: this.pluginSketch + "/panel/export.html",
-            width: 320,
-            height: 610,
+            width: 360,
+            height: 600,
             data: data,
             callback: function( data ){
                 var allData = self.allData;
                 self.selectionArtboards = [];
                 self.allCount = 0;
-
                 for (var p = 0; p < allData.pages.length; p++) {
                     var artboards = allData.pages[p].artboards;
-                    // if(data.order == 'reverse'){
-                    //     artboards = artboards.reverse();
-                    // }
-                    // else if(data.order == 'alphabet'){
-                    //     artboards = artboards.sort(function(a, b) {
-                    //         var nameA = a.name.toUpperCase(),
-                    //             nameB = b.name.toUpperCase();
-                    //         if (nameA < nameB) {
-                    //             return -1;
-                    //         }
-                    //         if (nameA > nameB) {
-                    //             return 1;
-                    //         }
-                    //         return 0;
-                    //     });
-                    // }
+                    if(data.order == 'reverse'){
+                        artboards = artboards.reverse();
+                    }
+                    else if(data.order == 'alphabet'){
+                        artboards = artboards.sort(function(a, b) {
+                            var nameA = a.name.toUpperCase(),
+                                nameB = b.name.toUpperCase();
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
 
                     for (var a = 0; a < artboards.length; a++) {
                         var artboard = artboards[a].MSArtboardGroup,
@@ -3192,6 +3247,7 @@ SM.extend({
                     Android:data.Android,
                     export3x:data.export3x,
                     exportOption: true,
+                    remFontSize: data.remFontSize,
                     // exportOption: data.exportOption,
                     // exportInfluenceRect: data.exportInfluenceRect,
                     exportCodes: data.RN || data.React || data.Vue || data.Android,
@@ -3225,9 +3281,22 @@ SM.extend({
                     NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
                     self.message(_("Export complete!"));
                 }else{
+                    const CodeByAI_ZIP = CodeByAI_DIR + ".zip";
+                    let returnUserMessage  = '';
+                    if(NSFileManager.defaultManager().fileExistsAtPath(CodeByAI_ZIP)){
+                        try {
+                            const resultJson = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(CodeByAI_ZIP, 4, nil));
+                            if(resultJson && resultJson.error && resultJson.error.returnCode !== 0 && resultJson.error.returnUserMessage){
+                                returnUserMessage = resultJson.error.returnUserMessage;
+                            }
+                            NSFileManager.defaultManager().removeItemAtPath_error(CodeByAI_ZIP,nil);
+                        }catch (error){
+                            console.log("parse post result json failed");
+                        }
+                    }
                     console.log("CodeByAI dir not found, export failed!")
                     var dialog = NSAlert.alloc().init()
-                    dialog.setInformativeText(_("Generate code failed!"));
+                    dialog.setInformativeText(returnUserMessage ? returnUserMessage : _("Generate code failed!"));
                     dialog.runModal();
                 }
                 // this.message(_("Export complete!"));
@@ -3313,8 +3382,10 @@ SM.extend({
                     data = {
                         scale: self.configs.scale,
                         unit: self.configs.unit,
-                        remFontSize: self.configs.remFontSize,
-                        colorFormat: self.configs.colorFormat || "color-hex",
+                        remFontSize: self.configs.remFontSize || 0,
+                        colorFormat: self.configs.colorFormat,
+                        sketchLanguage: lang,
+                        pluginVersion: self.version,
                         componentLibraryNamePrefix: self.getComponentLibraryNamePrefix(),
                         artboards: [],
                         slices: [],
@@ -3456,19 +3527,19 @@ SM.extend({
                             //存储JSON信息
                             self.writeFile({
                                 content: JSON.stringify(data,undefined, 2),
-                                path: self.toJSString(savePath),
+                                path: self.toJSString(savePath+"/bak/"),
                                 fileName: "artboard.json"
                             });
                             if(self.configs.exportOption){
                                 self.writeFile({
-                                        content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(data)}),
+                                        content: self.template(template, {htmlLang:lang, lang: language, pluginVersion: self.version, data: JSON.stringify(data)}),
                                         path: self.toJSString(savePath),
                                         fileName: "index.html"
                                     });
                                 self.writeFile({
-                                    content: self.template(template, {htmlLang:lang, lang: language, data: JSON.stringify(data)}),
-                                    path: self.toJSString(savePath),
-                                    fileName: "index.html.bak"
+                                    content: self.template(template, {htmlLang:lang, lang: language, pluginVersion: self.version, data: JSON.stringify(data)}),
+                                    path: self.toJSString(savePath + "/bak/"),
+                                    fileName: "index.html"
                                 });
                                 selectingPath = savePath + "/index.html";
                             }
