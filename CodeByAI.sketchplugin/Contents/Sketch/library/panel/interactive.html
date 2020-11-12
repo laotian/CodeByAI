@@ -136,7 +136,7 @@
               baseName+=bg;
               SMAction('submit', baseName);
             }else if(settings.type==='text'){
-              if($("#cb-editable").attr("checked")==true){
+              if($("#cb-editable").prop("checked")){
                 baseName+="#E";
               }
               SMAction('submit', baseName);

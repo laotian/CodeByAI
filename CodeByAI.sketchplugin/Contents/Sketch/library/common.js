@@ -1268,7 +1268,7 @@ SM.extend({
                                 self.init(self.context, "exportable");
                             }
                         }),
-                interactiveButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-slice",
+                interactiveButton = self.addButton( NSMakeRect(354, 14, 20, 20), "icon-tap",
                     function(sender){
                         self.updateContext();
                         if(NSEvent.modifierFlags() == NSAlternateKeyMask){
@@ -3205,7 +3205,7 @@ SM.extend({
         return this.SMPanel({
             url: this.pluginSketch + "/panel/export.html",
             width: 360,
-            height: 600,
+            height: 640,
             data: data,
             callback: function( data ){
                 var allData = self.allData;
