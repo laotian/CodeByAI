@@ -105,7 +105,13 @@
           colors.forEach(function (color){
             let hexColor = color.hexColor;
             if(!currentColor || currentColor!=hexColor) {
-              $('#colors').append('<option value="' + hexColor + '">' + color.name + '(' + hexColor + ')' + '</option>');
+              let nameTitle = '';
+              if(color.name){
+                nameTitle = color.name + '(' + hexColor + ')';
+              }else{
+                nameTitle = hexColor ;
+              }
+              $('#colors').append('<option value="' + hexColor + '">' + nameTitle + '</option>');
             }
           });
           match = settings.name.match(/#T\s*(#|$)/i);
