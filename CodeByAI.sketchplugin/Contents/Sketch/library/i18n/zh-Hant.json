@@ -116,9 +116,9 @@
     "Only support text/rectangle/oval type" : "僅支持文字/矩形/橢圓形狀",
     "Editable": "可編輯",
     "Select a layer first": "先選擇一個圖層",
-    "Touchable, but no feed back": "可点击，但无背景色变换",
-    "Touch not support": "不支持点击",
-    "Current Color": "当前颜色",
-    "OK": "确认",
-    "Touch background color": "触控时背景色"
+    "Touchable, but no feed back": "可點擊，但無背景色變換",
+    "Touch not support": "不支持點擊",
+    "Current Color": "當前顏色",
+    "OK": "確認",
+    "Touch background color": "觸控時背景色"
 };

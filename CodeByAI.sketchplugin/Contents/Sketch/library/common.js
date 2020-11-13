@@ -2407,7 +2407,7 @@ SM.extend({
             width: 320,
             height: 451,
             data: data,
-            floatWindow: false,
+            floatWindow: true,
             identifier: "com.codebyai.colors",
             callback: function( data ){
                 var colors = data;
@@ -3205,7 +3205,7 @@ SM.extend({
         return this.SMPanel({
             url: this.pluginSketch + "/panel/export.html",
             width: 360,
-            height: 640,
+            height: 560,
             data: data,
             callback: function( data ){
                 var allData = self.allData;

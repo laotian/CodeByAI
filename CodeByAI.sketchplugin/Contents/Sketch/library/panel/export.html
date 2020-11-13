@@ -21,6 +21,17 @@
         height: 160px;
         z-index: 1;
       }
+      .inputGroup{
+        display: flex;
+        flex-direction: row;
+      }
+      .inputGroupLeft{
+        flex: 2;
+        margin-right: 10px;
+      }
+      .inputGroupRight{
+        flex: 3;
+      }
     </style>
 
 
@@ -245,21 +256,25 @@
                           '</div>',
                       '</div>',
                     '</div>',
-                  '<div class="input-text mrb16">',
-                    '<input type="text" id="componentLibraryNamePrefix" name="componentLibraryNamePrefix" placeholder=' + _('Component library name prefix') + ' value="" style="width: 100%; text-align:left">',
-                  '</div>',
+                  '<div class="inputGroup">',
 
-                    '<div class="resolution selectbox mrb16" tabindex="0">',
+                    '<div class="inputGroupLeft resolution selectbox mrb16" tabindex="0">',
                       '<div class="selectwrap">',
                         '<h3>H5 Rem</h3>',
                         '<p></p>',
                         '<ul>',
                           '<li><label id="rem-0"><input type="radio" name="resolution-type" value="rem-0"><span>' + _('Pixel') + '</span></label></li>',
-                          '<li><label id="rem-12"><input type="radio" name="resolution-type" value="rem-12"><span>' + _('CSS Rem') + ' 12px</span></label></li>',
-                          '<li><label id="rem-14"><input type="radio" name="resolution-type" value="rem-14"><span>' + _('CSS Rem') + ' 14px</span></label></li>',
-                          '<li><label id="rem-16"><input type="radio" name="resolution-type" value="rem-16"><span>' + _('CSS Rem') + ' 16px</span></label></li>',
+                          '<li><label id="rem-12"><input type="radio" name="resolution-type" value="rem-12"><span>'  + 'REM 12px</span></label></li>',
+                          '<li><label id="rem-14"><input type="radio" name="resolution-type" value="rem-14"><span>'  + 'REM 14px</span></label></li>',
+                          '<li><label id="rem-16"><input type="radio" name="resolution-type" value="rem-16"><span>'  + 'REM 16px</span></label></li>',
                         '</ul>',
                       '</div>',
+                    '</div>',
+
+              '<div class="inputGroupRight input-text mrb16">',
+              '<input type="text" id="componentLibraryNamePrefix" name="componentLibraryNamePrefix" placeholder=' + _('Component library name prefix') + ' value="" style="width: 100%; text-align:left">',
+              '</div>',
+
                     '</div>',
 
                     '<div class="item" style="margin-top:10px; position: relative; display: flex; flex-direction: row; justify-content: space-between">',
