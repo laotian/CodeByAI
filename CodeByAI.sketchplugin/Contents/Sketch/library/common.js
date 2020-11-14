@@ -206,9 +206,8 @@ SM.extend({
                     fileName: lockFileName,
                 });
 
-                //
                 const draftConfig = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(exportDir+"/"+draftId+".json", 4, nil));
-                this.autoConfig(draftConfig);
+                this.autoConfig(draftConfig.artBoards);
                 self.isExporting = true;
                 this.export(true,parts.join("/")+"/",function (exportSuccess) {
                     self.writeFile({
@@ -3544,14 +3543,12 @@ SM.extend({
                                 selectingPath = savePath + "/index.html";
                             }
                             //生成
-                            if(!_autoMode) {
-                                if (self.configs.exportCodes) {
-                                    const generateService = self.generateService.bind(self);
-                                    generateService(savePath, processing, self.selectionArtboards.length, selectingPath);
-                                } else {
-                                    NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
-                                    self.message(_("Export complete!"));
-                                }
+                            if (self.configs.exportCodes) {
+                                const generateService = self.generateService.bind(self);
+                                generateService(savePath, processing, self.selectionArtboards.length, selectingPath);
+                            } else  if(!_autoMode){
+                                NSWorkspace.sharedWorkspace().activateFileViewerSelectingURLs([NSURL.fileURLWithPath(selectingPath)]);
+                                self.message(_("Export complete!"));
                             }
                             self.wantsStop = true;
                         }
