@@ -208,11 +208,7 @@ SM.extend({
 
                 //
                 const draftConfig = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(exportDir+"/"+draftId+".json", 4, nil));
-                let selectArtBoards = [];
-                if(draftConfig.artBoardSelectIndex){
-                    selectArtBoards = draftConfig.artBoardSelectIndex.split(",");
-                }
-                this.autoConfig(selectArtBoards);
+                this.autoConfig(draftConfig);
                 self.isExporting = true;
                 this.export(true,parts.join("/")+"/",function (exportSuccess) {
                     self.writeFile({
@@ -2949,7 +2945,7 @@ SM.extend({
             // console.log("getSymbol!",layer.symbolMaster().name(),"desc:",layer.symbolMaster().description(),"symbolId:",symbolObjectID);
             // layerData.objectID = symbolObjectID;
             let componentName = this.toJSString(layer.symbolMaster().name());
-            var prefix = this.getComponentLibraryNamePrefix();
+            var prefix = this.configs.componentLibraryNamePrefix;
             if(!(prefix && componentName && componentName.startsWith(prefix))){
                 componentName = '';
             }
@@ -3162,6 +3158,7 @@ SM.extend({
             data.Vue = this.configs.Vue;
             data.Android = this.configs.Android;
             data.remFontSize = this.configs.remFontSize || 0;
+            data.componentLibraryNamePrefix = this.configs.componentLibraryNamePrefix;
         }
 
         data.componentLibraryNamePrefix = this.getComponentLibraryNamePrefix();
@@ -3251,7 +3248,8 @@ SM.extend({
                     // exportOption: data.exportOption,
                     // exportInfluenceRect: data.exportInfluenceRect,
                     exportCodes: data.RN || data.React || data.Vue || data.Android,
-                    order: data.order
+                    order: data.order,
+                    componentLibraryNamePrefix: data.componentLibraryNamePrefix,
                 });
                 self.setComponentLibraryNamePrefix(data.componentLibraryNamePrefix);
             }
@@ -3310,22 +3308,24 @@ SM.extend({
         });
     },
 
-    autoConfig: function(selectedArtBoards) {
+    autoConfig: function(draftConfig) {
         // '{"scale":"1","unit":"px","colorFormat":"color-hex","timestamp":1598514115454,"RN":true,"React":true,"Vue":true,"Android":true,"export3x":false,"exportOption":true,"exportCodes":true}'
         this.configs = {
             scale: "1",
             unit:"px",
             colorFormat:"color-hex",
             timestamp:Date.now(),
-            RN: false,
-            Android: false,
-            Vue:false,
-            React: false,
+            RN: draftConfig.codeTypes.includes("RN"),
+            Android: draftConfig.codeTypes.includes("Android"),
+            Vue: draftConfig.codeTypes.includes("Vue"),
+            React: draftConfig.codeTypes.includes("React"),
             export3x: false,
             exportOption: true,
             exportCodes: false,
+            remFontSize: draftConfig.remFontSize,
+            componentLibraryNamePrefix : draftConfig.componentLibraryNamePrefix,
         }
-
+        const selectedArtBoards = draftConfig.selectedArtBoards;
         this.updateContext();
         this.document =this.context.document;
             // this.document = context.document;
@@ -3386,7 +3386,7 @@ SM.extend({
                         colorFormat: self.configs.colorFormat,
                         sketchLanguage: lang,
                         pluginVersion: self.version,
-                        componentLibraryNamePrefix: self.getComponentLibraryNamePrefix(),
+                        componentLibraryNamePrefix:  self.config.componentLibraryNamePrefix,
                         artboards: [],
                         slices: [],
                         colors: [],
