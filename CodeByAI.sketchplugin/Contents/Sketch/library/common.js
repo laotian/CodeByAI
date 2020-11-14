@@ -207,7 +207,7 @@ SM.extend({
                 });
 
                 const draftConfig = JSON.parse(NSString.stringWithContentsOfFile_encoding_error(exportDir+"/"+draftId+".json", 4, nil));
-                this.autoConfig(draftConfig.artBoards);
+                this.autoConfig(JSON.parse(draftConfig.artBoards));
                 self.isExporting = true;
                 this.export(true,parts.join("/")+"/",function (exportSuccess) {
                     self.writeFile({
@@ -3385,7 +3385,7 @@ SM.extend({
                         colorFormat: self.configs.colorFormat,
                         sketchLanguage: lang,
                         pluginVersion: self.version,
-                        componentLibraryNamePrefix:  self.config.componentLibraryNamePrefix,
+                        componentLibraryNamePrefix:  self.configs.componentLibraryNamePrefix,
                         artboards: [],
                         slices: [],
                         colors: [],
