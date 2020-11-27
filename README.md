@@ -10,9 +10,9 @@ A Sketch smart plug-in that can accurately convert the design draft into mobile 
 * Visualization: You can view the actual running effect of the code, and developers can easily select part/full page code into the project.
 
 ## Demo
-[Demo online](https://service.codebyai.com/demo/index.html)  
+[Demo online](https://codebyai.com/static/demo/index.html)  
 
-[Demo sketch file download](https://service.codebyai.com/images/demo.sketch) 
+[Demo sketch file download](https://codebyai.com/static/demo.sketch) 
 
 After entering the page, select "Code Type" in the upper right corner to view a screenshot of the running effect.  
 Click to select a single element or select multiple elements, and view the corresponding code in the code area in the lower right corner of the page; to facilitate developers to copy by category, the code area is divided into three TABs, picture guide package, VIEW layout, style information.  
